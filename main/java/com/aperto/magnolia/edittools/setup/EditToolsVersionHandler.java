@@ -3,9 +3,14 @@ package com.aperto.magnolia.edittools.setup;
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
 import com.aperto.magnolia.edittools.action.DuplicateComponentAction;
 import com.aperto.magnolia.edittools.action.DuplicateComponentActionDefinition;
+import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
+import info.magnolia.jcr.nodebuilder.NodeOperation;
+import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
+import info.magnolia.ui.api.action.ConfiguredActionDefinition;
+import info.magnolia.ui.framework.availability.IsNotDeletedRule;
 import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 
 import java.util.List;
@@ -27,33 +32,88 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
     private static final String CN_GROUPS = "groups";
     private static final String CN_ITEMS = "items";
-    private static final String CN_DEV_ACTIONS = "devActions";
     private static final String ACTION_DUPLICATE_CMP = "duplicateComponent";
+    private static final String ACTION_PREVIEW_EXTERNAL_CMP = "previewExternal";
+    private static final String SECTION_EDITING_ACTIONS = "editingActions";
+    private static final String SECTION_COMPONENT_ACTIONS = "componentActions";
+    private static final String SECTION_PAGE_ACTIONS = "pageActions";
+    private static final String EDITING_FLOW = "editingFlow";
+
     private static final String MODULE_PAGES = "pages";
     private static final String PN_PROPERTY_NAME = "propertyName";
     private static final String PN_DISPLAY_IN_CHOOSE_DIALOG = "displayInChooseDialog";
     private static final String PN_SORTABLE = "sortable";
     private static final String PN_WIDTH = "width";
+    private static final String PN_LABEL = "label";
+    private static final String PN_AVAILABILITY = "availability";
 
-    private final Task _registerDevActions = selectModuleConfig("Register developer actions", "Register developer actions", MODULE_PAGES,
-        getNode("apps/pages/subApps/detail").then(
-            getNode("actions").then(
-                addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                    addOrSetProperty(PN_CLASS, DuplicateComponentActionDefinition.class.getName()),
-                    addOrSetProperty(PN_ICON, "icon-duplicate"),
-                    addOrSetProperty(PN_IMPL_CLASS, DuplicateComponentAction.class.getName())
+    private final Task _registerDevActions = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
+        getNode("apps/pages/subApps").then(
+            getNode("detail").then(
+                getNode("actions").then(
+                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
+                        addOrSetProperty(PN_CLASS, DuplicateComponentActionDefinition.class.getName()),
+                        addOrSetProperty(PN_ICON, "icon-duplicate"),
+                        addOrSetProperty(PN_IMPL_CLASS, DuplicateComponentAction.class.getName())
+                    ),
+                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
+                        addOrGetNode(PN_AVAILABILITY, NodeTypes.ContentNode.NAME).then(
+                            addOrGetNode("rules", NodeTypes.ContentNode.NAME).then(
+                                addOrGetNode("isNotDeleted", NodeTypes.ContentNode.NAME).then(
+                                    addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())))),
+                        addOrSetProperty(PN_ICON, "icon-view"),
+                        addOrSetProperty(PN_LABEL, "previewExternal.label"),
+                        addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
+                        addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName()))
+                ),
+                getNode("actionbar/sections").then(
+                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
+                        addOrGetContentNode(CN_GROUPS).then(
+                            addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                                addOrGetContentNode(CN_ITEMS).then(
+                                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
+                                        orderBefore(ACTION_DUPLICATE_CMP, "startMoveComponent")
+                                    )
+                                )
+                            )
+                        )
+                    ),
+                    addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
+                        addPreviewExternal()
+                    ),
+                    addOrGetContentNode("areaActions").then(
+                        addPreviewExternal()
+                    ),
+                    addOrGetContentNode("pageNodeAreaActions").then(
+                        addPreviewExternal()
+                    ),
+                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
+                        addPreviewExternal()
+                    )
                 )
             ),
-            getNode("actionbar/sections").then(
-                addOrGetContentNode("componentActions").then(addOrGetContentNode(CN_GROUPS).then(
-                        addOrGetContentNode("editingActions").then(
-                            addOrGetContentNode(CN_ITEMS).then(
-                                addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                                    orderBefore(ACTION_DUPLICATE_CMP, "startMoveComponent")
+            getNode("browser").then(
+                getNode("actions").then(
+                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
+                        addOrGetNode(PN_AVAILABILITY, NodeTypes.ContentNode.NAME).then(
+                            addOrGetNode("rules", NodeTypes.ContentNode.NAME).then(
+                                addOrGetNode("isNotDeleted", NodeTypes.ContentNode.NAME).then(
+                                    addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())))),
+                        addOrSetProperty(PN_ICON, "icon-view"),
+                        addOrSetProperty(PN_LABEL, "previewExternal.label"),
+                        addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
+                        addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName()))
+                ),
+                getNode("actionbar/sections").then(
+                    addOrGetContentNode(SECTION_PAGE_ACTIONS).then(addOrGetContentNode(CN_GROUPS).then(
+                            addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                                addOrGetContentNode(CN_ITEMS).then(
+                                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
+                                        orderBefore(ACTION_PREVIEW_EXTERNAL_CMP, "edit"))
                             )
                         )
                     )
-                )
+                    )
                 )
             )
         )
@@ -82,6 +142,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
         tasks.add(_registerDevActions);
+        tasks.add(_addLastModifiedAndCreatorToListView);
         return tasks;
     }
 
@@ -89,6 +150,19 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
         List<Task> tasks = super.getExtraInstallTasks(installContext);
         tasks.add(_registerDevActions);
+        tasks.add(_addLastModifiedAndCreatorToListView);
         return tasks;
+    }
+
+    private NodeOperation addPreviewExternal() {
+        return addOrGetContentNode(CN_GROUPS).then(
+            addOrGetContentNode(EDITING_FLOW).then(
+                addOrGetContentNode(CN_ITEMS).then(
+                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
+                        orderBefore("preview", ACTION_PREVIEW_EXTERNAL_CMP)
+                    )
+                )
+            )
+        );
     }
 }
