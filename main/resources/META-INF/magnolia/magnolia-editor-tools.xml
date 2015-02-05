@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module SYSTEM "module.dtd" >
+<module>
+    <name>magnolia-editor-tools</name>
+    <displayName>${project.name}</displayName>
+    <description>${project.description}</description>
+    <versionHandler>com.aperto.magnolia.edittools.setup.EditToolsVersionHandler</versionHandler>
+    <version>${project.version}</version>
+
+    <components>
+        <id>magnolia-editor-tools</id>
+        <component>
+            <type>com.aperto.magnolia.edittools.util.LinkService</type>
+            <implementation>com.aperto.magnolia.edittools.util.LinkService</implementation>
+            <scope>singleton</scope>
+        </component>
+    </components>
+
+    <components>
+        <!-- set custom view impl for the pages app -->
+        <id>app-pages-detail</id>
+        <component>
+            <type>info.magnolia.pages.app.editor.PagesEditorSubAppView</type>
+            <implementation>com.aperto.magnolia.edittools.views.EditorToolsPagesEditorSubAppViewImpl</implementation>
+        </component>
+    </components>
+
+    <dependencies>
+        <dependency>
+            <name>core</name>
+            <version>${magnolia.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>pages</name>
+            <version>${magnolia.pages.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>multisite</name>
+            <version>${magnolia.multisite.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>magkit</name>
+            <version>${magkit.version}/*</version>
+        </dependency>
+    </dependencies>
+</module>
