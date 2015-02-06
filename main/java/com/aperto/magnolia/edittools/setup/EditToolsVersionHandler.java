@@ -40,6 +40,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private static final String EDITING_FLOW = "editingFlow";
 
     private static final String MODULE_PAGES = "pages";
+    private static final String MODULE_DAM = "dam-app";
     private static final String PN_PROPERTY_NAME = "propertyName";
     private static final String PN_DISPLAY_IN_CHOOSE_DIALOG = "displayInChooseDialog";
     private static final String PN_SORTABLE = "sortable";
@@ -119,40 +120,19 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         )
     );
 
-    private final Task _addLastModifiedAndCreatorToListView = selectModuleConfig("Add last modified and creator to list view.", "", MODULE_PAGES,
+    private final Task _addLastModifiedAndCreatorToListViewOfPagesApp = selectModuleConfig("Add last modified and creator to list view.", "", MODULE_PAGES,
         getNode("apps/pages/subApps/browser/workbench/contentViews/list/columns").then(
-            addOrGetContentNode("lastModUser").then(
-                addOrSetProperty(PN_CLASS, MetaDataColumnDefinition.class.getName()),
-                addOrSetProperty(PN_DISPLAY_IN_CHOOSE_DIALOG, false),
-                addOrSetProperty(PN_PROPERTY_NAME, LAST_MODIFIED_BY),
-                addOrSetProperty(PN_SORTABLE, "true"),
-                addOrSetProperty(PN_WIDTH, 80L)
-            ),
-            addOrGetContentNode("createdByUser").then(
-                addOrSetProperty(PN_CLASS, MetaDataColumnDefinition.class.getName()),
-                addOrSetProperty(PN_DISPLAY_IN_CHOOSE_DIALOG, false),
-                addOrSetProperty(PN_PROPERTY_NAME, CREATED_BY),
-                addOrSetProperty(PN_SORTABLE, "true"),
-                addOrSetProperty(PN_WIDTH, 80L)
-            )
+            addColumn("lastModUser", LAST_MODIFIED_BY, "column.lastModUser.label"),
+            addColumn("createdByUser", CREATED_BY, "column.createdByUser.label")
         )
     );
 
-    @Override
-    protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
-        List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
-        tasks.add(_registerDevActions);
-        tasks.add(_addLastModifiedAndCreatorToListView);
-        return tasks;
-    }
-
-    @Override
-    protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
-        List<Task> tasks = super.getExtraInstallTasks(installContext);
-        tasks.add(_registerDevActions);
-        tasks.add(_addLastModifiedAndCreatorToListView);
-        return tasks;
-    }
+    private final Task _addLastModifiedAndCreatorToListViewOfDamApp = selectModuleConfig("Add last modified and creator to list view.", "", MODULE_DAM,
+        getNode("apps/assets/subApps/browser/workbench/contentViews/list/columns").then(
+            addColumn("lastModUser", LAST_MODIFIED_BY, "column.lastModUser.label"),
+            addColumn("createdByUser", CREATED_BY, "column.createdByUser.label")
+        )
+    );
 
     private NodeOperation addPreviewExternal() {
         return addOrGetContentNode(CN_GROUPS).then(
@@ -164,5 +144,34 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                 )
             )
         );
+    }
+
+    private NodeOperation addColumn(final String columnNodeName, final String columnPropertyName, final String label) {
+        return addOrGetContentNode(columnNodeName).then(
+            addOrSetProperty(PN_CLASS, MetaDataColumnDefinition.class.getName()),
+            addOrSetProperty(PN_DISPLAY_IN_CHOOSE_DIALOG, false),
+            addOrSetProperty(PN_PROPERTY_NAME, columnPropertyName),
+            addOrSetProperty(PN_SORTABLE, "true"),
+            addOrSetProperty(PN_LABEL, label),
+            addOrSetProperty(PN_WIDTH, 80L)
+        );
+    }
+
+    @Override
+    protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
+        List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
+        tasks.add(_registerDevActions);
+        tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
+        tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
+        return tasks;
+    }
+
+    @Override
+    protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
+        List<Task> tasks = super.getExtraInstallTasks(installContext);
+        tasks.add(_registerDevActions);
+        tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
+        tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
+        return tasks;
     }
 }
