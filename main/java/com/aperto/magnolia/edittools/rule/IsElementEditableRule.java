@@ -50,7 +50,7 @@ public class IsElementEditableRule extends AbstractElementAvailabilityRule {
                 }
                 if (NodeUtils.isNodeType(pageNode, NodeTypes.Page.NAME)) {
                     TemplateDefinition templateDefinition = _templateDefinitionRegistry.getTemplateDefinition(NodeUtils.getTemplate(pageNode));
-                    result = templateDefinition.getDialog() != null && templateDefinition.getEditable();
+                    result = templateDefinition.getDialog() != null && (templateDefinition.getEditable() == null || templateDefinition.getEditable());
                 }
             } catch (RepositoryException | RegistrationException e) {
                 LOGGER.debug("Unable to check page template for dialog");
