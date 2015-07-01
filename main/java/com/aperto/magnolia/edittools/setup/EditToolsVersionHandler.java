@@ -4,6 +4,7 @@ import com.aperto.magkit.module.BootstrapModuleVersionHandler;
 import com.aperto.magnolia.edittools.action.DuplicateComponentAction;
 import com.aperto.magnolia.edittools.action.DuplicateComponentActionDefinition;
 import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
+import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.module.InstallContext;
@@ -15,8 +16,13 @@ import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 
 import java.util.List;
 
-import static com.aperto.magkit.module.delta.StandardTasks.*;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.*;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_CLASS;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_ICON;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_IMPL_CLASS;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetContentNode;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetNode;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrSetProperty;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.orderBefore;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static info.magnolia.jcr.nodebuilder.Ops.getNode;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
@@ -47,6 +53,9 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private static final String PN_WIDTH = "width";
     private static final String PN_LABEL = "label";
     private static final String PN_AVAILABILITY = "availability";
+    private static final String SECTION_AREA_ACTIONS = "areaActions";
+    public static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
+    public static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
 
     private final Task _registerDevActions = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
@@ -106,14 +115,15 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                         addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName()))
                 ),
                 getNode("actionbar/sections").then(
-                    addOrGetContentNode(SECTION_PAGE_ACTIONS).then(addOrGetContentNode(CN_GROUPS).then(
+                    addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
+                        addOrGetContentNode(CN_GROUPS).then(
                             addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                                 addOrGetContentNode(CN_ITEMS).then(
                                     addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
                                         orderBefore(ACTION_PREVIEW_EXTERNAL_CMP, "edit"))
+                                )
                             )
                         )
-                    )
                     )
                 )
             )
@@ -131,6 +141,58 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         getNode("apps/assets/subApps/browser/workbench/contentViews/list/columns").then(
             addColumn("lastModUser", LAST_MODIFIED_BY, "column.lastModUser.label"),
             addColumn("createdByUser", CREATED_BY, "column.createdByUser.label")
+        )
+    );
+
+    private final Task _updateEditPagePropertyAction = selectModuleConfig("Add Edit PageProperties everywhere in detail page view", "", MODULE_PAGES,
+        getNode("apps/pages/subApps/detail/").then(
+            getNode("actions/editProperties/availability/rules/isPageEditable").then(
+                addOrSetProperty(PN_IMPL_CLASS, IsElementEditableRule.class.getName())
+            ),
+            getNode("actionbar/sections").then(
+                addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
+                    addOrGetContentNode(CN_GROUPS).then(
+                        addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                            addOrGetContentNode(CN_ITEMS).then(
+                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME)
+                            )
+                        )
+                    )
+                ),
+                addOrGetContentNode(SECTION_AREA_ACTIONS).then(
+                    addOrGetContentNode(CN_GROUPS).then(
+                        addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                            addOrGetContentNode(CN_ITEMS).then(
+                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                    orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editArea")
+                                )
+                            )
+                        )
+                    )
+                ),
+                addOrGetContentNode(SECTION_PAGE_NODE_AREA_ACTIONS).then(
+                    addOrGetContentNode(CN_GROUPS).then(
+                        addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                            addOrGetContentNode(CN_ITEMS).then(
+                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                    orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editPageNodeArea")
+                                )
+                            )
+                        )
+                    )
+                ),
+                addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
+                    addOrGetContentNode(CN_GROUPS).then(
+                        addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                            addOrGetContentNode(CN_ITEMS).then(
+                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                    orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editComponent")
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         )
     );
 
@@ -163,6 +225,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_registerDevActions);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
+        tasks.add(_updateEditPagePropertyAction);
         return tasks;
     }
 
@@ -172,6 +235,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_registerDevActions);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
+        tasks.add(_updateEditPagePropertyAction);
         return tasks;
     }
 }
