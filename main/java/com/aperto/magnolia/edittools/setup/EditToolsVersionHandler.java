@@ -3,6 +3,7 @@ package com.aperto.magnolia.edittools.setup;
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
 import com.aperto.magnolia.edittools.action.DuplicateComponentAction;
 import com.aperto.magnolia.edittools.action.DuplicateComponentActionDefinition;
+import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
 import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
@@ -17,12 +18,14 @@ import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 import java.util.List;
 
 import static com.aperto.magkit.module.delta.StandardTasks.PN_CLASS;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_EXTENDS;
 import static com.aperto.magkit.module.delta.StandardTasks.PN_ICON;
 import static com.aperto.magkit.module.delta.StandardTasks.PN_IMPL_CLASS;
 import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetContentNode;
 import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetNode;
 import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrSetProperty;
 import static com.aperto.magkit.nodebuilder.NodeOperationFactory.orderBefore;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.removeIfExists;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static info.magnolia.jcr.nodebuilder.Ops.getNode;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
@@ -146,8 +149,13 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
     private final Task _updateEditPagePropertyAction = selectModuleConfig("Add Edit PageProperties everywhere in detail page view", "", MODULE_PAGES,
         getNode("apps/pages/subApps/detail/").then(
-            getNode("actions/editProperties/availability/rules/isPageEditable").then(
-                addOrSetProperty(PN_IMPL_CLASS, IsElementEditableRule.class.getName())
+            getNode("actions/editProperties").then(
+                getNode("availability/rules/isPageEditable").then(
+                    addOrSetProperty(PN_IMPL_CLASS, IsElementEditableRule.class.getName())
+                ),
+                addOrSetProperty(PN_CLASS, EditPageActionDefinition.class.getName()),
+                addOrSetProperty(PN_ICON, "icon-edit"),
+                removeIfExists(PN_EXTENDS)
             ),
             getNode("actionbar/sections").then(
                 addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
