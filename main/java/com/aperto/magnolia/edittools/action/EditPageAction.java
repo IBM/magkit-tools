@@ -52,13 +52,12 @@ public class EditPageAction extends EditElementAction {
     @Override
     public void execute() throws ActionExecutionException {
 
+        Node pageNode = SessionUtil.getNode(_element.getWorkspace(), _element.getPath());
+        if (pageNode == null) {
+            pageNode = SessionUtil.getNode(_element.getWorkspace(), "/");
+        }
+
         try {
-            String workspace = _element.getWorkspace();
-            String path = _element.getPath();
-            Node pageNode = SessionUtil.getNode(_element.getWorkspace(), _element.getPath());
-            if (pageNode == null) {
-                pageNode = SessionUtil.getNode(_element.getWorkspace(), "/");
-            }
             while (pageNode != null && pageNode.getDepth() > 1 && !NodeUtils.isNodeType(pageNode, NodeTypes.Page.NAME)) {
                 pageNode = pageNode.getParent();
             }

@@ -1,16 +1,21 @@
 package com.aperto.magnolia.edittools.setup;
 
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
+import com.aperto.magnolia.edittools.action.CopyNodeActionDefinition;
 import com.aperto.magnolia.edittools.action.DuplicateComponentAction;
 import com.aperto.magnolia.edittools.action.DuplicateComponentActionDefinition;
 import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
 import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
+import com.aperto.magnolia.edittools.action.PasteNodeActionDefinition;
+import com.aperto.magnolia.edittools.rule.HasClipboardContentRule;
+import com.aperto.magnolia.edittools.rule.IsClipboardAddable;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
+import info.magnolia.pages.app.editor.availability.IsAreaAddibleRule;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 import info.magnolia.ui.framework.availability.IsNotDeletedRule;
 import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
@@ -30,6 +35,7 @@ import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectMo
 import static info.magnolia.jcr.nodebuilder.Ops.getNode;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
 import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED_BY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
  * Version Handler for the edit tools.
@@ -204,6 +210,44 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         )
     );
 
+    private final Task _addCopyPasteActions = selectModuleConfig("Add copy action to pages app", EMPTY, MODULE_PAGES,
+        getNode("apps/pages/subApps/detail").then(
+            getNode("actions").then(
+                addOrGetContentNode("copyNode").then(
+                    addOrSetProperty(PN_CLASS, CopyNodeActionDefinition.class.getName()),
+                    addOrSetProperty(PN_ICON, "icon-copy"),
+                    addOrSetProperty(PN_LABEL, "copy.label")
+                ),
+                addOrGetContentNode("pasteNode").then(
+                    addOrGetContentNode(PN_AVAILABILITY).then(
+                        addOrGetContentNode("rules").then(
+                            addOrGetContentNode(HasClipboardContentRule.class.getSimpleName()).then(
+                                addOrSetProperty(PN_IMPL_CLASS, HasClipboardContentRule.class.getName())
+                            ),
+                            addOrGetContentNode(IsAreaAddibleRule.class.getSimpleName()).then(
+                                addOrSetProperty(PN_IMPL_CLASS, IsAreaAddibleRule.class.getName())
+                            ),
+                            addOrGetContentNode(IsClipboardAddable.class.getSimpleName()).then(
+                                addOrSetProperty(PN_IMPL_CLASS, IsClipboardAddable.class.getName())
+                            )
+                        )
+                    ),
+                    addOrSetProperty(PN_CLASS, PasteNodeActionDefinition.class.getName()),
+                    addOrSetProperty(PN_ICON, "icon-paste"),
+                    addOrSetProperty(PN_LABEL, "paste.label")
+                )
+            ),
+            getNode("actionbar/sections/areaActions/groups/addingActions/items").then(
+                addOrGetContentNode("pasteNode")
+            ),
+            getNode("actionbar/sections/componentActions/groups/editingActions/items").then(
+                addOrGetContentNode("copyNode").then(
+                    orderBefore("copyNode", "duplicateComponent")
+                )
+            )
+        )
+    );
+
     private NodeOperation addPreviewExternal() {
         return addOrGetContentNode(CN_GROUPS).then(
             addOrGetContentNode(EDITING_FLOW).then(
@@ -234,6 +278,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
+        tasks.add(_addCopyPasteActions);
         return tasks;
     }
 
@@ -244,6 +289,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
+        tasks.add(_addCopyPasteActions);
         return tasks;
     }
 }
