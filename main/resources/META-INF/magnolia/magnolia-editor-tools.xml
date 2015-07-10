@@ -4,6 +4,7 @@
     <name>magnolia-editor-tools</name>
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
+    <class>com.aperto.magnolia.edittools.setup.EditToolsModule</class>
     <versionHandler>com.aperto.magnolia.edittools.setup.EditToolsVersionHandler</versionHandler>
     <version>${project.version}</version>
 
