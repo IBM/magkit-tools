@@ -1,17 +1,11 @@
 package com.aperto.magnolia.edittools.setup;
 
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
-import com.aperto.magnolia.edittools.action.CopyNodeActionDefinition;
-import com.aperto.magnolia.edittools.action.DuplicateComponentAction;
-import com.aperto.magnolia.edittools.action.DuplicateComponentActionDefinition;
-import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
-import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
-import com.aperto.magnolia.edittools.action.PasteNodeActionDefinition;
+import com.aperto.magnolia.edittools.action.*;
 import com.aperto.magnolia.edittools.rule.HasClipboardContentRule;
 import com.aperto.magnolia.edittools.rule.IsClipboardAddable;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
-import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
@@ -22,15 +16,8 @@ import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 
 import java.util.List;
 
-import static com.aperto.magkit.module.delta.StandardTasks.PN_CLASS;
-import static com.aperto.magkit.module.delta.StandardTasks.PN_EXTENDS;
-import static com.aperto.magkit.module.delta.StandardTasks.PN_ICON;
-import static com.aperto.magkit.module.delta.StandardTasks.PN_IMPL_CLASS;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetContentNode;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetNode;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrSetProperty;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.orderBefore;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.removeIfExists;
+import static com.aperto.magkit.module.delta.StandardTasks.*;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.*;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static info.magnolia.jcr.nodebuilder.Ops.getNode;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
@@ -66,37 +53,21 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     public static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
     public static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
 
-    private final Task _registerDevActions = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
+    private final Task _addExternalPreviewAction = selectModuleConfig("Add external preview action", "Add external preview action in pages app.", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
             getNode("detail").then(
                 getNode("actions").then(
-                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                        addOrSetProperty(PN_CLASS, DuplicateComponentActionDefinition.class.getName()),
-                        addOrSetProperty(PN_ICON, "icon-duplicate"),
-                        addOrSetProperty(PN_IMPL_CLASS, DuplicateComponentAction.class.getName())
-                    ),
-                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
-                        addOrGetNode(PN_AVAILABILITY, NodeTypes.ContentNode.NAME).then(
-                            addOrGetNode("rules", NodeTypes.ContentNode.NAME).then(
-                                addOrGetNode("isNotDeleted", NodeTypes.ContentNode.NAME).then(
-                                    addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())))),
+                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
+                        addOrGetContentNode(PN_AVAILABILITY + "/rules/isNotDeleted").then(
+                            addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
+                        ),
                         addOrSetProperty(PN_ICON, "icon-view"),
                         addOrSetProperty(PN_LABEL, "previewExternal.label"),
                         addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
-                        addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName()))
+                        addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName())
+                    )
                 ),
                 getNode("actionbar/sections").then(
-                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
-                        addOrGetContentNode(CN_GROUPS).then(
-                            addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
-                                addOrGetContentNode(CN_ITEMS).then(
-                                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                                        orderBefore(ACTION_DUPLICATE_CMP, "startMoveComponent")
-                                    )
-                                )
-                            )
-                        )
-                    ),
                     addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
                         addPreviewExternal()
                     ),
@@ -113,11 +84,10 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             ),
             getNode("browser").then(
                 getNode("actions").then(
-                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
-                        addOrGetNode(PN_AVAILABILITY, NodeTypes.ContentNode.NAME).then(
-                            addOrGetNode("rules", NodeTypes.ContentNode.NAME).then(
-                                addOrGetNode("isNotDeleted", NodeTypes.ContentNode.NAME).then(
-                                    addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())))),
+                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
+                        addOrGetContentNode(PN_AVAILABILITY + "/rules/isNotDeleted").then(
+                            addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
+                        ),
                         addOrSetProperty(PN_ICON, "icon-view"),
                         addOrSetProperty(PN_LABEL, "previewExternal.label"),
                         addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
@@ -128,8 +98,36 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                         addOrGetContentNode(CN_GROUPS).then(
                             addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                                 addOrGetContentNode(CN_ITEMS).then(
-                                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
-                                        orderBefore(ACTION_PREVIEW_EXTERNAL_CMP, "edit"))
+                                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
+                                        orderBefore(ACTION_PREVIEW_EXTERNAL_CMP, "edit")
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    );
+
+    private final Task _addDuplicateAction = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
+        getNode("apps/pages/subApps").then(
+            getNode("detail").then(
+                getNode("actions").then(
+                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
+                        addOrSetProperty(PN_CLASS, DuplicateComponentActionDefinition.class.getName()),
+                        addOrSetProperty(PN_ICON, "icon-duplicate"),
+                        addOrSetProperty(PN_IMPL_CLASS, DuplicateComponentAction.class.getName())
+                    )
+                ),
+                getNode("actionbar/sections").then(
+                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
+                        addOrGetContentNode(CN_GROUPS).then(
+                            addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
+                                addOrGetContentNode(CN_ITEMS).then(
+                                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
+                                        orderBefore(ACTION_DUPLICATE_CMP, "startMoveComponent")
+                                    )
                                 )
                             )
                         )
@@ -168,7 +166,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     addOrGetContentNode(CN_GROUPS).then(
                         addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                             addOrGetContentNode(CN_ITEMS).then(
-                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME)
+                                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES)
                             )
                         )
                     )
@@ -177,7 +175,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     addOrGetContentNode(CN_GROUPS).then(
                         addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                             addOrGetContentNode(CN_ITEMS).then(
-                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
                                     orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editArea")
                                 )
                             )
@@ -188,7 +186,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     addOrGetContentNode(CN_GROUPS).then(
                         addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                             addOrGetContentNode(CN_ITEMS).then(
-                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
                                     orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editPageNodeArea")
                                 )
                             )
@@ -199,7 +197,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     addOrGetContentNode(CN_GROUPS).then(
                         addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
                             addOrGetContentNode(CN_ITEMS).then(
-                                addOrGetNode(ACTION_EDIT_PAGE_PROPERTIES, NodeTypes.ContentNode.NAME).then(
+                                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
                                     orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editComponent")
                                 )
                             )
@@ -219,17 +217,15 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     addOrSetProperty(PN_LABEL, "copy.label")
                 ),
                 addOrGetContentNode("pasteNode").then(
-                    addOrGetContentNode(PN_AVAILABILITY).then(
-                        addOrGetContentNode("rules").then(
-                            addOrGetContentNode(HasClipboardContentRule.class.getSimpleName()).then(
-                                addOrSetProperty(PN_IMPL_CLASS, HasClipboardContentRule.class.getName())
-                            ),
-                            addOrGetContentNode(IsAreaAddibleRule.class.getSimpleName()).then(
-                                addOrSetProperty(PN_IMPL_CLASS, IsAreaAddibleRule.class.getName())
-                            ),
-                            addOrGetContentNode(IsClipboardAddable.class.getSimpleName()).then(
-                                addOrSetProperty(PN_IMPL_CLASS, IsClipboardAddable.class.getName())
-                            )
+                    addOrGetContentNode(PN_AVAILABILITY + "/rules").then(
+                        addOrGetContentNode(HasClipboardContentRule.class.getSimpleName()).then(
+                            addOrSetProperty(PN_IMPL_CLASS, HasClipboardContentRule.class.getName())
+                        ),
+                        addOrGetContentNode(IsAreaAddibleRule.class.getSimpleName()).then(
+                            addOrSetProperty(PN_IMPL_CLASS, IsAreaAddibleRule.class.getName())
+                        ),
+                        addOrGetContentNode(IsClipboardAddable.class.getSimpleName()).then(
+                            addOrSetProperty(PN_IMPL_CLASS, IsClipboardAddable.class.getName())
                         )
                     ),
                     addOrSetProperty(PN_CLASS, PasteNodeActionDefinition.class.getName()),
@@ -242,7 +238,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             ),
             getNode("actionbar/sections/componentActions/groups/editingActions/items").then(
                 addOrGetContentNode("copyNode").then(
-                    orderBefore("copyNode", "duplicateComponent")
+                    orderBefore("copyNode", ACTION_DUPLICATE_CMP)
                 )
             )
         )
@@ -252,7 +248,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         return addOrGetContentNode(CN_GROUPS).then(
             addOrGetContentNode(EDITING_FLOW).then(
                 addOrGetContentNode(CN_ITEMS).then(
-                    addOrGetNode(ACTION_PREVIEW_EXTERNAL_CMP, NodeTypes.ContentNode.NAME).then(
+                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
                         orderBefore("preview", ACTION_PREVIEW_EXTERNAL_CMP)
                     )
                 )
@@ -274,7 +270,8 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
-        tasks.add(_registerDevActions);
+        tasks.add(_addExternalPreviewAction);
+        tasks.add(_addDuplicateAction);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
@@ -285,7 +282,8 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     @Override
     protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
         List<Task> tasks = super.getExtraInstallTasks(installContext);
-        tasks.add(_registerDevActions);
+        tasks.add(_addExternalPreviewAction);
+        tasks.add(_addDuplicateAction);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
