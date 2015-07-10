@@ -27,11 +27,9 @@ import static info.magnolia.jcr.util.NodeTypes.*;
 import static info.magnolia.jcr.util.NodeUtil.*;
 import static java.lang.Integer.MAX_VALUE;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.math.NumberUtils.toInt;
 
 /**
- * Checkt, ob weitere Elemente einer Area hinzugefügt werden können.
- * Es wird in der TemplateDefinition und im Multisite Prototype nach dem Wert für 'maxComponents' gesucht.
+ * Check if components could be added to an area.
  *
  * @author Philipp Güttler (Aperto AG)
  * @since 18.11.14
@@ -40,7 +38,6 @@ public class DuplicateComponentRule extends AbstractAvailabilityRule {
     private static final Logger LOGGER = LoggerFactory.getLogger(DuplicateComponentRule.class);
 
     private static final TemplateDefinitionTraverser TRAVERSER = new TemplateDefinitionTraverser();
-    private static final String PARAM_MAX_COMPONENTS = "maxComponents";
 
     private TemplateDefinitionRegistry _templateDefinitionRegistry;
 
@@ -48,7 +45,6 @@ public class DuplicateComponentRule extends AbstractAvailabilityRule {
 
     @Override
     protected boolean isAvailableForItem(final Object itemId) {
-
         boolean isAvailable = false;
 
         if (itemId instanceof JcrNodeItemId) {
@@ -130,19 +126,6 @@ public class DuplicateComponentRule extends AbstractAvailabilityRule {
         }
 
         return area;
-    }
-
-    private int getMaxComponentsFromGivenComponent(final Node node) {
-        int maxComponents = MAX_VALUE;
-        try {
-            final TemplateDefinition templateDefinition = _templateDefinitionRegistry.getTemplateDefinition(getTemplate(node));
-            if (templateDefinition != null && templateDefinition.getParameters().containsKey(PARAM_MAX_COMPONENTS)) {
-                maxComponents = toInt((String) templateDefinition.getParameters().get(PARAM_MAX_COMPONENTS));
-            }
-        } catch (RegistrationException e) {
-            LOGGER.debug("Error on maxComponents of component  [{}].", getPathIfPossible(node), e);
-        }
-        return maxComponents;
     }
 
     private int getNumericComponents(final AreaDefinition areaDefinition) {
