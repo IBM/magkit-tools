@@ -6,7 +6,7 @@ import info.magnolia.context.MgnlContext;
 import info.magnolia.init.MagnoliaConfigurationProperties;
 import info.magnolia.jcr.util.SessionUtil;
 import info.magnolia.link.LinkUtil;
-import info.magnolia.module.templatingkit.sites.SiteManager;
+import info.magnolia.module.site.SiteManager;
 
 import javax.inject.Inject;
 import javax.jcr.Node;

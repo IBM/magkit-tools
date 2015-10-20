@@ -2,8 +2,10 @@ package com.aperto.magnolia.edittools.util;
 
 import com.aperto.magnolia.edittools.setup.EditToolsModule;
 import com.aperto.magnolia.edittools.setup.PublicLinkConfig;
-import info.magnolia.module.templatingkit.sites.Site;
-import info.magnolia.module.templatingkit.sites.SiteManager;
+
+import info.magnolia.module.site.ConfiguredSite;
+import info.magnolia.module.site.Site;
+import info.magnolia.module.site.SiteManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,7 +63,7 @@ public class LinkServiceTest {
     }
 
     private Site createSite(final String siteName) {
-        Site site = new Site();
+        ConfiguredSite site = new ConfiguredSite();
         site.setName(siteName);
         return site;
     }

@@ -2,8 +2,9 @@ package com.aperto.magnolia.edittools.rule;
 
 import com.aperto.magnolia.edittools.util.TemplateDefinitionTraverser;
 import com.aperto.magnolia.edittools.util.TemplateNamePredicate;
-import info.magnolia.module.templatingkit.sites.Site;
-import info.magnolia.module.templatingkit.templates.pages.STKPage;
+
+import info.magnolia.config.registry.DefinitionProvider;
+import info.magnolia.module.site.Site;
 import info.magnolia.multisite.sites.MultiSiteManager;
 import info.magnolia.registry.RegistrationException;
 import info.magnolia.rendering.template.AreaDefinition;
@@ -87,20 +88,16 @@ public class DuplicateComponentRule extends AbstractAvailabilityRule {
 
     private AreaDefinition getTemplateAreaDefinition(final String areaName, final String templateId) {
         AreaDefinition returnValue = null;
-        TemplateDefinition templateDefinition;
+        DefinitionProvider<TemplateDefinition> templateDefinition;
 
-        try {
-            templateDefinition = _templateDefinitionRegistry.getTemplateDefinition(templateId);
-            returnValue = templateDefinition != null ? MapUtils.getObject(templateDefinition.getAreas(), areaName) : null;
+        templateDefinition = _templateDefinitionRegistry.getProvider(templateId);
+        returnValue = templateDefinition != null ? MapUtils.getObject(templateDefinition.get().getAreas(), areaName) : null;
 
-            if (returnValue == null && templateDefinition != null) {
-                // go deeper under first area
-                for (final AreaDefinition areaDefinition : templateDefinition.getAreas().values()) {
-                    returnValue = MapUtils.getObject(areaDefinition.getAreas(), areaName);
-                }
+        if (returnValue == null && templateDefinition != null) {
+            // go deeper under first area
+            for (final AreaDefinition areaDefinition : templateDefinition.get().getAreas().values()) {
+                returnValue = MapUtils.getObject(areaDefinition.getAreas(), areaName);
             }
-        } catch (RegistrationException e) {
-            LOGGER.debug("Unable to get template definition from template id [{}]", templateId, e);
         }
 
         return returnValue;
@@ -112,7 +109,7 @@ public class DuplicateComponentRule extends AbstractAvailabilityRule {
         AreaDefinition area = null;
 
         if (site != null) {
-            STKPage prototype = site.getTemplates().getPrototype();
+            TemplateDefinition prototype = site.getTemplates().getPrototype();
             if (prototype != null) {
                 results = TRAVERSER.breadthFirstTraversal(prototype).filter(new TemplateNamePredicate(areaName)).iterator();
             }
