@@ -35,7 +35,7 @@ public class EditorToolsPagesEditorSubAppViewImpl extends PagesEditorSubAppViewI
     private final LinkService _linkService;
 
     @Inject
-    public EditorToolsPagesEditorSubAppViewImpl(final PageBarView pageBarView, final SubAppContext subAppContext, final SimpleTranslator i18n, final ServerConfiguration serverConfiguration, final LinkService linkService) {
+    public EditorToolsPagesEditorSubAppViewImpl(final PageBarView<?> pageBarView, final SubAppContext subAppContext, final SimpleTranslator i18n, final ServerConfiguration serverConfiguration, final LinkService linkService) {
         super();
         _subAppContext = subAppContext;
         _i18n = i18n;

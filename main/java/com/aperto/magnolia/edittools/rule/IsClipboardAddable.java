@@ -32,7 +32,7 @@ public class IsClipboardAddable extends AbstractElementAvailabilityRule<AreaElem
         Object copyElement = MgnlContext.getAttribute(CopyNodeAction.class.getName(), Context.SESSION_SCOPE);
         if (copyElement instanceof JcrItemAdapter) {
             JcrItemAdapter adapter = (JcrItemAdapter) copyElement;
-            Property templateId = adapter.getItemProperty(NodeTypes.Renderable.TEMPLATE);
+            Property<?> templateId = adapter.getItemProperty(NodeTypes.Renderable.TEMPLATE);
             if (templateId != null) {
                 result = StringUtils.contains(element.getAvailableComponents(), String.valueOf(templateId.getValue()));
             }

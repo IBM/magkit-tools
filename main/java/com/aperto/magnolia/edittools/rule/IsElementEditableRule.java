@@ -1,11 +1,12 @@
 package com.aperto.magnolia.edittools.rule;
 
 import com.aperto.magkit.utils.NodeUtils;
+
+import info.magnolia.config.registry.DefinitionProvider;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.jcr.util.SessionUtil;
 import info.magnolia.pages.app.editor.PageEditorPresenter;
 import info.magnolia.pages.app.editor.availability.AbstractElementAvailabilityRule;
-import info.magnolia.registry.RegistrationException;
 import info.magnolia.rendering.template.TemplateDefinition;
 import info.magnolia.rendering.template.registry.TemplateDefinitionRegistry;
 import info.magnolia.ui.vaadin.gwt.client.shared.AbstractElement;
@@ -26,7 +27,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * @author Philipp Güttler (Aperto AG)
  * @since 30.06.2015
  */
-public class IsElementEditableRule extends AbstractElementAvailabilityRule {
+public class IsElementEditableRule extends AbstractElementAvailabilityRule<AbstractElement> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IsElementEditableRule.class);
 
@@ -49,10 +50,10 @@ public class IsElementEditableRule extends AbstractElementAvailabilityRule {
                     pageNode = pageNode.getParent();
                 }
                 if (NodeUtils.isNodeType(pageNode, NodeTypes.Page.NAME)) {
-                    TemplateDefinition templateDefinition = _templateDefinitionRegistry.getTemplateDefinition(NodeUtils.getTemplate(pageNode));
-                    result = templateDefinition.getDialog() != null && (templateDefinition.getEditable() == null || templateDefinition.getEditable());
+                    DefinitionProvider<TemplateDefinition> templateDefinition = _templateDefinitionRegistry.getProvider(NodeUtils.getTemplate(pageNode));
+                    result = templateDefinition.get().getDialog() != null && (templateDefinition.get().getEditable() == null || templateDefinition.get().getEditable());
                 }
-            } catch (RepositoryException | RegistrationException e) {
+            } catch (RepositoryException e) {
                 LOGGER.debug("Unable to check page template for dialog");
             }
         }

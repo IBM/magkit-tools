@@ -6,7 +6,6 @@ import com.aperto.magnolia.edittools.util.TemplateNamePredicate;
 import info.magnolia.config.registry.DefinitionProvider;
 import info.magnolia.module.site.Site;
 import info.magnolia.multisite.sites.MultiSiteManager;
-import info.magnolia.registry.RegistrationException;
 import info.magnolia.rendering.template.AreaDefinition;
 import info.magnolia.rendering.template.TemplateDefinition;
 import info.magnolia.rendering.template.registry.TemplateDefinitionRegistry;

@@ -19,7 +19,6 @@ import java.util.List;
 import static com.aperto.magkit.module.delta.StandardTasks.*;
 import static com.aperto.magkit.nodebuilder.NodeOperationFactory.*;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
-import static info.magnolia.jcr.nodebuilder.Ops.getNode;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
 import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED_BY;
 import static org.apache.commons.lang3.StringUtils.EMPTY;

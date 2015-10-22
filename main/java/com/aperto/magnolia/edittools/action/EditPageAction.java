@@ -1,12 +1,13 @@
 package com.aperto.magnolia.edittools.action;
 
 import com.aperto.magkit.utils.NodeUtils;
+
+import info.magnolia.config.registry.DefinitionProvider;
 import info.magnolia.event.EventBus;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.jcr.util.SessionUtil;
 import info.magnolia.pages.app.action.EditElementAction;
 import info.magnolia.pages.app.action.EditElementActionDefinition;
-import info.magnolia.registry.RegistrationException;
 import info.magnolia.rendering.template.TemplateDefinition;
 import info.magnolia.rendering.template.registry.TemplateDefinitionRegistry;
 import info.magnolia.ui.api.action.ActionExecutionException;
@@ -64,8 +65,8 @@ public class EditPageAction extends EditElementAction {
             if (NodeUtils.isNodeType(pageNode, NodeTypes.Page.NAME)) {
                 final JcrNodeAdapter item = new JcrNodeAdapter(pageNode);
                 String templateId = NodeTypes.Renderable.getTemplate(pageNode);
-                TemplateDefinition templateDefinition = _templateDefinitionRegistry.getTemplateDefinition(templateId);
-                String dialogId = templateDefinition.getDialog();
+                DefinitionProvider<TemplateDefinition> templateDefinition = _templateDefinitionRegistry.getProvider(templateId);
+                String dialogId = templateDefinition.get().getDialog();
                 final FormDialogPresenter formDialogPresenter = _dialogPresenterFactory.createFormDialogPresenter(dialogId);
                 formDialogPresenter.start(item, dialogId, _subAppContext, new EditorCallback() {
 
@@ -81,7 +82,7 @@ public class EditPageAction extends EditElementAction {
                     }
                 });
             }
-        } catch (RepositoryException | RegistrationException e) {
+        } catch (RepositoryException e) {
             throw new ActionExecutionException(e);
         }
     }

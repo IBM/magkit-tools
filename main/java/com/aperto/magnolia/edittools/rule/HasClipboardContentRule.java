@@ -21,7 +21,7 @@ import static info.magnolia.context.Context.SESSION_SCOPE;
  * @author Philipp Güttler (Aperto AG)
  * @since 06.07.2015
  */
-public class HasClipboardContentRule extends AbstractElementAvailabilityRule {
+public class HasClipboardContentRule extends AbstractElementAvailabilityRule<AbstractElement> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HasClipboardContentRule.class);
 

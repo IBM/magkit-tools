@@ -2,6 +2,8 @@ package com.aperto.magnolia.edittools.action;
 
 import com.aperto.magkit.mockito.ContextMockUtils;
 import com.aperto.magkit.mockito.jcr.SessionMockUtils;
+
+import info.magnolia.config.registry.DefinitionProvider;
 import info.magnolia.event.EventBus;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.rendering.template.TemplateDefinition;
@@ -14,6 +16,9 @@ import info.magnolia.ui.vaadin.gwt.client.shared.ComponentElement;
 import info.magnolia.ui.vaadin.gwt.client.shared.PageElement;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.aperto.magkit.mockito.MagnoliaNodeMockUtils.mockMgnlNode;
 import static com.aperto.magkit.mockito.jcr.NodeMockUtils.mockNode;
@@ -35,12 +40,19 @@ import static org.mockito.Mockito.when;
  * @author Philipp Güttler (Aperto AG)
  * @since 01.07.2015
  */
+@RunWith(MockitoJUnitRunner.class)
 public class EditPageActionTest {
 
     private static final String GENERIC_DIALOG_ID = "myID";
     private EditPageAction _action;
+    @Mock
     private TemplateDefinitionRegistry _templateDefinitionRegistry;
+    @Mock
     private FormDialogPresenterFactory _formDialogPresenterFactory;
+    @Mock
+    private DefinitionProvider<TemplateDefinition> _provider;
+    @Mock
+    private TemplateDefinition _templateDefinition;
 
     @Before
     public void setUp() throws Exception {
@@ -56,13 +68,9 @@ public class EditPageActionTest {
             )
         );
 
-        TemplateDefinition templateDefinition = mock(TemplateDefinition.class);
-        when(templateDefinition.getDialog()).thenReturn(DIALOG_ID);
-
-        _templateDefinitionRegistry = mock(TemplateDefinitionRegistry.class);
-        when(_templateDefinitionRegistry.getTemplateDefinition(TEMPLATE_ID)).thenReturn(templateDefinition);
-
-        _formDialogPresenterFactory = mock(FormDialogPresenterFactory.class);
+        when(_provider.get()).thenReturn(_templateDefinition);
+        when(_templateDefinition.getDialog()).thenReturn(DIALOG_ID);
+        when(_templateDefinitionRegistry.getProvider(TEMPLATE_ID)).thenReturn(_provider);
         when(_formDialogPresenterFactory.createFormDialogPresenter(DIALOG_ID)).thenReturn(mock(FormDialogPresenter.class));
     }
 
