@@ -4,10 +4,14 @@ import com.aperto.magkit.mockito.ContextMockUtils;
 import com.aperto.magnolia.edittools.action.CopyNodeAction;
 import com.vaadin.data.Property;
 import info.magnolia.pages.app.editor.PageEditorPresenter;
+import info.magnolia.ui.dialog.formdialog.FormDialogPresenterFactory;
 import info.magnolia.ui.vaadin.gwt.client.shared.AreaElement;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static com.aperto.magkit.mockito.ContextMockUtils.mockWebContext;
 import static com.aperto.magkit.mockito.WebContextStubbingOperation.stubAttribute;
@@ -25,23 +29,26 @@ import static org.mockito.Mockito.when;
  * @author Philipp Güttler (Aperto AG)
  * @since 06.07.2015
  */
+@RunWith(MockitoJUnitRunner.class)
 public class IsClipboardAddableTest {
 
     public static final String EXTERNAL_LINK_ID = "my-module:links/externalLink";
+    public static final String EXTERNAL_LINK_NEW_ID = "my-module:links/externalLinkNew";
     public static final String TEXT_TEASER_ID = "my-module:teasers/textTeaser";
     private IsClipboardAddable _rule;
 
+    @Mock
+    private Property<String> _templateId;
 
     @Before
     public void setUp() throws Exception {
         ContextMockUtils.cleanContext();
         _rule = new IsClipboardAddable(mock(PageEditorPresenter.class));
 
-        Property templateId = mock(Property.class);
-        when(templateId.getValue()).thenReturn(EXTERNAL_LINK_ID);
+        when(_templateId.getValue()).thenReturn(EXTERNAL_LINK_ID);
 
         JcrItemAdapter adapter = mock(JcrItemAdapter.class);
-        when(adapter.getItemProperty(TEMPLATE)).thenReturn(templateId);
+        when(adapter.getItemProperty(TEMPLATE)).thenReturn(_templateId);
 
         mockWebContext(stubAttribute(CopyNodeAction.class.getName(), adapter, SESSION_SCOPE));
     }
@@ -63,4 +70,11 @@ public class IsClipboardAddableTest {
         AreaElement element = new AreaElement(EMPTY, EMPTY, EMPTY, EMPTY);
         assertThat(_rule.isAvailableForElement(element), is(FALSE));
     }
+
+    @Test
+    public void testIsNotAvailableForAlikeNamedElement() throws Exception {
+        AreaElement element = new AreaElement(EMPTY, EMPTY, EMPTY, TEXT_TEASER_ID + "," + EXTERNAL_LINK_NEW_ID);
+        assertThat(_rule.isAvailableForElement(element), is(FALSE));
+    }
+
 }

@@ -38,10 +38,10 @@ public class IsClipboardAddable extends AbstractElementAvailabilityRule<AreaElem
             JcrItemAdapter adapter = (JcrItemAdapter) copyElement;
             Property<?> templateId = adapter.getItemProperty(NodeTypes.Renderable.TEMPLATE);
             if (templateId != null) {
-               String[] availableComponents = StringUtils.split(element.getAvailableComponents(), ',');
-               if (availableComponents != null && availableComponents.length > 0) {
-                   result = Arrays.asList(availableComponents).contains(String.valueOf(templateId.getValue())); 
-               }
+                String[] availableComponents = StringUtils.split(element.getAvailableComponents(), ',');
+                if (availableComponents != null && availableComponents.length > 0) {
+                    result = Arrays.asList(availableComponents).contains(String.valueOf(templateId.getValue())); 
+                }
             }
         }
         return result;
