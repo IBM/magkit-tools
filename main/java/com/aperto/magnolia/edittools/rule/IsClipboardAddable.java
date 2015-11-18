@@ -11,6 +11,10 @@ import info.magnolia.ui.vaadin.gwt.client.shared.AreaElement;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.inject.Inject;
 
 /**
@@ -34,7 +38,10 @@ public class IsClipboardAddable extends AbstractElementAvailabilityRule<AreaElem
             JcrItemAdapter adapter = (JcrItemAdapter) copyElement;
             Property<?> templateId = adapter.getItemProperty(NodeTypes.Renderable.TEMPLATE);
             if (templateId != null) {
-                result = StringUtils.contains(element.getAvailableComponents(), String.valueOf(templateId.getValue()));
+               String[] availableComponents = StringUtils.split(element.getAvailableComponents(), ',');
+               if (availableComponents != null && availableComponents.length > 0) {
+                   result = Arrays.asList(availableComponents).contains(String.valueOf(templateId.getValue())); 
+               }
             }
         }
         return result;
