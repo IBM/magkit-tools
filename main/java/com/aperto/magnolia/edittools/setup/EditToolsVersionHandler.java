@@ -51,6 +51,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private static final String SECTION_AREA_ACTIONS = "areaActions";
     public static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
     public static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
+    private static final String ACTION_JUMP_CMP = "jumpToBrowser";
 
     private final Task _addExternalPreviewAction = selectModuleConfig("Add external preview action", "Add external preview action in pages app.", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
@@ -67,18 +68,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                     )
                 ),
                 getNode("actionbar/sections").then(
-                    addOrGetContentNode(SECTION_PAGE_ACTIONS).then(
-                        addPreviewExternal()
-                    ),
-                    addOrGetContentNode("areaActions").then(
-                        addPreviewExternal()
-                    ),
-                    addOrGetContentNode("pageNodeAreaActions").then(
-                        addPreviewExternal()
-                    ),
-                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
-                        addPreviewExternal()
-                    )
+                    addToSections(addActionToEditingFlowGroup(ACTION_PREVIEW_EXTERNAL_CMP))
                 )
             ),
             getNode("browser").then(
@@ -108,6 +98,33 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             )
         )
     );
+
+    private final Task _addJumpToBrowserAction = selectModuleConfig("Add To Browser action", "Add to browser jump action in pages app.", MODULE_PAGES,
+        getNode("apps/pages/subApps").then(
+            getNode("detail").then(
+                getNode("actions").then(
+                    addOrGetContentNode(ACTION_JUMP_CMP).then(
+                        addOrSetProperty(PN_ICON, "icon-view-tree"),
+                        addOrSetProperty(PN_LABEL, "jumpToBrowser.label"),
+                        addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
+                        addOrSetProperty(PN_IMPL_CLASS, OpenTreeOnCurrentPositionAction.class.getName())
+                    )
+                ),
+                getNode("actionbar/sections").then(
+                    addToSections(addActionToEditingFlowGroup(ACTION_JUMP_CMP))
+                )
+            )
+        )
+    );
+
+    private NodeOperation[] addToSections(final NodeOperation nodeOperation) {
+        return new NodeOperation[]{
+            addOrGetContentNode(SECTION_PAGE_ACTIONS).then(nodeOperation),
+            addOrGetContentNode(SECTION_AREA_ACTIONS).then(nodeOperation),
+            addOrGetContentNode(SECTION_PAGE_NODE_AREA_ACTIONS).then(nodeOperation),
+            addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(nodeOperation)
+        };
+    }
 
     private final Task _addDuplicateAction = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
@@ -243,13 +260,11 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         )
     );
 
-    private NodeOperation addPreviewExternal() {
+    private NodeOperation addActionToEditingFlowGroup(String actionName) {
         return addOrGetContentNode(CN_GROUPS).then(
             addOrGetContentNode(EDITING_FLOW).then(
                 addOrGetContentNode(CN_ITEMS).then(
-                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
-                        orderBefore("preview", ACTION_PREVIEW_EXTERNAL_CMP)
-                    )
+                    addOrGetContentNode(actionName)
                 )
             )
         );
@@ -275,6 +290,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
         tasks.add(_addCopyPasteActions);
+        tasks.add(_addJumpToBrowserAction);
         return tasks;
     }
 
@@ -287,6 +303,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
         tasks.add(_addCopyPasteActions);
+        tasks.add(_addJumpToBrowserAction);
         return tasks;
     }
 }
