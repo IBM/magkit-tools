@@ -7,6 +7,7 @@ import com.aperto.magnolia.edittools.rule.IsClipboardAddable;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.module.InstallContext;
+import info.magnolia.module.delta.BootstrapConditionally;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
 import info.magnolia.pages.app.editor.availability.IsAreaAddibleRule;
@@ -281,6 +282,8 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         );
     }
 
+    private final Task _logoUriMapping = new BootstrapConditionally("Add virtual uri mapping for logo", "/mgnl-bootstrap/magnolia-editor-tools/config.modules.magnolia-editor-tools.virtualURIMapping.logo.xml");
+
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
@@ -291,6 +294,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_updateEditPagePropertyAction);
         tasks.add(_addCopyPasteActions);
         tasks.add(_addJumpToBrowserAction);
+        tasks.add(_logoUriMapping);
         return tasks;
     }
 
