@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE module SYSTEM "module.dtd">
+<module>
+    <name>${project.artifactId}</name>
+    <displayName>${project.name}</displayName>
+    <description>${project.description}</description>
+    <versionHandler>com.aperto.magkit.module.BootstrapModuleVersionHandler</versionHandler>
+    <version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${git.commitsCount}-${git.buildnumber}</version>
+    <components>
+        <id>main</id>
+        <component>
+            <type>info.magnolia.i18nsystem.TranslationService</type>
+            <implementation>com.aperto.magnolia.translation.MagnoliaTranslationServiceImpl</implementation>
+            <scope>singleton</scope>
+        </component>
+    </components>
+    <dependencies>
+        <dependency>
+            <name>i18n</name>
+            <version>5.4/*</version>
+        </dependency>
+    </dependencies>
+    <repositories>
+        <repository>
+            <name>magnolia</name>
+            <workspaces>
+                <workspace>translation</workspace>
+            </workspaces>
+            <nodeTypeFile>/mgnl-nodetypes/magnolia-translation-nodetypes.xml</nodeTypeFile>
+        </repository>
+    </repositories>
+</module>
