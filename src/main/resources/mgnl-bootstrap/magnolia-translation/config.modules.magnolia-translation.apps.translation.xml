@@ -529,7 +529,7 @@
             <sv:value>versioned</sv:value>
           </sv:property>
           <sv:property sv:name="class" sv:type="String">
-            <sv:value>info.magnolia.ui.framework.action.DeactivationActionDefinition</sv:value>
+            <sv:value>info.magnolia.ui.framework.action.ActivationActionDefinition</sv:value>
           </sv:property>
           <sv:property sv:name="command" sv:type="String">
             <sv:value>deactivate</sv:value>
