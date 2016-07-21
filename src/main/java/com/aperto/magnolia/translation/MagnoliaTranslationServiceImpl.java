@@ -53,10 +53,12 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
 
     private String getMessage(String key, String language) {
         String message = EMPTY;
-        List<Node> results = search(createQuery("Select * from [nt:base] where key = '" + key + "'", WORKSPACE_TRANSLATION));
-        if (!results.isEmpty()) {
-            Node translation = results.get(0);
-            message = getString(translation, PREFIX_NAME + language, message);
+        if (!key.contains("'")) {
+            List<Node> results = search(createQuery("Select * from [nt:base] where key = '" + key + "'", WORKSPACE_TRANSLATION));
+            if (!results.isEmpty()) {
+                Node translation = results.get(0);
+                message = getString(translation, PREFIX_NAME + language, message);
+            }
         }
         return message;
     }
@@ -75,16 +77,18 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
 
     private List<Node> search(Query query) {
         List<Node> itemsList = new LinkedList<>();
-        NodeIterator iterator = null;
-        try {
-            final QueryResult result = query.execute();
-            iterator = result.getNodes();
-        } catch (RepositoryException e) {
-            LOGGER.error("Can't get translations for templates.", e);
-        }
-        if (iterator != null && iterator.getSize() > 0) {
-            while (iterator.hasNext()) {
-                itemsList.add(iterator.nextNode());
+        if (query != null) {
+            NodeIterator iterator = null;
+            try {
+                final QueryResult result = query.execute();
+                iterator = result.getNodes();
+            } catch (RepositoryException e) {
+                LOGGER.error("Can't get translations for templates.", e);
+            }
+            if (iterator != null && iterator.getSize() > 0) {
+                while (iterator.hasNext()) {
+                    itemsList.add(iterator.nextNode());
+                }
             }
         }
         return itemsList;
