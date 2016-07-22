@@ -34,7 +34,6 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
     private static final String CN_GROUPS = "groups";
     private static final String CN_ITEMS = "items";
-    private static final String ACTION_DUPLICATE_CMP = "duplicateComponent";
     private static final String ACTION_PREVIEW_EXTERNAL_CMP = "previewExternal";
     private static final String SECTION_EDITING_ACTIONS = "editingActions";
     private static final String SECTION_COMPONENT_ACTIONS = "componentActions";
@@ -126,33 +125,6 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(nodeOperation)
         };
     }
-
-    private final Task _addDuplicateAction = selectModuleConfig("Register editor actions", "Register developer actions", MODULE_PAGES,
-        getNode("apps/pages/subApps").then(
-            getNode("detail").then(
-                getNode("actions").then(
-                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                        addOrSetProperty(PN_CLASS, DuplicateComponentActionDefinition.class.getName()),
-                        addOrSetProperty(PN_ICON, "icon-duplicate"),
-                        addOrSetProperty(PN_IMPL_CLASS, DuplicateComponentAction.class.getName())
-                    )
-                ),
-                getNode("actionbar/sections").then(
-                    addOrGetContentNode(SECTION_COMPONENT_ACTIONS).then(
-                        addOrGetContentNode(CN_GROUPS).then(
-                            addOrGetContentNode(SECTION_EDITING_ACTIONS).then(
-                                addOrGetContentNode(CN_ITEMS).then(
-                                    addOrGetContentNode(ACTION_DUPLICATE_CMP).then(
-                                        orderBefore(ACTION_DUPLICATE_CMP, "startMoveComponent")
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    );
 
     private final Task _addLastModifiedAndCreatorToListViewOfPagesApp = selectModuleConfig("Add last modified and creator to list view.", "", MODULE_PAGES,
         getNode("apps/pages/subApps/browser/workbench/contentViews/list/columns").then(
@@ -255,7 +227,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             ),
             getNode("actionbar/sections/componentActions/groups/editingActions/items").then(
                 addOrGetContentNode("copyNode").then(
-                    orderBefore("copyNode", ACTION_DUPLICATE_CMP)
+                    orderBefore("copyNode", "startMoveComponent")
                 )
             )
         )
@@ -288,7 +260,6 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
         tasks.add(_addExternalPreviewAction);
-        tasks.add(_addDuplicateAction);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
@@ -302,7 +273,6 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
         List<Task> tasks = super.getExtraInstallTasks(installContext);
         tasks.add(_addExternalPreviewAction);
-        tasks.add(_addDuplicateAction);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
