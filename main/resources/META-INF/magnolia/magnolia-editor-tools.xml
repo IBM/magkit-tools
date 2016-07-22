@@ -21,8 +21,8 @@
         <!-- set custom view impl for the pages app -->
         <id>app-pages-detail</id>
         <component>
-            <type>info.magnolia.pages.app.editor.PagesEditorSubAppView</type>
-            <implementation>com.aperto.magnolia.edittools.views.EditorToolsPagesEditorSubAppViewImpl</implementation>
+            <type>info.magnolia.pages.app.editor.statusbar.activationstatus.ActivationStatusView</type>
+            <implementation>com.aperto.magnolia.edittools.views.EditorToolsActivationStatusViewImpl</implementation>
         </component>
     </components>
 
