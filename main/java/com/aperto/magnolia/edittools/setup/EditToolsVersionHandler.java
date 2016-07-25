@@ -8,8 +8,10 @@ import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.BootstrapConditionally;
+import info.magnolia.module.delta.DeltaBuilder;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
+import info.magnolia.pages.app.action.DuplicatePageComponentActionDefinition;
 import info.magnolia.pages.app.editor.availability.IsAreaAddibleRule;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 import info.magnolia.ui.framework.availability.IsNotDeletedRule;
@@ -255,6 +257,19 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     }
 
     private final Task _logoUriMapping = new BootstrapConditionally("Add virtual uri mapping for logo", "/mgnl-bootstrap/magnolia-editor-tools/config.modules.magnolia-editor-tools.virtualURIMapping.logo.xml");
+
+    public EditToolsVersionHandler() {
+        DeltaBuilder update110 = DeltaBuilder.update("1.1.0", "Update to version 1.1.0.");
+        update110.addTask(
+            selectModuleConfig("Reset pages app", "Reset duplicate component action in pages app,", MODULE_PAGES,
+                getNode("apps/pages/subApps/detail/actions/duplicateComponent").then(
+                    setProperty(PN_CLASS, DuplicatePageComponentActionDefinition.class.getName()),
+                    removeIfExists(PN_IMPL_CLASS)
+                )
+            )
+        );
+        register(update110);
+    }
 
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
