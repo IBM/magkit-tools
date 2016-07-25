@@ -24,6 +24,7 @@ import static com.aperto.magkit.nodebuilder.NodeOperationFactory.*;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
 import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED_BY;
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -260,14 +261,19 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
     public EditToolsVersionHandler() {
         DeltaBuilder update110 = DeltaBuilder.update("1.1.0", "Update to version 1.1.0.");
-        update110.addTask(
+        update110.addTasks(asList(new Task[]{
             selectModuleConfig("Reset pages app", "Reset duplicate component action in pages app,", MODULE_PAGES,
                 getNode("apps/pages/subApps/detail/actions/duplicateComponent").then(
                     setProperty(PN_CLASS, DuplicatePageComponentActionDefinition.class.getName()),
                     removeIfExists(PN_IMPL_CLASS)
                 )
+            ),
+            selectModuleConfig("Remove link service", "Remove link service from context attributes.", "rendering",
+                getNode("renderers/freemarker/contextAttributes").then(
+                    removeIfExists("etls")
+                )
             )
-        );
+        }));
         register(update110);
     }
 
