@@ -1,8 +1,5 @@
 package com.aperto.magnolia.edittools.action;
 
-import com.aperto.magkit.mockito.ContextMockUtils;
-import com.aperto.magkit.mockito.jcr.SessionMockUtils;
-
 import info.magnolia.config.registry.DefinitionProvider;
 import info.magnolia.event.EventBus;
 import info.magnolia.jcr.util.NodeTypes;
@@ -14,27 +11,20 @@ import info.magnolia.ui.dialog.formdialog.FormDialogPresenterFactory;
 import info.magnolia.ui.vaadin.gwt.client.shared.AreaElement;
 import info.magnolia.ui.vaadin.gwt.client.shared.ComponentElement;
 import info.magnolia.ui.vaadin.gwt.client.shared.PageElement;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static com.aperto.magkit.mockito.MagnoliaNodeMockUtils.mockMgnlNode;
+import static com.aperto.magkit.mockito.ContextMockUtils.cleanContext;
+import static com.aperto.magkit.mockito.MagnoliaNodeMockUtils.mockPageNode;
 import static com.aperto.magkit.mockito.jcr.NodeMockUtils.mockNode;
-import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubNode;
-import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubProperty;
-import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubType;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.COMPONENT_ID;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.DIALOG_ID;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_AREA;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_COMPONENT;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_PAGE;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.TEMPLATE_ID;
+import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.*;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.*;
 import static info.magnolia.repository.RepositoryConstants.WEBSITE;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Philipp Güttler (Aperto AG)
@@ -42,8 +32,8 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EditPageActionTest {
-
     private static final String GENERIC_DIALOG_ID = "myID";
+
     private EditPageAction _action;
     @Mock
     private TemplateDefinitionRegistry _templateDefinitionRegistry;
@@ -56,9 +46,7 @@ public class EditPageActionTest {
 
     @Before
     public void setUp() throws Exception {
-        ContextMockUtils.cleanContext();
-        SessionMockUtils.cleanSession();
-        mockMgnlNode(PATH_TO_PAGE, WEBSITE, NodeTypes.Page.NAME, stubProperty(NodeTypes.Renderable.TEMPLATE, TEMPLATE_ID),
+        mockPageNode(PATH_TO_PAGE, stubProperty(NodeTypes.Renderable.TEMPLATE, TEMPLATE_ID),
             stubNode(
                 mockNode(PATH_TO_AREA, stubType(NodeTypes.Area.NAME),
                     stubNode(
@@ -72,6 +60,11 @@ public class EditPageActionTest {
         when(_templateDefinition.getDialog()).thenReturn(DIALOG_ID);
         when(_templateDefinitionRegistry.getProvider(TEMPLATE_ID)).thenReturn(_provider);
         when(_formDialogPresenterFactory.createFormDialogPresenter(DIALOG_ID)).thenReturn(mock(FormDialogPresenter.class));
+    }
+
+    @After
+    public void cleanUp() throws Exception {
+        cleanContext();
     }
 
     @Test

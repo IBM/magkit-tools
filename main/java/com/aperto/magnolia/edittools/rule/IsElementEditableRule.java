@@ -18,8 +18,8 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import static com.aperto.magkit.utils.NodeUtils.isNodeType;
 import static info.magnolia.jcr.util.NodeUtil.getNearestAncestorOfType;
-import static info.magnolia.jcr.util.NodeUtil.isNodeType;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
@@ -34,6 +34,7 @@ public class IsElementEditableRule extends AbstractElementAvailabilityRule<Abstr
 
     private TemplateDefinitionRegistry _templateDefinitionRegistry;
 
+    @Inject
     public IsElementEditableRule(final PageEditorPresenter pageEditorPresenter) {
         super(pageEditorPresenter, AbstractElement.class);
     }
@@ -49,7 +50,7 @@ public class IsElementEditableRule extends AbstractElementAvailabilityRule<Abstr
                 if (!isNodeType(pageNode, NodeTypes.Page.NAME)) {
                     pageNode = getNearestAncestorOfType(pageNode, NodeTypes.Page.NAME);
                 }
-                if (NodeUtils.isNodeType(pageNode, NodeTypes.Page.NAME)) {
+                if (pageNode != null) {
                     DefinitionProvider<TemplateDefinition> templateDefinition = _templateDefinitionRegistry.getProvider(NodeUtils.getTemplate(pageNode));
                     result = templateDefinition.get().getDialog() != null && (templateDefinition.get().getEditable() == null || templateDefinition.get().getEditable());
                 }

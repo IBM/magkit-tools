@@ -1,18 +1,18 @@
 package com.aperto.magnolia.edittools.rule;
 
-import com.aperto.magkit.mockito.ContextMockUtils;
 import com.aperto.magnolia.edittools.action.CopyNodeAction;
 import com.vaadin.data.Property;
 import info.magnolia.pages.app.editor.PageEditorPresenter;
-import info.magnolia.ui.dialog.formdialog.FormDialogPresenterFactory;
 import info.magnolia.ui.vaadin.gwt.client.shared.AreaElement;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import static com.aperto.magkit.mockito.ContextMockUtils.cleanContext;
 import static com.aperto.magkit.mockito.ContextMockUtils.mockWebContext;
 import static com.aperto.magkit.mockito.WebContextStubbingOperation.stubAttribute;
 import static info.magnolia.context.Context.SESSION_SCOPE;
@@ -31,10 +31,10 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class IsClipboardAddableTest {
+    private static final String EXTERNAL_LINK_ID = "my-module:links/externalLink";
+    private static final String EXTERNAL_LINK_NEW_ID = "my-module:links/externalLinkNew";
+    private static final String TEXT_TEASER_ID = "my-module:teasers/textTeaser";
 
-    public static final String EXTERNAL_LINK_ID = "my-module:links/externalLink";
-    public static final String EXTERNAL_LINK_NEW_ID = "my-module:links/externalLinkNew";
-    public static final String TEXT_TEASER_ID = "my-module:teasers/textTeaser";
     private IsClipboardAddable _rule;
 
     @Mock
@@ -42,7 +42,6 @@ public class IsClipboardAddableTest {
 
     @Before
     public void setUp() throws Exception {
-        ContextMockUtils.cleanContext();
         _rule = new IsClipboardAddable(mock(PageEditorPresenter.class));
 
         when(_templateId.getValue()).thenReturn(EXTERNAL_LINK_ID);
@@ -51,6 +50,11 @@ public class IsClipboardAddableTest {
         when(adapter.getItemProperty(TEMPLATE)).thenReturn(_templateId);
 
         mockWebContext(stubAttribute(CopyNodeAction.class.getName(), adapter, SESSION_SCOPE));
+    }
+
+    @After
+    public void cleanUp() throws Exception {
+        cleanContext();
     }
 
     @Test
@@ -76,5 +80,4 @@ public class IsClipboardAddableTest {
         AreaElement element = new AreaElement(EMPTY, EMPTY, EMPTY, TEXT_TEASER_ID + "," + EXTERNAL_LINK_NEW_ID);
         assertThat(_rule.isAvailableForElement(element), is(FALSE));
     }
-
 }
