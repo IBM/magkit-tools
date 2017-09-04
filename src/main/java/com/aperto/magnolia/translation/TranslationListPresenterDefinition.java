@@ -1,5 +1,6 @@
 package com.aperto.magnolia.translation;
 
+import com.google.inject.Inject;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.ui.workbench.column.definition.ColumnDefinition;
 import info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition;
@@ -22,15 +23,14 @@ public class TranslationListPresenterDefinition extends ConfiguredContentPresent
 
     public static final String VIEW_TYPE = "listview";
 
+    @Inject
     private I18nContentSupport _i18nContentSupport;
 
-    public TranslationListPresenterDefinition(I18nContentSupport i18nContentSupport) {
+    public TranslationListPresenterDefinition() {
         setImplementationClass(ListPresenter.class);
         setViewType(VIEW_TYPE);
         setActive(true);
         setIcon("icon-view-list");
-
-        _i18nContentSupport = i18nContentSupport;
     }
 
     @Override
@@ -53,5 +53,9 @@ public class TranslationListPresenterDefinition extends ConfiguredContentPresent
             newColumns.add(column);
         }
         return newColumns;
+    }
+
+    public void setI18nContentSupport(I18nContentSupport i18nContentSupport) {
+        _i18nContentSupport = i18nContentSupport;
     }
 }
