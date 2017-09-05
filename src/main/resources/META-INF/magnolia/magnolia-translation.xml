@@ -4,7 +4,7 @@
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
     <versionHandler>com.aperto.magkit.module.BootstrapModuleVersionHandler</versionHandler>
-    <version>${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${git.commitsCount}-${git.buildnumber}</version>
+    <version>${project.version}</version>
     <components>
         <id>main</id>
         <component>
