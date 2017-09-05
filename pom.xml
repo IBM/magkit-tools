@@ -8,7 +8,7 @@
         <version>1.7.2</version>
     </parent>
     <groupId>com.aperto.magkit</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>Magnolia Translation Module</name>
     <description>App to manage translations for various lanugages form different properties files.</description>
     <artifactId>magnolia-translation</artifactId>
