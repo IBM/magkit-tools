@@ -1,25 +1,25 @@
 package com.aperto.magnolia.translation;
 
+import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
+import info.magnolia.event.EventBus;
 import info.magnolia.i18nsystem.LocaleProvider;
 import info.magnolia.i18nsystem.TranslationServiceImpl;
+import info.magnolia.i18nsystem.module.I18nModule;
+import info.magnolia.objectfactory.ComponentProvider;
+import info.magnolia.resourceloader.ResourceOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
-import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
-import java.util.LinkedList;
-import java.util.List;
 
-import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
-import static info.magnolia.context.MgnlContext.getJCRSession;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
+import static info.magnolia.cms.util.QueryUtil.search;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
-import static javax.jcr.query.Query.JCR_SQL2;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -31,16 +31,18 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
  */
 @Singleton
 public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
+    private static final String QUERY_STATEMENT = "select * from [%s] where key = '%s'";
 
-
-    private static final String WORKSPACE_TRANSLATION = "translation";
+    @Inject
+    public MagnoliaTranslationServiceImpl(Provider<I18nModule> i18nModuleProvider, ComponentProvider componentProvider, final ResourceOrigin resourceOrigin, @Named("system") EventBus systemEventBus) {
+        super(i18nModuleProvider, componentProvider, resourceOrigin, systemEventBus);
+    }
 
     @Override
     public String translate(LocaleProvider localeProvider, String basename, String[] keys) {
-        final String language = localeProvider.getLocale().getLanguage();
         String message = super.translate(localeProvider, basename, keys);
+        final String language = localeProvider.getLocale().getLanguage();
         for (String key : keys) {
             String newMessage = getMessage(key, language);
             if (isNotBlank(newMessage)) {
@@ -54,43 +56,16 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
     private String getMessage(String key, String language) {
         String message = EMPTY;
         if (!key.contains("'")) {
-            List<Node> results = search(createQuery("Select * from [nt:base] where key = '" + key + "'", WORKSPACE_TRANSLATION));
-            if (!results.isEmpty()) {
-                Node translation = results.get(0);
-                message = getString(translation, PREFIX_NAME + language, message);
+            String statement = String.format(QUERY_STATEMENT, Translation.NAME, key);
+            try {
+                NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
+                if (nodeIterator.hasNext()) {
+                    message = getString(nodeIterator.nextNode(), Translation.PREFIX_NAME + language, message);
+                }
+            } catch (RepositoryException e) {
+                LOGGER.error("Error on querying translation node for query {}.", statement, e);
             }
         }
         return message;
-    }
-
-    private Query createQuery(final String queryString, String workspace) {
-        Query query = null;
-        try {
-            final Session jcrSession = getJCRSession(workspace);
-            final QueryManager queryManager = jcrSession.getWorkspace().getQueryManager();
-            query = queryManager.createQuery(queryString, JCR_SQL2);
-        } catch (RepositoryException e) {
-            LOGGER.error("Can't get translation for templates. Can't create query'" + queryString + "'.", e);
-        }
-        return query;
-    }
-
-    private List<Node> search(Query query) {
-        List<Node> itemsList = new LinkedList<>();
-        if (query != null) {
-            NodeIterator iterator = null;
-            try {
-                final QueryResult result = query.execute();
-                iterator = result.getNodes();
-            } catch (RepositoryException e) {
-                LOGGER.error("Can't get translations for templates.", e);
-            }
-            if (iterator != null && iterator.getSize() > 0) {
-                while (iterator.hasNext()) {
-                    itemsList.add(iterator.nextNode());
-                }
-            }
-        }
-        return itemsList;
     }
 }

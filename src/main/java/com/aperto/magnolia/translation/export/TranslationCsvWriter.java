@@ -15,22 +15,18 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.P
  * @author diana.racho (Aperto AG)
  */
 public class TranslationCsvWriter {
-
-    private static final String FILE_EXTENSION = ".csv";
-    private final File _file;
-    private FileInputStream _inputStream;
-
-    private final File _path;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(TranslationCsvWriter.class);
+    private static final String FILE_EXTENSION = ".csv";
+
+    private final File _file;
+    private final File _path;
 
     private final Map<String, Map<String, String>> _eventEntries;
     private Collection<Locale> _locales;
 
     public TranslationCsvWriter(Map<String, Map<String, String>> entries, File path, Collection<Locale> locales) {
         _path = path;
-        _file = createFile(FILE_EXTENSION);
-
+        _file = createFile();
         _locales = locales;
         _eventEntries = entries;
     }
@@ -38,7 +34,7 @@ public class TranslationCsvWriter {
     /**
      * Export logic.
      */
-    public boolean createFile() {
+    public void writeCsv() {
         List<String[]> entries = new ArrayList<>();
         List<String> headerLine = new ArrayList<>();
         headerLine.add("Key");
@@ -54,40 +50,35 @@ public class TranslationCsvWriter {
             }
             entries.add(line.toArray(new String[line.size()]));
         }
-        try {
-            FileWriter fileWriter = new FileWriter(getFile());
-            CSVWriter writer = new CSVWriter(fileWriter);
+
+        try (FileWriter fileWriter = new FileWriter(getFile()); CSVWriter writer = new CSVWriter(fileWriter)) {
             writer.writeAll(entries);
             writer.flush();
-            writer.close();
         } catch (IOException e) {
             LOGGER.error("Could not create csv file", e);
         }
-        return false;
     }
 
-    private File createFile(final String ext) {
+    private File createFile() {
         File file = null;
         try {
-            file = File.createTempFile("export", ext, _path);
+            file = File.createTempFile("export", FILE_EXTENSION, _path);
         } catch (IOException e) {
-            LOGGER.error("could not create file", e);
+            LOGGER.error("Could not create file.", e);
         }
         return file;
     }
 
     public FileInputStream getStream() {
-        if (_inputStream == null) {
-            try {
-                _inputStream = new FileInputStream(getFile());
-            } catch (FileNotFoundException e) {
-                LOGGER.error("could not close stream", e);
-            }
+        try {
+            return new FileInputStream(getFile());
+        } catch (FileNotFoundException e) {
+            LOGGER.error("Could not stream file.", e);
+            return null;
         }
-        return _inputStream;
     }
 
-    File getFile() {
+    protected File getFile() {
         return _file;
     }
 }

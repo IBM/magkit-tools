@@ -14,7 +14,6 @@ import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemUtil;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
 import info.magnolia.ui.vaadin.overlay.MessageStyleTypeEnum;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +25,20 @@ import java.util.*;
 
 import static info.magnolia.context.Context.ATTRIBUTE_RECURSIVE;
 import static java.lang.Boolean.TRUE;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Get parent translation folder node and activate all sub nodes recursive.
  *
  * @author Janine.Naumann
  */
-@SuppressWarnings("rawtypes")
+@SuppressWarnings("unchecked")
 public class PublishAllAction extends ActivationAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PublishAllAction.class);
 
     private final List<JcrItemAdapter> _items;
     private Map<JcrItemAdapter, Exception> _failedItems;
     private final UiContext _uiContext;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PublishAllAction.class);
 
     @Inject
     public PublishAllAction(ActivationActionDefinition definition, JcrItemAdapter item, CommandsManager commandsManager, @Named("admincentral") EventBus admincentralEventBus, SubAppContext uiContext, SimpleTranslator i18n) {
@@ -81,12 +81,12 @@ public class PublishAllAction extends ActivationAction {
 
         if (_failedItems.isEmpty()) {
             String message = getSuccessMessage();
-            if (StringUtils.isNotBlank(message)) {
+            if (isNotBlank(message)) {
                 _uiContext.openNotification(MessageStyleTypeEnum.INFO, true, message);
             }
         } else {
             String message = getErrorNotification();
-            if (StringUtils.isNotBlank(message)) {
+            if (isNotBlank(message)) {
                 _uiContext.openNotification(MessageStyleTypeEnum.ERROR, false, message);
             }
         }
@@ -97,10 +97,9 @@ public class PublishAllAction extends ActivationAction {
         if (failureMessage != null) {
             StringBuilder notification = new StringBuilder(failureMessage);
             notification.append("<ul>");
-            for (JcrItemAdapter item : _failedItems.keySet()) {
-                Exception ex = _failedItems.get(item);
-                notification.append("<li>").append("<b>");
-                notification.append(JcrItemUtil.getItemPath(item.getJcrItem())).append("</b>: ").append(ex.getMessage());
+            for (Map.Entry<JcrItemAdapter, Exception> entry : _failedItems.entrySet()) {
+                notification.append("<li><strong>");
+                notification.append(JcrItemUtil.getItemPath(entry.getKey().getJcrItem())).append("</strong>: ").append(entry.getValue().getMessage());
                 notification.append("</li>");
             }
             notification.append("</ul>");

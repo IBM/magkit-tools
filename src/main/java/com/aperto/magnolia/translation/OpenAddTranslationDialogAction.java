@@ -1,5 +1,6 @@
 package com.aperto.magnolia.translation;
 
+import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.event.EventBus;
 import info.magnolia.ui.api.action.ActionExecutionException;
@@ -17,12 +18,13 @@ import javax.inject.Named;
 import javax.jcr.Node;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 
 /**
  * Action for opening the add translation dialog.
  *
- * @author diana.racho (Apertp AG)
  * @param <D> the action definition type
+ * @author diana.racho (Apertp AG)
  */
 public class OpenAddTranslationDialogAction<D extends ConfiguredActionDefinition> extends AbstractTranslationDialogAction<D> {
 
@@ -36,9 +38,9 @@ public class OpenAddTranslationDialogAction<D extends ConfiguredActionDefinition
 
     @Override
     public void execute() throws ActionExecutionException {
-        FormDialogDefinition dialogDefinition = getDialogDefinition(WORKSPACE_TRANSLATION, PREFIX_NAME);
+        FormDialogDefinition dialogDefinition = getDialogDefinition(WS_TRANSLATION, PREFIX_NAME);
         Node parentNode = _parentItem.getJcrItem();
-        final JcrNodeAdapter item = new JcrNewNodeAdapter(parentNode, TranslationNodeTypes.Translation.NAME);
+        final JcrNodeAdapter item = new JcrNewNodeAdapter(parentNode, Translation.NAME);
         startPresenter(item, dialogDefinition);
     }
 }

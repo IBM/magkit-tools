@@ -10,17 +10,26 @@
     <groupId>com.aperto.magkit</groupId>
     <version>1.0.3-SNAPSHOT</version>
     <name>Magnolia Translation Module</name>
-    <description>App to manage translations for various lanugages form different properties files.</description>
+    <description>App to manage translations for various languages form different properties files.</description>
     <artifactId>magnolia-translation</artifactId>
     <packaging>jar</packaging>
 
     <properties>
+        <magnolia.version>5.4.8</magnolia.version>
+        <aperto.magkit.version>3.2.0</aperto.magkit.version>
+
         <!-- Aperto Super-Pom properties override -->
         <source.javaversion>1.8</source.javaversion>
         <target.javaversion>1.8</target.javaversion>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>info.magnolia</groupId>
+            <artifactId>magnolia-i18n</artifactId>
+            <version>${magnolia.version}</version>
+        </dependency>
+
         <!-- CSV -->
         <dependency>
             <groupId>net.sf.opencsv</groupId>
@@ -31,7 +40,7 @@
         <dependency>
             <artifactId>magkit</artifactId>
             <groupId>com.aperto.magkit</groupId>
-            <version>3.2.0</version>
+            <version>${aperto.magkit.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>magnolia-module-standard-templating-kit</artifactId>
@@ -53,70 +62,17 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>**/*.properties</exclude>
                     <exclude>**/META-INF/magnolia/*.xml</exclude>
                 </excludes>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
                 <includes>
-                    <include>**/*.properties</include>
                     <include>**/META-INF/magnolia/*.xml</include>
                 </includes>
                 <filtering>true</filtering>
             </resource>
         </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>enforce-versions</id>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <requireJavaVersion>
-                                        <version>[1.6,)</version>
-                                    </requireJavaVersion>
-                                    <bannedDependencies>
-                                        <includes>
-                                            <!-- Do not even allow scope "test", since it overrides a transitive
-                                                "provided". S. http://www.sonatype.com/books/mvnref-book/reference/pom-relationships-sect-project-dependencies.html#pom-relationships-sect-transitive -->
-                                            <include>org.mockito:mockito-all</include>
-                                            <!--<include>javax.servlet:javax.servlet-api:*:*:provided</include> -->
-                                        </includes>
-                                    </bannedDependencies>
-                                </rules>
-                                <fail>true</fail>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-
-        </pluginManagement>
-
-        <plugins>
-            <!-- The Resources Plugin handles the copying of project resources to
-                the output directory. Variables can be included in your resources. These
-                variables, denoted by the ${...} delimiters, can come from the System properties,
-                your project properties, from your filter resources and from the command
-                lines. See http://maven.apache.org/plugins/maven-resources-plugin -->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <configuration>
-                    <!-- we only filter *.properties which must use ISO-8859-1 since java
-                        reads property bundles with that encoding see http://docs.oracle.com/javase/6/docs/api/java/util/Properties.html -->
-                    <encoding>ISO-8859-1</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
     </build>
 
     <distributionManagement>

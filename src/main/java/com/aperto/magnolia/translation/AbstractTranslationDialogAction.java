@@ -6,7 +6,6 @@ import info.magnolia.event.EventBus;
 import info.magnolia.jcr.node2bean.Node2BeanException;
 import info.magnolia.jcr.node2bean.Node2BeanProcessor;
 import info.magnolia.objectfactory.Components;
-import info.magnolia.repository.RepositoryConstants;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ActionDefinition;
 import info.magnolia.ui.api.action.ActionExecutionException;
@@ -21,26 +20,23 @@ import info.magnolia.ui.form.definition.TabDefinition;
 import info.magnolia.ui.form.field.definition.FieldDefinition;
 import info.magnolia.ui.form.field.definition.TextFieldDefinition;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
-
-import java.util.List;
-import java.util.Locale;
+import org.apache.commons.lang.StringUtils;
 
 import javax.inject.Named;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import java.util.List;
+import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
+import static info.magnolia.repository.RepositoryConstants.CONFIG;
 
 /**
  * Abstract base class for actions that open dialogs for adding or editing locale properties.
  *
- * @author diana.racho (Aperto AG)
  * @param <D> the action definition type
+ * @author diana.racho (Aperto AG)
  */
 public abstract class AbstractTranslationDialogAction<D extends ActionDefinition> extends AbstractAction<D> {
-
-    public static final String WORKSPACE_TRANSLATION = "translation";
-
     private static final String DIALOG_PATH = "/modules/magnolia-translation/dialogs/";
     private static final String TRANSLATION_DIALOG_NAME = "editTranslation";
 
@@ -58,10 +54,9 @@ public abstract class AbstractTranslationDialogAction<D extends ActionDefinition
     }
 
     protected FormDialogDefinition getDialogDefinition(String appName, String localeProperty) throws ActionExecutionException {
-
         try {
             // We read the definition from the JCR directly rather than getting it from the registry and then clone it
-            Node node = MgnlContext.getJCRSession(RepositoryConstants.CONFIG).getNode(DIALOG_PATH + TRANSLATION_DIALOG_NAME);
+            Node node = MgnlContext.getJCRSession(CONFIG).getNode(DIALOG_PATH + TRANSLATION_DIALOG_NAME);
             ConfiguredFormDialogDefinition dialogDefinition = (ConfiguredFormDialogDefinition) Components.getComponent(Node2BeanProcessor.class).toBean(node, FormDialogDefinition.class);
 
             if (dialogDefinition == null) {
@@ -73,9 +68,7 @@ public abstract class AbstractTranslationDialogAction<D extends ActionDefinition
             for (TabDefinition tab : tabs) {
                 if (StringUtils.equals(tab.getName(), "main")) {
                     for (Locale locale : _i18nContentSupport.getLocales()) {
-
                         String displayName = localeProperty + locale.getLanguage();
-
                         boolean hasFieldForDisplayName = hasField(tab, displayName);
 
                         if (!hasFieldForDisplayName) {
@@ -89,14 +82,12 @@ public abstract class AbstractTranslationDialogAction<D extends ActionDefinition
             }
 
             return dialogDefinition;
-
         } catch (RepositoryException | Node2BeanException e) {
             throw new ActionExecutionException(e);
         }
     }
-    
 
-    protected boolean hasField(TabDefinition tab, String name) {
+    private boolean hasField(TabDefinition tab, String name) {
         for (FieldDefinition fieldDefinition : tab.getFields()) {
             if (fieldDefinition.getName().equals(name)) {
                 return true;

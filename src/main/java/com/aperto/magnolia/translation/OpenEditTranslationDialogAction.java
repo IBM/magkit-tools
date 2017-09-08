@@ -14,12 +14,13 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 
 /**
  * Action for opening the translation edit dialog.
  *
- * @author diana.racho (Aperto AG)
  * @param <D> the action definition type
+ * @author diana.racho (Aperto AG)
  */
 public class OpenEditTranslationDialogAction<D extends ConfiguredActionDefinition> extends AbstractTranslationDialogAction<D> {
 
@@ -33,7 +34,7 @@ public class OpenEditTranslationDialogAction<D extends ConfiguredActionDefinitio
 
     @Override
     public void execute() throws ActionExecutionException {
-        FormDialogDefinition dialogDefinition = getDialogDefinition(WORKSPACE_TRANSLATION, PREFIX_NAME);
+        FormDialogDefinition dialogDefinition = getDialogDefinition(WS_TRANSLATION, PREFIX_NAME);
         startPresenter(_itemToEdit, dialogDefinition);
     }
 }

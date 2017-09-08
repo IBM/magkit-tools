@@ -8,6 +8,7 @@ import static info.magnolia.jcr.util.NodeTypes.MGNL_PREFIX;
  * @author diana.racho (Aperto AG)
  */
 public final class TranslationNodeTypes {
+    public static final String WS_TRANSLATION = "translation";
 
     private TranslationNodeTypes() {
     }
@@ -16,6 +17,8 @@ public final class TranslationNodeTypes {
      * Represents the mgnl:translation node type.
      */
     public static final class Translation {
+
+        public static final String PN_KEY = "key";
 
         private Translation() {
         }

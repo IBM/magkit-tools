@@ -20,10 +20,8 @@ import static java.lang.Boolean.TRUE;
  * @author diana.racho (Aperto AG)
  */
 public class TranslationListPresenterDefinition extends ConfiguredContentPresenterDefinition {
+    private static final String VIEW_TYPE = "listview";
 
-    public static final String VIEW_TYPE = "listview";
-
-    @Inject
     private I18nContentSupport _i18nContentSupport;
 
     public TranslationListPresenterDefinition() {
@@ -55,6 +53,7 @@ public class TranslationListPresenterDefinition extends ConfiguredContentPresent
         return newColumns;
     }
 
+    @Inject
     public void setI18nContentSupport(I18nContentSupport i18nContentSupport) {
         _i18nContentSupport = i18nContentSupport;
     }
