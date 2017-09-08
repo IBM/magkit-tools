@@ -21,7 +21,11 @@ import javax.inject.Named;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static info.magnolia.context.Context.ATTRIBUTE_RECURSIVE;
 import static java.lang.Boolean.TRUE;

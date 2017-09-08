@@ -77,7 +77,6 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
 
     private void streamFile(final TranslationCsvWriter csvWriter) {
         StreamResource.StreamSource source = (StreamResource.StreamSource) csvWriter::getStream;
-
         String fileName = csvWriter.getFile().getName();
         StreamResource resource = new StreamResource(source, fileName);
         resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + fileName + "\"");

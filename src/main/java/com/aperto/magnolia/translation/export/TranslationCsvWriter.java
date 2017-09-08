@@ -4,8 +4,16 @@ import au.com.bytecode.opencsv.CSVWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 
@@ -51,7 +59,10 @@ public class TranslationCsvWriter {
             entries.add(line.toArray(new String[line.size()]));
         }
 
-        try (FileWriter fileWriter = new FileWriter(getFile()); CSVWriter writer = new CSVWriter(fileWriter)) {
+        try (
+            FileWriter fileWriter = new FileWriter(getFile());
+            CSVWriter writer = new CSVWriter(fileWriter)
+        ) {
             writer.writeAll(entries);
             writer.flush();
         } catch (IOException e) {
