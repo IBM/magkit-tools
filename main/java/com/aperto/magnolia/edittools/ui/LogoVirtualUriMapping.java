@@ -5,7 +5,9 @@ import info.magnolia.init.MagnoliaConfigurationProperties;
 
 import javax.inject.Inject;
 
-import static info.magnolia.cms.util.RequestDispatchUtil.*;
+import static info.magnolia.cms.util.RequestDispatchUtil.FORWARD_PREFIX;
+import static info.magnolia.cms.util.RequestDispatchUtil.PERMANENT_PREFIX;
+import static info.magnolia.cms.util.RequestDispatchUtil.REDIRECT_PREFIX;
 import static org.apache.commons.lang.StringUtils.startsWithAny;
 
 /**

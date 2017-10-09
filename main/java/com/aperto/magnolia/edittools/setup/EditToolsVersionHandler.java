@@ -1,7 +1,11 @@
 package com.aperto.magnolia.edittools.setup;
 
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
-import com.aperto.magnolia.edittools.action.*;
+import com.aperto.magnolia.edittools.action.CopyNodeActionDefinition;
+import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
+import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
+import com.aperto.magnolia.edittools.action.OpenTreeOnCurrentPositionAction;
+import com.aperto.magnolia.edittools.action.PasteNodeActionDefinition;
 import com.aperto.magnolia.edittools.rule.HasClipboardContentRule;
 import com.aperto.magnolia.edittools.rule.IsClipboardAddable;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
@@ -19,8 +23,16 @@ import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 
 import java.util.List;
 
-import static com.aperto.magkit.module.delta.StandardTasks.*;
-import static com.aperto.magkit.nodebuilder.NodeOperationFactory.*;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_CLASS;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_EXTENDS;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_ICON;
+import static com.aperto.magkit.module.delta.StandardTasks.PN_IMPL_CLASS;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrGetContentNode;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.addOrSetProperty;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.getNode;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.orderBefore;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.removeIfExists;
+import static com.aperto.magkit.nodebuilder.NodeOperationFactory.setProperty;
 import static com.aperto.magkit.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static info.magnolia.jcr.util.NodeTypes.Created.CREATED_BY;
 import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED_BY;

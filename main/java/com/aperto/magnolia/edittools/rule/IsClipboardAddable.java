@@ -11,11 +11,8 @@ import info.magnolia.ui.vaadin.gwt.client.shared.AreaElement;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
+import java.util.Arrays;
 
 /**
  * Checks if clipboard content is addable to current area by comparing the areas available components.
@@ -40,7 +37,7 @@ public class IsClipboardAddable extends AbstractElementAvailabilityRule<AreaElem
             if (templateId != null) {
                 String[] availableComponents = StringUtils.split(element.getAvailableComponents(), ',');
                 if (availableComponents != null && availableComponents.length > 0) {
-                    result = Arrays.asList(availableComponents).contains(String.valueOf(templateId.getValue())); 
+                    result = Arrays.asList(availableComponents).contains(String.valueOf(templateId.getValue()));
                 }
             }
         }

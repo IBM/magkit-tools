@@ -21,10 +21,19 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static com.aperto.magkit.mockito.ContextMockUtils.cleanContext;
 import static com.aperto.magkit.mockito.MagnoliaNodeMockUtils.mockPageNode;
 import static com.aperto.magkit.mockito.jcr.NodeMockUtils.mockNode;
-import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.*;
-import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.*;
+import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubNode;
+import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubProperty;
+import static com.aperto.magkit.mockito.jcr.NodeStubbingOperation.stubType;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.COMPONENT_ID;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.DIALOG_ID;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_AREA;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_COMPONENT;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.PATH_TO_PAGE;
+import static com.aperto.magnolia.edittools.rule.IsElementEditableRuleTest.TEMPLATE_ID;
 import static info.magnolia.repository.RepositoryConstants.WEBSITE;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Philipp Güttler (Aperto AG)
