@@ -16,6 +16,7 @@ import info.magnolia.ui.dialog.formdialog.FormDialogPresenter;
 import info.magnolia.ui.dialog.formdialog.FormDialogPresenterFactory;
 import info.magnolia.ui.form.EditorCallback;
 import info.magnolia.ui.vaadin.gwt.client.shared.AbstractElement;
+import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
 
 import javax.inject.Inject;
@@ -33,7 +34,6 @@ import static info.magnolia.jcr.util.NodeUtil.getNearestAncestorOfType;
  * @since 30.06.2015
  */
 public class EditPageAction extends EditElementAction {
-
     private final AbstractElement _element;
     private final SubAppContext _subAppContext;
     private final EventBus _eventBus;
@@ -41,9 +41,8 @@ public class EditPageAction extends EditElementAction {
     private TemplateDefinitionRegistry _templateDefinitionRegistry;
 
     @Inject
-    public EditPageAction(EditElementActionDefinition definition, AbstractElement element, SubAppContext subAppContext, @Named(SubAppEventBus.NAME) EventBus eventBus, FormDialogPresenterFactory
-        dialogPresenterFactory) {
-        super(definition, element, subAppContext, eventBus, dialogPresenterFactory);
+    public EditPageAction(JcrItemAdapter item, EditElementActionDefinition definition, AbstractElement element, SubAppContext subAppContext, @Named(SubAppEventBus.NAME) EventBus eventBus, FormDialogPresenterFactory dialogPresenterFactory) {
+        super(item, definition, element, subAppContext, eventBus, dialogPresenterFactory);
 
         _element = element;
         _subAppContext = subAppContext;

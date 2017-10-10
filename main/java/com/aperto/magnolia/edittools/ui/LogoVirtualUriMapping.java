@@ -1,7 +1,7 @@
 package com.aperto.magnolia.edittools.ui;
 
-import info.magnolia.cms.beans.config.DefaultVirtualURIMapping;
 import info.magnolia.init.MagnoliaConfigurationProperties;
+import info.magnolia.virtualuri.mapping.DefaultVirtualUriMapping;
 
 import javax.inject.Inject;
 
@@ -16,14 +16,14 @@ import static org.apache.commons.lang.StringUtils.startsWithAny;
  * @author frank.sommer
  * @since 14.06.2016
  */
-public class LogoVirtualUriMapping extends DefaultVirtualURIMapping {
+public class LogoVirtualUriMapping extends DefaultVirtualUriMapping {
 
     @Inject
     public LogoVirtualUriMapping(MagnoliaConfigurationProperties magnoliaConfigurationProperties) {
-        setFromURI("/VAADIN/themes/admincentraltheme/img/logo-magnolia.svg");
+        setFromUri("/VAADIN/themes/admincentraltheme/img/logo-magnolia.svg");
         String logoUri = magnoliaConfigurationProperties.getProperty("magkit.admincentral.logo");
         if (startsWithAny(logoUri, new String[]{FORWARD_PREFIX, PERMANENT_PREFIX, REDIRECT_PREFIX})) {
-            setToURI(logoUri);
+            setToUri(logoUri);
         }
     }
 }

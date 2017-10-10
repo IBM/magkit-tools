@@ -24,7 +24,6 @@ import static info.magnolia.jcr.util.NodeUtil.isNodeType;
  * @since 05.02.15
  */
 public class OpenPreviewNewWindowAction extends AbstractAction<ConfiguredActionDefinition> {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenPreviewNewWindowAction.class);
 
     private TemplatingFunctions _stkTemplatingFunctions;
