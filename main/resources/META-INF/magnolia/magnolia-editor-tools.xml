@@ -26,6 +26,14 @@
         </component>
     </components>
 
+    <components>
+        <id>admincentral</id>
+        <type-mapping>
+            <type>info.magnolia.ui.workbench.tree.MoveHandler</type>
+            <implementation>com.aperto.magnolia.edittools.action.ConfirmTreeViewDropHandler</implementation>
+        </type-mapping>
+    </components>
+
     <dependencies>
         <dependency>
             <name>core</name>

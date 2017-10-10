@@ -221,7 +221,9 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         );
     }
 
-    private final Task _logoUriMapping = new BootstrapConditionally("Add virtual uri mapping for logo", "/mgnl-bootstrap/magnolia-editor-tools/config.modules.magnolia-editor-tools.virtualURIMapping.logo.xml");
+    private final Task _logoUriMapping = new BootstrapConditionally("Add virtual uri mapping for logo", "/mgnl-bootstrap/install/magnolia-editor-tools/config.modules.magnolia-editor-tools.virtualURIMapping.logo.xml");
+
+    private final Task _workspaceMoveConfig = new BootstrapConditionally("Add move workspace config", "/mgnl-bootstrap/install/magnolia-editor-tools/config.modules.magnolia-editor-tools.config.moveConfirmWorkspaces.xml");
 
     public EditToolsVersionHandler() {
         DeltaBuilder update110 = DeltaBuilder.update("1.1.0", "Update to version 1.1.0.");
@@ -280,6 +282,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_updateEditPagePropertyAction);
         tasks.add(_addJumpToBrowserAction);
         tasks.add(_logoUriMapping);
+        tasks.add(_workspaceMoveConfig);
         return tasks;
     }
 

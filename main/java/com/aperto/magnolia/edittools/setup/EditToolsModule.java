@@ -5,6 +5,10 @@ import info.magnolia.module.ModuleLifecycleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
+import static java.util.Collections.emptyList;
+
 /**
  * Edit tools module class.
  *
@@ -15,6 +19,7 @@ public class EditToolsModule implements ModuleLifecycle {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditToolsModule.class);
 
     private PublicLinkConfig _publicLinkConfig;
+    private List<String> _moveConfirmWorkspaces;
 
     @Override
     public void start(final ModuleLifecycleContext moduleLifecycleContext) {
@@ -32,5 +37,13 @@ public class EditToolsModule implements ModuleLifecycle {
 
     public void setPublicLinkConfig(final PublicLinkConfig publicLinkConfig) {
         _publicLinkConfig = publicLinkConfig;
+    }
+
+    public List<String> getMoveConfirmWorkspaces() {
+        return _moveConfirmWorkspaces != null ? _moveConfirmWorkspaces : emptyList();
+    }
+
+    public void setMoveConfirmWorkspaces(final List<String> moveConfirmWorkspaces) {
+        _moveConfirmWorkspaces = moveConfirmWorkspaces;
     }
 }
