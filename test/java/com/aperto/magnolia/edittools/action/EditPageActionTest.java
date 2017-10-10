@@ -78,7 +78,7 @@ public class EditPageActionTest {
 
     @Test
     public void testExecutePageElement() throws Exception {
-        _action = new EditPageAction(new EditPageActionDefinition(), new PageElement(WEBSITE, PATH_TO_PAGE, DIALOG_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
+        _action = new EditPageAction(null, new EditPageActionDefinition(), new PageElement(WEBSITE, PATH_TO_PAGE, DIALOG_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
         _action.setTemplateDefinitionRegistry(_templateDefinitionRegistry);
         _action.execute();
         verify(_formDialogPresenterFactory).createFormDialogPresenter(DIALOG_ID);
@@ -86,7 +86,7 @@ public class EditPageActionTest {
 
     @Test
     public void testExecuteAreaElement() throws Exception {
-        _action = new EditPageAction(new EditPageActionDefinition(), new AreaElement(WEBSITE, PATH_TO_AREA, GENERIC_DIALOG_ID, COMPONENT_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
+        _action = new EditPageAction(null, new EditPageActionDefinition(), new AreaElement(WEBSITE, PATH_TO_AREA, GENERIC_DIALOG_ID, COMPONENT_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
         _action.setTemplateDefinitionRegistry(_templateDefinitionRegistry);
         _action.execute();
         verify(_formDialogPresenterFactory).createFormDialogPresenter(DIALOG_ID);
@@ -94,7 +94,7 @@ public class EditPageActionTest {
 
     @Test
     public void testExecuteComponentElement() throws Exception {
-        _action = new EditPageAction(new EditPageActionDefinition(), new ComponentElement(WEBSITE, PATH_TO_COMPONENT, GENERIC_DIALOG_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
+        _action = new EditPageAction(null, new EditPageActionDefinition(), new ComponentElement(WEBSITE, PATH_TO_COMPONENT, GENERIC_DIALOG_ID), mock(SubAppContext.class), mock(EventBus.class), _formDialogPresenterFactory);
         _action.setTemplateDefinitionRegistry(_templateDefinitionRegistry);
         _action.execute();
         verify(_formDialogPresenterFactory).createFormDialogPresenter(DIALOG_ID);
