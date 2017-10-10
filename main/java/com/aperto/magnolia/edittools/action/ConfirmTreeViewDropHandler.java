@@ -22,11 +22,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Provider;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+
+import static com.aperto.magkit.utils.NodeUtils.getNodeByIdentifier;
+import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 
 /**
  * Extended handler for drag and drop.
@@ -68,7 +72,7 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
                 if (showConfirmation((JcrNodeItemId) targetItemId)) {
                     _uiContext.openConfirmation(
                         MessageStyleTypeEnum.WARNING, getConfirmationQuestion(dropEvent),
-                        _i18n.translate("magkit.moveItem.warningText"),
+                        getBodyText(dropEvent),
                         _i18n.translate("magkit.moveItem.confirmText"),
                         _i18n.translate("magkit.moveItem.cancelText"),
                         true,
@@ -88,6 +92,19 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
                 }
             }
         }
+    }
+
+    private String getBodyText(final DragAndDropEvent dropEvent) {
+        StringBuilder bodyText = new StringBuilder("<ul>");
+        Collection<Object> itemIdsToMove = getItemIdsToMove(dropEvent);
+        for (Object itemId : itemIdsToMove) {
+            if (itemId instanceof JcrNodeItemId) {
+                Node node = getNodeByIdentifier(((JcrNodeItemId) itemId).getWorkspace(), ((JcrNodeItemId) itemId).getUuid());
+                bodyText.append("<li>").append(getPathIfPossible(node)).append("</li>");
+            }
+        }
+        bodyText.append("</ul>");
+        return bodyText.toString();
     }
 
     private boolean showConfirmation(final JcrNodeItemId targetItemId) {
