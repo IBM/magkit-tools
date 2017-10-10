@@ -1,13 +1,9 @@
 package com.aperto.magnolia.edittools.setup;
 
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
-import com.aperto.magnolia.edittools.action.CopyNodeActionDefinition;
 import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
 import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
 import com.aperto.magnolia.edittools.action.OpenTreeOnCurrentPositionAction;
-import com.aperto.magnolia.edittools.action.PasteNodeActionDefinition;
-import com.aperto.magnolia.edittools.rule.HasClipboardContentRule;
-import com.aperto.magnolia.edittools.rule.IsClipboardAddable;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.module.InstallContext;
@@ -16,7 +12,6 @@ import info.magnolia.module.delta.DeltaBuilder;
 import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
 import info.magnolia.pages.app.action.DuplicatePageComponentActionDefinition;
-import info.magnolia.pages.app.editor.availability.IsAreaAddibleRule;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 import info.magnolia.ui.framework.availability.IsNotDeletedRule;
 import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
@@ -46,7 +41,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  * @since 31.03.14
  */
 public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
-
     private static final String CN_GROUPS = "groups";
     private static final String CN_ITEMS = "items";
     private static final String ACTION_PREVIEW_EXTERNAL_CMP = "previewExternal";
@@ -64,28 +58,12 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private static final String PN_LABEL = "label";
     private static final String PN_AVAILABILITY = "availability";
     private static final String SECTION_AREA_ACTIONS = "areaActions";
-    public static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
-    public static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
+    private static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
+    private static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
     private static final String ACTION_JUMP_CMP = "jumpToBrowser";
 
-    private final Task _addExternalPreviewAction = selectModuleConfig("Add external preview action", "Add external preview action in pages app.", MODULE_PAGES,
+    private final Task _addExternalPreviewActionToBrowserSubApp = selectModuleConfig("Add external preview action", "Add external preview action in pages app.", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
-            getNode("detail").then(
-                getNode("actions").then(
-                    addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
-                        addOrGetContentNode(PN_AVAILABILITY + "/rules/isNotDeleted").then(
-                            addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
-                        ),
-                        addOrSetProperty(PN_ICON, "icon-view"),
-                        addOrSetProperty(PN_LABEL, "previewExternal.label"),
-                        addOrSetProperty(PN_CLASS, ConfiguredActionDefinition.class.getName()),
-                        addOrSetProperty(PN_IMPL_CLASS, OpenPreviewNewWindowAction.class.getName())
-                    )
-                ),
-                getNode("actionbar/sections").then(
-                    addToSections(addActionToEditingFlowGroup(ACTION_PREVIEW_EXTERNAL_CMP))
-                )
-            ),
             getNode("browser").then(
                 getNode("actions").then(
                     addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
@@ -212,47 +190,21 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         )
     );
 
-    private final Task _addCopyPasteActions = selectModuleConfig("Add copy action to pages app", EMPTY, MODULE_PAGES,
-        getNode("apps/pages/subApps/detail").then(
-            getNode("actions").then(
-                addOrGetContentNode("copyNode").then(
-                    addOrSetProperty(PN_CLASS, CopyNodeActionDefinition.class.getName()),
-                    addOrSetProperty(PN_ICON, "icon-copy"),
-                    addOrSetProperty(PN_LABEL, "copy.label")
-                ),
-                addOrGetContentNode("pasteNode").then(
-                    addOrGetContentNode(PN_AVAILABILITY + "/rules").then(
-                        addOrGetContentNode(HasClipboardContentRule.class.getSimpleName()).then(
-                            addOrSetProperty(PN_IMPL_CLASS, HasClipboardContentRule.class.getName())
-                        ),
-                        addOrGetContentNode(IsAreaAddibleRule.class.getSimpleName()).then(
-                            addOrSetProperty(PN_IMPL_CLASS, IsAreaAddibleRule.class.getName())
-                        ),
-                        addOrGetContentNode(IsClipboardAddable.class.getSimpleName()).then(
-                            addOrSetProperty(PN_IMPL_CLASS, IsClipboardAddable.class.getName())
-                        )
-                    ),
-                    addOrSetProperty(PN_CLASS, PasteNodeActionDefinition.class.getName()),
-                    addOrSetProperty(PN_ICON, "icon-paste"),
-                    addOrSetProperty(PN_LABEL, "paste.label")
-                )
-            ),
-            getNode("actionbar/sections/areaActions/groups/addingActions/items").then(
-                addOrGetContentNode("pasteNode")
-            ),
-            getNode("actionbar/sections/componentActions/groups/editingActions/items").then(
-                addOrGetContentNode("copyNode").then(
-                    orderBefore("copyNode", "startMoveComponent")
-                )
-            )
-        )
-    );
-
     private NodeOperation addActionToEditingFlowGroup(String actionName) {
         return addOrGetContentNode(CN_GROUPS).then(
             addOrGetContentNode(EDITING_FLOW).then(
                 addOrGetContentNode(CN_ITEMS).then(
                     addOrGetContentNode(actionName)
+                )
+            )
+        );
+    }
+
+    private NodeOperation removeActionToEditingFlowGroup(String actionName) {
+        return addOrGetContentNode(CN_GROUPS).then(
+            addOrGetContentNode(EDITING_FLOW).then(
+                addOrGetContentNode(CN_ITEMS).then(
+                    removeIfExists(actionName)
                 )
             )
         );
@@ -287,16 +239,45 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             )
         }));
         register(update110);
+
+        DeltaBuilder update120 = DeltaBuilder.update("1.2.0", "Update to version 1.2.0.");
+        final Task removeCustomCopyPasteActions = selectModuleConfig("Remove copy action from pages app", EMPTY, MODULE_PAGES,
+            getNode("apps/pages/subApps/detail").then(
+                getNode("actions").then(
+                    removeIfExists("copyNode"),
+                    removeIfExists("pasteNode")
+                ),
+                getNode("actionbar/sections/areaActions/groups/addingActions/items").then(
+                    removeIfExists("pasteNode")
+                ),
+                getNode("actionbar/sections/componentActions/groups/editingActions/items").then(
+                    removeIfExists("copyNode")
+                )
+            )
+        );
+        final Task removeExternalPreviewActionFromDetailSubApp = selectModuleConfig("Remove external preview action", "Remove external preview action from pages app.", MODULE_PAGES,
+            getNode("apps/pages/subApps").then(
+                getNode("detail").then(
+                    getNode("actions").then(
+                        removeIfExists(ACTION_PREVIEW_EXTERNAL_CMP)
+                    ),
+                    getNode("actionbar/sections").then(
+                        addToSections(removeActionToEditingFlowGroup(ACTION_PREVIEW_EXTERNAL_CMP))
+                    )
+                )
+            )
+        );
+        update120.addTasks(asList(removeCustomCopyPasteActions, removeExternalPreviewActionFromDetailSubApp));
+        register(update120);
     }
 
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
-        tasks.add(_addExternalPreviewAction);
+        tasks.add(_addExternalPreviewActionToBrowserSubApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
-        tasks.add(_addCopyPasteActions);
         tasks.add(_addJumpToBrowserAction);
         tasks.add(_logoUriMapping);
         return tasks;
@@ -305,11 +286,10 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     @Override
     protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
         List<Task> tasks = super.getExtraInstallTasks(installContext);
-        tasks.add(_addExternalPreviewAction);
+        tasks.add(_addExternalPreviewActionToBrowserSubApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfPagesApp);
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
-        tasks.add(_addCopyPasteActions);
         tasks.add(_addJumpToBrowserAction);
         return tasks;
     }
