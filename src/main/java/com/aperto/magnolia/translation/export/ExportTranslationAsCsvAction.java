@@ -16,6 +16,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
@@ -76,7 +77,12 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     }
 
     private void streamFile(final TranslationCsvWriter csvWriter) {
-        StreamResource.StreamSource source = (StreamResource.StreamSource) csvWriter::getStream;
+        StreamResource.StreamSource source = new StreamResource.StreamSource() {
+            @Override
+            public InputStream getStream() {
+                return csvWriter.getStream();
+            }
+        };
         String fileName = csvWriter.getFile().getName();
         StreamResource resource = new StreamResource(source, fileName);
         resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + fileName + "\"");
