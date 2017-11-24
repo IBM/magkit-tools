@@ -19,8 +19,8 @@
         <aperto.magkit.version>3.2.0</aperto.magkit.version>
 
         <!-- Aperto Super-Pom properties override -->
-        <source.javaversion>1.8</source.javaversion>
-        <target.javaversion>1.8</target.javaversion>
+        <source.javaversion>1.7</source.javaversion>
+        <target.javaversion>1.7</target.javaversion>
     </properties>
 
     <dependencies>
