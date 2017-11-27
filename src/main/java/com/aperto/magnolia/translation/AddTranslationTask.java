@@ -8,7 +8,6 @@ import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.NodeExistsDelegateTask;
 import info.magnolia.module.delta.TaskExecutionException;
 
-import java.util.Collections;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -45,7 +44,7 @@ public class AddTranslationTask extends AbstractTask {
     public void execute(InstallContext installContext) throws TaskExecutionException {
         ArrayDelegateTask task = new ArrayDelegateTask("Add translation key tasks");
         ResourceBundle bundle = ResourceBundle.getBundle(_baseName, _locale);
-        for (String key : Collections.list(bundle.getKeys())) {
+        for (String key : bundle.keySet()) {
             String keyNodeName = getValidatedLabel(key);
             task.addTask(
                 new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, "/" + keyNodeName, null,
