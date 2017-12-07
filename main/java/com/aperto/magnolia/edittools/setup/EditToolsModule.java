@@ -18,6 +18,7 @@ import static java.util.Collections.emptyList;
 public class EditToolsModule implements ModuleLifecycle {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditToolsModule.class);
 
+    private StatusBarConfig _statusBarConfig;
     private PublicLinkConfig _publicLinkConfig;
     private List<String> _moveConfirmWorkspaces;
 
@@ -45,5 +46,13 @@ public class EditToolsModule implements ModuleLifecycle {
 
     public void setMoveConfirmWorkspaces(final List<String> moveConfirmWorkspaces) {
         _moveConfirmWorkspaces = moveConfirmWorkspaces;
+    }
+
+    public StatusBarConfig getStatusBarConfig() {
+        return _statusBarConfig;
+    }
+
+    public void setStatusBarConfig(final StatusBarConfig statusBarConfig) {
+        _statusBarConfig = statusBarConfig;
     }
 }

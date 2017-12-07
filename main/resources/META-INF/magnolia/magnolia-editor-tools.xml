@@ -27,6 +27,14 @@
     </components>
 
     <components>
+        <id>subapp</id>
+        <component>
+            <type>info.magnolia.ui.workbench.WorkbenchStatusBarPresenter</type>
+            <implementation>com.aperto.magnolia.edittools.ui.workbench.ToolsWorkbenchStatusBarPresenter</implementation>
+        </component>
+    </components>
+
+    <components>
         <id>admincentral</id>
         <type-mapping>
             <type>info.magnolia.ui.workbench.tree.MoveHandler</type>
