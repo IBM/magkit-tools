@@ -1,13 +1,18 @@
 package com.aperto.magnolia.edittools.ui.workbench;
 
 import com.aperto.magnolia.edittools.setup.EditToolsModule;
+import com.aperto.magnolia.edittools.util.LinkService;
+import com.vaadin.server.ExternalResource;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Link;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.dam.jcr.DamConstants;
 import info.magnolia.event.EventBus;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.jcr.util.NodeUtil;
+import info.magnolia.link.LinkException;
 import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.vaadin.integration.contentconnector.ContentConnector;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeItemId;
@@ -16,10 +21,12 @@ import info.magnolia.ui.workbench.StatusBarView;
 import info.magnolia.ui.workbench.WorkbenchStatusBarPresenter;
 import info.magnolia.ui.workbench.event.SelectionChangedEvent;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -29,9 +36,13 @@ import javax.jcr.query.QueryResult;
 import java.util.List;
 import java.util.Set;
 
+import static com.aperto.magkit.utils.NodeUtils.getNodeByIdentifier;
 import static com.vaadin.ui.Alignment.TOP_LEFT;
 import static com.vaadin.ui.Alignment.TOP_RIGHT;
+import static info.magnolia.link.LinkUtil.convertUUIDtoHandle;
+import static info.magnolia.repository.RepositoryConstants.WEBSITE;
 import static javax.jcr.query.Query.JCR_SQL2;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
@@ -52,13 +63,16 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
     private boolean _rootIsSelected;
     private SimpleTranslator _i18n;
     private final EditToolsModule _toolsModule;
+    private final Link _linkToPublic = new Link();
+    private final LinkService _linkService;
 
     @Inject
-    public ToolsWorkbenchStatusBarPresenter(StatusBarView view, ContentConnector contentConnector, SimpleTranslator i18n) {
+    public ToolsWorkbenchStatusBarPresenter(StatusBarView view, ContentConnector contentConnector, SimpleTranslator i18n, final LinkService linkService) {
         super(view, contentConnector, i18n);
         _view = view;
         _contentConnector = contentConnector;
         _i18n = i18n;
+        _linkService = linkService;
         _toolsModule = Components.getComponent(EditToolsModule.class);
     }
 
@@ -80,6 +94,13 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
 
         _view.addComponent(_rightLabel, TOP_RIGHT);
         ((HorizontalLayout) _view).setExpandRatio(_rightLabel, 1);
+
+        _linkToPublic.setCaption("Public");
+        _linkToPublic.setVisible(false);
+        _linkToPublic.setTargetName("_blank");
+        _linkToPublic.addStyleName("v-label");
+        _linkToPublic.setPrimaryStyleName("noprimarystylename");
+        _view.addComponent(_linkToPublic, Alignment.TOP_RIGHT);
 
         bindHandlers();
         refresh();
@@ -115,11 +136,35 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
                 final String identifier = ((JcrNodeItemId) itemId).getUuid();
                 _rightLabel.setValue(identifier);
                 _rightLabel.setDescription(identifier);
+
+                handleLinkToPublic(identifier);
             }
         } else {
             String selected = _i18n.translate("ui-contentapp.statusbar.selected", totalSelectedValue);
             _selectionLabel.setValue(selected);
             _selectionLabel.setDescription(selected);
+            _linkToPublic.setVisible(false);
+        }
+    }
+
+    private void handleLinkToPublic(final String identifier) {
+        String path = StringUtils.EMPTY;
+        final Node node = getNodeByIdentifier(identifier);
+        if (node != null) {
+            try {
+                path = convertUUIDtoHandle(identifier, WEBSITE);
+            } catch (LinkException e) {
+                LOGGER.error("Error on getting path for identifier [{}]", identifier, e);
+            }
+        }
+
+        if (isNotBlank(path)) {
+            LOGGER.debug("Show Link to public page in right side of status bar.");
+            _linkToPublic.setVisible(true);
+            final String publicLink = _linkService.getPublicLink(path);
+            _linkToPublic.setResource(new ExternalResource(publicLink));
+        } else {
+            _linkToPublic.setVisible(false);
         }
     }
 
