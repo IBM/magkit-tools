@@ -18,7 +18,7 @@ import static java.util.Collections.emptyList;
 public class EditToolsModule implements ModuleLifecycle {
     private static final Logger LOGGER = LoggerFactory.getLogger(EditToolsModule.class);
 
-    private StatusBarConfig _statusBarConfig;
+    private StatusBarConfig _statusBarConfig = new StatusBarConfig();
     private PublicLinkConfig _publicLinkConfig;
     private List<String> _moveConfirmWorkspaces;
 

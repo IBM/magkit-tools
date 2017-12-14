@@ -77,12 +77,7 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
     }
 
     private void bindHandlers() {
-        _eventBus.addHandler(SelectionChangedEvent.class, new SelectionChangedEvent.Handler() {
-            @Override
-            public void onSelectionChanged(SelectionChangedEvent event) {
-                setSelectedItems(event.getItemIds());
-            }
-        });
+        _eventBus.addHandler(SelectionChangedEvent.class, event -> setSelectedItems(event.getItemIds()));
     }
 
     public StatusBarView start(EventBus eventBus, ContentPresenter activeContentPresenter) {
@@ -131,13 +126,18 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
             _selectionLabel.setValue(selectionLabel);
             _selectionLabel.setDescription(selectionLabel);
 
-            if (showUuid() && itemId instanceof JcrNodeItemId) {
-                LOGGER.debug("Show UUID in right side of status bar.");
+            if (itemId instanceof JcrNodeItemId) {
                 final String identifier = ((JcrNodeItemId) itemId).getUuid();
-                _rightLabel.setValue(identifier);
-                _rightLabel.setDescription(identifier);
 
-                handleLinkToPublic(identifier);
+                if (showUuid()) {
+                    LOGGER.debug("Show UUID in right side of status bar.");
+                    _rightLabel.setValue(identifier);
+                    _rightLabel.setDescription(identifier);
+                }
+
+                if (isWebsiteWorkspace()) {
+                    handleLinkToPublic(identifier);
+                }
             }
         } else {
             String selected = _i18n.translate("ui-contentapp.statusbar.selected", totalSelectedValue);
@@ -182,6 +182,10 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
 
     private boolean isDamWorkspace() {
         return DamConstants.WORKSPACE.equals(getCurrentWorkspace());
+    }
+
+    private boolean isWebsiteWorkspace() {
+        return WEBSITE.equals(getCurrentWorkspace());
     }
 
     private boolean showUuid() {
