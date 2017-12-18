@@ -1,12 +1,12 @@
 package com.aperto.magnolia.edittools.action;
 
 import com.aperto.magnolia.edittools.setup.EditToolsModule;
-import com.vaadin.event.DataBoundTransferable;
 import com.vaadin.event.Transferable;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.shared.ui.dd.VerticalDropLocation;
-import com.vaadin.ui.AbstractSelect;
-import com.vaadin.ui.TreeTable;
+import com.vaadin.v7.event.DataBoundTransferable;
+import com.vaadin.v7.ui.AbstractSelect;
+import com.vaadin.v7.ui.TreeTable;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.api.context.UiContext;
 import info.magnolia.ui.api.overlay.ConfirmationCallback;
@@ -21,6 +21,7 @@ import info.magnolia.ui.workbench.tree.drop.TreeViewDropHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -46,6 +47,7 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
     private SimpleTranslator _i18n;
     private Provider<EditToolsModule> _moduleProvider;
 
+    @Inject
     public ConfirmTreeViewDropHandler(TreeTable tree, DropConstraint constraint, UiContext uiContext, SimpleTranslator i18n, Provider<EditToolsModule> moduleProvider) {
         super(tree, constraint);
         _tree = tree;
