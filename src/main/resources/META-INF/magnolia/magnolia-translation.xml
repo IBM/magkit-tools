@@ -18,6 +18,10 @@
             <name>i18n</name>
             <version>5.4/*</version>
         </dependency>
+        <dependency>
+            <name>ui-admincentral</name>
+            <version>5.4/*</version>
+        </dependency>
     </dependencies>
     <repositories>
         <repository>
