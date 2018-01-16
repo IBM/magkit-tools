@@ -47,10 +47,10 @@ public class IsElementEditableRule extends AbstractElementAvailabilityRule<Abstr
         } else if (isValidElement(element)) {
             try {
                 Node pageNode = SessionUtil.getNode(element.getWorkspace(), element.getPath());
-                if (!isNodeType(pageNode, NodeTypes.Page.NAME)) {
-                    pageNode = getNearestAncestorOfType(pageNode, NodeTypes.Page.NAME);
-                }
                 if (pageNode != null) {
+                    if (!isNodeType(pageNode, NodeTypes.Page.NAME)) {
+                        pageNode = getNearestAncestorOfType(pageNode, NodeTypes.Page.NAME);
+                    }
                     DefinitionProvider<TemplateDefinition> templateDefinition = _templateDefinitionRegistry.getProvider(NodeUtils.getTemplate(pageNode));
                     result = templateDefinition.get().getDialog() != null && (templateDefinition.get().getEditable() == null || templateDefinition.get().getEditable());
                 }
