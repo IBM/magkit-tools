@@ -7,22 +7,22 @@
         <artifactId>mgnl-pom</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.1.0-SNAPSHOT</version>
     <name>Magnolia Translation Module</name>
-    <description>App to manage translations for various languages form different properties files.</description>
+    <description>App to manage translations for various languages from different properties files.</description>
     <artifactId>magnolia-translation</artifactId>
     <packaging>jar</packaging>
 
     <properties>
-        <magnolia.version>5.4.8</magnolia.version>
-        <aperto.magkit.version>3.2.0</aperto.magkit.version>
-
-        <!-- Aperto Mgnl-Pom properties override -->
-        <source.javaversion>1.7</source.javaversion>
-        <target.javaversion>1.7</target.javaversion>
+        <magnolia.version>5.6</magnolia.version>
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>info.magnolia.ui</groupId>
+            <artifactId>magnolia-ui-admincentral</artifactId>
+            <version>${magnolia.version}</version>
+        </dependency>
         <dependency>
             <groupId>info.magnolia</groupId>
             <artifactId>magnolia-i18n</artifactId>
@@ -34,22 +34,6 @@
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
-        </dependency>
-
-        <dependency>
-            <artifactId>magkit</artifactId>
-            <groupId>com.aperto.magkit</groupId>
-            <version>${aperto.magkit.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>magnolia-module-standard-templating-kit</artifactId>
-                    <groupId>info.magnolia</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

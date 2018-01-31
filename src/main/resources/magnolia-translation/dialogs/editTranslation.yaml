@@ -1,0 +1,13 @@
+form:
+  tabs:
+    main:
+      fields:
+        key:
+          class: info.magnolia.ui.form.field.definition.TextFieldDefinition
+actions:
+  commit:
+    class: info.magnolia.ui.admincentral.dialog.action.SaveDialogActionDefinition
+    label: save changes
+  cancel:
+    class: info.magnolia.ui.admincentral.dialog.action.CancelDialogActionDefinition
+    label: cancel

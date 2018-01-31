@@ -16,11 +16,11 @@
     <dependencies>
         <dependency>
             <name>i18n</name>
-            <version>5.4/*</version>
+            <version>${magnolia.version}/*</version>
         </dependency>
         <dependency>
             <name>ui-admincentral</name>
-            <version>5.4/*</version>
+            <version>${magnolia.version}/*</version>
         </dependency>
     </dependencies>
     <repositories>

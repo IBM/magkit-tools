@@ -14,7 +14,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
-import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 
 /**
  * Action for opening the translation edit dialog.
@@ -34,7 +33,7 @@ public class OpenEditTranslationDialogAction<D extends ConfiguredActionDefinitio
 
     @Override
     public void execute() throws ActionExecutionException {
-        FormDialogDefinition dialogDefinition = getDialogDefinition(WS_TRANSLATION, PREFIX_NAME);
+        FormDialogDefinition dialogDefinition = getDialogDefinition(PREFIX_NAME);
         startPresenter(_itemToEdit, dialogDefinition);
     }
 }

@@ -1,0 +1,140 @@
+appClass: info.magnolia.ui.contentapp.ContentApp
+class: info.magnolia.ui.contentapp.ConfiguredContentAppDescriptor
+icon: icon-message
+subApps:
+  browser:
+    class: info.magnolia.ui.contentapp.browser.BrowserSubAppDescriptor
+    subAppClass: info.magnolia.ui.contentapp.browser.BrowserSubApp
+    actions:
+      addTranslation:
+        class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+        icon: icon-add-item
+        implementationClass: com.aperto.magnolia.translation.OpenAddTranslationDialogAction
+        availability:
+          root: true
+          nodeTypes:
+            folder: mgnl:folder
+          rules:
+            - name: IsNotDeletedRule
+              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
+      editTranslation:
+        class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+        icon: icon-edit
+        implementationClass: com.aperto.magnolia.translation.OpenEditTranslationDialogAction
+        availability:
+          rules:
+            - name: IsNotDeletedRule
+              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
+      activate:
+        catalog: versioned
+        class: info.magnolia.ui.framework.action.ActivationActionDefinition
+        command: activate
+        icon: icon-publish
+        availability:
+          rules:
+            - name: IsNotDeletedRule
+              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
+      deactivate:
+        catalog: versioned
+        class: info.magnolia.ui.framework.action.ActivationActionDefinition
+        command: deactivate
+        icon: icon-unpublish
+        availability:
+          rules:
+            - name: IsNotDeletedRule
+              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
+      exportTranslation:
+        class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+        icon: icon-export
+        implementationClass: com.aperto.magnolia.translation.export.ExportTranslationAsCsvAction
+        availability:
+          root: true
+      publishAll:
+        class: info.magnolia.ui.framework.action.ActivationActionDefinition
+        command: activate
+        icon: icon-publish-incl-sub
+        implementationClass: com.aperto.magnolia.translation.PublishAllAction
+        recursive: true
+        availability:
+          nodes: false
+          root: true
+      saveItemProperty:
+        class: info.magnolia.ui.contentapp.browser.action.SaveItemPropertyActionDefinition
+        availability:
+          properties: true
+    actionbar:
+      defaultAction: editTranslation
+      sections:
+        - name: root
+          groups:
+            - name: addActions
+              items:
+                - name: addTranslation
+                - name: exportTranslation
+                - name: publishAll
+          availability:
+            nodes: false
+            root: true
+        - name: translation
+          groups:
+            - name: addActions
+              items:
+                - name: addTranslation
+            - name: editActions
+              items:
+                - name: editTranslation
+                - name: exportTranslation
+            - name: activationActions
+              items:
+                - name: activate
+                - name: deactivate
+          availability:
+            nodeTypes:
+              mgnl-translation: mgnl:translation
+    workbench:
+      dropConstraintClass: info.magnolia.ui.workbench.tree.drop.AlwaysTrueDropConstraint
+      editable: true
+      contentViews:
+        list:
+          class: com.aperto.magnolia.translation.TranslationListPresenterDefinition
+          columns:
+            key:
+              class: info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition
+              displayInChooseDialog: false
+              editable: false
+              expandRatio: 1.0
+              propertyName: key
+              sortable: true
+              width: 300
+            status:
+              class: info.magnolia.ui.workbench.column.definition.StatusColumnDefinition
+              displayInChooseDialog: false
+              expandRatio: 1
+              formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
+              width: 46
+        search:
+          class: info.magnolia.ui.workbench.search.SearchPresenterDefinition
+          columns:
+            key:
+              class: info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition
+              displayInChooseDialog: false
+              editable: false
+              expandRatio: 1.0
+              propertyName: key
+              sortable: true
+              width: 300
+            status:
+              class: info.magnolia.ui.workbench.column.definition.StatusColumnDefinition
+              displayInChooseDialog: false
+              expandRatio: 1
+              formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
+              width: 46
+    contentConnector:
+      defaultOrder: jcrName
+      includeProperties: false
+      rootPath: /
+      workspace: translation
+      nodeTypes:
+        translation:
+          icon: icon-message
+          name: mgnl:translation
