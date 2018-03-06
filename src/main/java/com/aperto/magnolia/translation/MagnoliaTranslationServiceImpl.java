@@ -58,13 +58,13 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
             try {
                 // MGKT-466: Execute translation search in system context > MgnlContext is not always set.
                 message = MgnlContext.doInSystemContext(() -> {
-                    String message1 = EMPTY;
-                    NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
-                    if (nodeIterator.hasNext()) {
-                        message1 = getString(nodeIterator.nextNode(), Translation.PREFIX_NAME + language, message1);
-                    }
-                    return message1;
-                });
+                        String message1 = EMPTY;
+                        NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
+                        if (nodeIterator.hasNext()) {
+                            message1 = getString(nodeIterator.nextNode(), Translation.PREFIX_NAME + language, message1);
+                        }
+                        return message1;
+                    });
             } catch (RepositoryException e) {
                 LOGGER.error("Error on querying translation node for query {}.", statement, e);
             }
