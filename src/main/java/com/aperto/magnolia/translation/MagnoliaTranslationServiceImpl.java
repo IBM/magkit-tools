@@ -2,18 +2,14 @@ package com.aperto.magnolia.translation;
 
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import info.magnolia.context.MgnlContext;
-import info.magnolia.event.EventBus;
 import info.magnolia.i18nsystem.DefaultMessageBundlesLoader;
 import info.magnolia.i18nsystem.LocaleProvider;
 import info.magnolia.i18nsystem.TranslationServiceImpl;
 import info.magnolia.i18nsystem.module.I18nModule;
-import info.magnolia.objectfactory.ComponentProvider;
-import info.magnolia.resourceloader.ResourceOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 import javax.jcr.NodeIterator;
