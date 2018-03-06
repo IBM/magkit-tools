@@ -1,7 +1,9 @@
 package com.aperto.magnolia.translation;
 
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
+import info.magnolia.context.MgnlContext;
 import info.magnolia.event.EventBus;
+import info.magnolia.i18nsystem.DefaultMessageBundlesLoader;
 import info.magnolia.i18nsystem.LocaleProvider;
 import info.magnolia.i18nsystem.TranslationServiceImpl;
 import info.magnolia.i18nsystem.module.I18nModule;
@@ -35,6 +37,12 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
     private static final String QUERY_STATEMENT = "select * from [%s] where key = '%s'";
 
     @Inject
+    public MagnoliaTranslationServiceImpl(Provider<I18nModule> i18nModuleProvider, Provider<DefaultMessageBundlesLoader> defaultMessageBundlesLoaderProvider) {
+        super(i18nModuleProvider, defaultMessageBundlesLoaderProvider);
+    }
+
+    @Deprecated
+    @Inject
     public MagnoliaTranslationServiceImpl(Provider<I18nModule> i18nModuleProvider, ComponentProvider componentProvider, final ResourceOrigin resourceOrigin, @Named("system") EventBus systemEventBus) {
         super(i18nModuleProvider, componentProvider, resourceOrigin, systemEventBus);
     }
@@ -58,10 +66,15 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         if (!key.contains("'")) {
             String statement = String.format(QUERY_STATEMENT, Translation.NAME, key);
             try {
-                NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
-                if (nodeIterator.hasNext()) {
-                    message = getString(nodeIterator.nextNode(), Translation.PREFIX_NAME + language, message);
-                }
+                // MGKT-466: Execute translation search in system context > MgnlContext is not always set.
+                message = MgnlContext.doInSystemContext(() -> {
+                    String message1 = EMPTY;
+                    NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
+                    if (nodeIterator.hasNext()) {
+                        message1 = getString(nodeIterator.nextNode(), Translation.PREFIX_NAME + language, message1);
+                    }
+                    return message1;
+                });
             } catch (RepositoryException e) {
                 LOGGER.error("Error on querying translation node for query {}.", statement, e);
             }
