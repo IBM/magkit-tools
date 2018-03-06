@@ -41,12 +41,6 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         super(i18nModuleProvider, defaultMessageBundlesLoaderProvider);
     }
 
-    @Deprecated
-    @Inject
-    public MagnoliaTranslationServiceImpl(Provider<I18nModule> i18nModuleProvider, ComponentProvider componentProvider, final ResourceOrigin resourceOrigin, @Named("system") EventBus systemEventBus) {
-        super(i18nModuleProvider, componentProvider, resourceOrigin, systemEventBus);
-    }
-
     @Override
     public String translate(LocaleProvider localeProvider, String basename, String[] keys) {
         String message = super.translate(localeProvider, basename, keys);
