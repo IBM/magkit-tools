@@ -72,7 +72,7 @@ public class AddTranslationTask extends AbstractTask {
         NodeNameHelper nodeNameHelper = Components.getComponent(NodeNameHelper.class);
         String prefixPath = "/";
         if (isNotBlank(_basePath)) {
-            prefixPath = prefixPath + _basePath + prefixPath;
+            prefixPath = _basePath + prefixPath;
         }
 
         for (String key : bundle.keySet()) {
