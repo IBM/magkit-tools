@@ -4,6 +4,7 @@ import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.AbstractTask;
 import info.magnolia.module.delta.TaskExecutionException;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -15,6 +16,7 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATIO
 import static info.magnolia.cms.core.Path.getValidatedLabel;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static info.magnolia.jcr.util.PropertyUtil.setProperty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.join;
@@ -29,11 +31,22 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 public class AddTranslationsToAppTask extends AbstractTask {
     private final String _baseName;
     private final String[] _languages;
+    private final String _basePath;
 
     public AddTranslationsToAppTask(String baseName, String... languages) {
-        super("Add translations for " + baseName, "Add translations for " + baseName + " in languages " + join(languages, ", "));
+        this("Add translations for " + baseName,
+            "Add translations for " + baseName + " in languages " + join(languages, ", "),
+            baseName,
+            EMPTY,
+            languages
+        );
+    }
+
+    public AddTranslationsToAppTask(String name, String description, String baseName, String basePath, String... languages) {
+        super(name, description);
         _baseName = baseName;
         _languages = languages;
+        _basePath = StringUtils.defaultString(basePath) + "/";
     }
 
     @Override
@@ -45,8 +58,8 @@ public class AddTranslationsToAppTask extends AbstractTask {
                     ResourceBundle bundle = ResourceBundle.getBundle(_baseName, new Locale(language));
                     for (String key : bundle.keySet()) {
                         String keyNodeName = getValidatedLabel(key);
-                        if (session.itemExists("/" + keyNodeName)) {
-                            Node translationNode = session.getNode("/" + keyNodeName);
+                        if (session.itemExists(_basePath + keyNodeName)) {
+                            Node translationNode = session.getNode(_basePath + keyNodeName);
                             String currentTranslation = getString(translationNode, Translation.PREFIX_NAME + language, "");
                             if (isNotEmpty(currentTranslation)) {
                                 installContext.info("Translation already set, skip " + keyNodeName + " ...");
