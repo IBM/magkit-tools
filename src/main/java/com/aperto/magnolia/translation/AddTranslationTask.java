@@ -73,7 +73,7 @@ public class AddTranslationTask extends AbstractTask {
             task.addTask(
                 new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, _basePath + keyNodeName, null,
                     new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
-                        addNode(keyNodeName, Translation.NAME).then(
+                        addNode(_basePath + keyNodeName, Translation.NAME).then(
                             addProperty(Translation.PN_KEY, (Object) key),
                             addProperty(Translation.PREFIX_NAME + _locale.getLanguage(), (Object) bundle.getString(key))
                         )
