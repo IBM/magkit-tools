@@ -14,7 +14,7 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.defaultString;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 import static info.magnolia.jcr.nodebuilder.Ops.addNode;
 import static info.magnolia.jcr.nodebuilder.Ops.addProperty;
@@ -42,10 +42,7 @@ public class AddTranslationTask extends AbstractTask {
      */
     @SuppressWarnings("unused")
     public AddTranslationTask(String taskName, String taskDescription, String baseName, Locale locale) {
-        super(taskName, taskDescription);
-        _baseName = baseName;
-        _locale = locale;
-        _basePath = EMPTY;
+        this(taskName, taskDescription, baseName, locale, EMPTY);
     }
 
     /**
@@ -55,14 +52,14 @@ public class AddTranslationTask extends AbstractTask {
      * @param taskDescription task description
      * @param baseName        bundle base name
      * @param locale          locale
-     * @param basePath        base path
+     * @param basePath        base path, may be null or empty or start with "/"
      */
     @SuppressWarnings("unused")
     public AddTranslationTask(String taskName, String taskDescription, String baseName, Locale locale, String basePath) {
         super(taskName, taskDescription);
         _baseName = baseName;
         _locale = locale;
-        _basePath = basePath;
+        _basePath = defaultString(basePath) + "/";
     }
 
     @Override
@@ -70,15 +67,11 @@ public class AddTranslationTask extends AbstractTask {
         ArrayDelegateTask task = new ArrayDelegateTask("Add translation key tasks");
         ResourceBundle bundle = ResourceBundle.getBundle(_baseName, _locale);
         NodeNameHelper nodeNameHelper = Components.getComponent(NodeNameHelper.class);
-        String prefixPath = "/";
-        if (isNotBlank(_basePath)) {
-            prefixPath = _basePath + prefixPath;
-        }
 
         for (String key : bundle.keySet()) {
             String keyNodeName = nodeNameHelper.getValidatedName(key);
             task.addTask(
-                new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, prefixPath + keyNodeName, null,
+                new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, _basePath + keyNodeName, null,
                     new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
                         addNode(keyNodeName, Translation.NAME).then(
                             addProperty(Translation.PN_KEY, (Object) key),
