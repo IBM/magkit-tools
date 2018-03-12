@@ -113,7 +113,7 @@ subApps:
               formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
               width: 46
         search:
-          class: info.magnolia.ui.workbench.search.SearchPresenterDefinition
+          class: com.aperto.magnolia.translation.TranslationSearchPresenterDefinition
           columns:
             key:
               class: info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition
