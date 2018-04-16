@@ -2,6 +2,7 @@ package com.aperto.magnolia.edittools.setup;
 
 import com.aperto.magkit.module.BootstrapModuleVersionHandler;
 import com.aperto.magnolia.edittools.action.EditPageActionDefinition;
+import com.aperto.magnolia.edittools.action.OpenPagePropertiesAction;
 import com.aperto.magnolia.edittools.action.OpenPreviewNewWindowAction;
 import com.aperto.magnolia.edittools.action.OpenTreeOnCurrentPositionAction;
 import com.aperto.magnolia.edittools.rule.IsElementEditableRule;
@@ -13,6 +14,7 @@ import info.magnolia.module.delta.Task;
 import info.magnolia.module.model.Version;
 import info.magnolia.pages.app.action.DuplicatePageComponentActionDefinition;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
+import info.magnolia.ui.framework.action.OpenEditDialogActionDefinition;
 import info.magnolia.ui.framework.availability.IsNotDeletedRule;
 import info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition;
 
@@ -61,11 +63,12 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private static final String ACTION_EDIT_PAGE_PROPERTIES = "editProperties";
     private static final String SECTION_PAGE_NODE_AREA_ACTIONS = "pageNodeAreaActions";
     private static final String ACTION_JUMP_CMP = "jumpToBrowser";
+    private static final String NN_ACTIONS = "actions";
 
     private final Task _addExternalPreviewActionToBrowserSubApp = selectModuleConfig("Add external preview action", "Add external preview action in pages app.", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
             getNode("browser").then(
-                getNode("actions").then(
+                getNode(NN_ACTIONS).then(
                     addOrGetContentNode(ACTION_PREVIEW_EXTERNAL_CMP).then(
                         addOrGetContentNode(PN_AVAILABILITY + "/rules/isNotDeleted").then(
                             addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
@@ -95,7 +98,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
     private final Task _addJumpToBrowserAction = selectModuleConfig("Add To Browser action", "Add to browser jump action in pages app.", MODULE_PAGES,
         getNode("apps/pages/subApps").then(
             getNode("detail").then(
-                getNode("actions").then(
+                getNode(NN_ACTIONS).then(
                     addOrGetContentNode(ACTION_JUMP_CMP).then(
                         addOrSetProperty(PN_ICON, "icon-view-tree"),
                         addOrSetProperty(PN_LABEL, "jumpToBrowser.label"),
@@ -105,6 +108,30 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
                 ),
                 getNode("actionbar/sections").then(
                     addToSections(addActionToEditingFlowGroup(ACTION_JUMP_CMP))
+                )
+            )
+        )
+    );
+
+    private final Task _addEditPropertiesActionToBrowser = selectModuleConfig("Add page properties action", "Add page properties action to pages browser sub app.", MODULE_PAGES,
+        getNode("apps/pages/subApps/browser").then(
+            getNode(NN_ACTIONS).then(
+                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
+                    addOrGetContentNode("availability").then(
+                        getNode("rules/IsNotDeletedRule").then(
+                            addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
+                        ),
+                        addOrSetProperty("writePermissionRequired", Boolean.TRUE)
+                    ),
+                    addOrSetProperty(PN_CLASS, OpenEditDialogActionDefinition.class.getName()),
+                    addOrSetProperty(PN_IMPL_CLASS, OpenPagePropertiesAction.class.getName()),
+                    addOrSetProperty(PN_LABEL, "pages.detail.actions.editProperties.label"),
+                    addOrSetProperty(PN_ICON, "icon-edit")
+                )
+            ),
+            getNode("actionbar/sections/pageActions/groups/editingActions/items").then(
+                addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
+                    orderBefore(ACTION_EDIT_PAGE_PROPERTIES, "editPageName")
                 )
             )
         )
@@ -245,7 +272,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         DeltaBuilder update120 = DeltaBuilder.update("1.2.0", "Update to version 1.2.0.");
         final Task removeCustomCopyPasteActions = selectModuleConfig("Remove copy action from pages app", EMPTY, MODULE_PAGES,
             getNode("apps/pages/subApps/detail").then(
-                getNode("actions").then(
+                getNode(NN_ACTIONS).then(
                     removeIfExists("copyNode"),
                     removeIfExists("pasteNode")
                 ),
@@ -260,7 +287,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         final Task removeExternalPreviewActionFromDetailSubApp = selectModuleConfig("Remove external preview action", "Remove external preview action from pages app.", MODULE_PAGES,
             getNode("apps/pages/subApps").then(
                 getNode("detail").then(
-                    getNode("actions").then(
+                    getNode(NN_ACTIONS).then(
                         removeIfExists(ACTION_PREVIEW_EXTERNAL_CMP)
                     ),
                     getNode("actionbar/sections").then(
@@ -283,6 +310,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addJumpToBrowserAction);
         tasks.add(_logoUriMapping);
         tasks.add(_workspaceMoveConfig);
+        tasks.add(_addEditPropertiesActionToBrowser);
         return tasks;
     }
 
@@ -294,6 +322,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         tasks.add(_addLastModifiedAndCreatorToListViewOfDamApp);
         tasks.add(_updateEditPagePropertyAction);
         tasks.add(_addJumpToBrowserAction);
+        tasks.add(_addEditPropertiesActionToBrowser);
         return tasks;
     }
 }
