@@ -32,13 +32,7 @@ public abstract class AbstractListPresenterDefinition extends ConfiguredContentP
 
     @Override
     public List<ColumnDefinition> getColumns() {
-        List<ColumnDefinition> oldColumns = super.getColumns();
         List<ColumnDefinition> newColumns = new ArrayList<>();
-        for (ColumnDefinition column : oldColumns) {
-            if (!column.getName().startsWith(PREFIX_NAME)) {
-                newColumns.add(column);
-            }
-        }
         for (Locale locale : _i18nContentSupport.getLocales()) {
             PropertyColumnDefinition column = new PropertyColumnDefinition();
             column.setName(PREFIX_NAME + locale.getLanguage());
@@ -49,7 +43,23 @@ public abstract class AbstractListPresenterDefinition extends ConfiguredContentP
             column.setLabel(locale.getDisplayName());
             newColumns.add(column);
         }
+
+        insertConfiguredColumns(newColumns);
         return newColumns;
+    }
+
+    private void insertConfiguredColumns(final List<ColumnDefinition> newColumns) {
+        List<ColumnDefinition> oldColumns = super.getColumns();
+        for (ColumnDefinition column : oldColumns) {
+            String columnName = column.getName();
+            if (!columnName.startsWith(PREFIX_NAME)) {
+                if ("key".equals(columnName)) {
+                    newColumns.add(0, column);
+                } else {
+                    newColumns.add(column);
+                }
+            }
+        }
     }
 
     @Inject

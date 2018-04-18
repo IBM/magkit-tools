@@ -62,6 +62,31 @@ subApps:
         class: info.magnolia.ui.contentapp.browser.action.SaveItemPropertyActionDefinition
         availability:
           properties: true
+      confirmDeletion:
+        class: info.magnolia.ui.framework.action.DeleteConfirmationActionDefinition
+        icon: icon-delete
+        successActionName: delete
+        availability:
+          nodes: true
+          multiple: true
+      delete:
+        class: info.magnolia.ui.framework.action.DeleteActionDefinition
+        asynchronous: true
+        command: delete
+      export:
+        class: info.magnolia.ui.framework.action.OpenExportDialogActionDefinition
+        dialogName: ui-admincentral:export
+        icon: icon-export
+        availability:
+          root: true
+          nodes: true
+      import:
+        class: info.magnolia.ui.framework.action.OpenCreateDialogActionDefinition
+        dialogName: ui-admincentral:import
+        icon: icon-import
+        availability:
+          root: true
+          nodes: false
     actionbar:
       defaultAction: editTranslation
       sections:
@@ -72,6 +97,8 @@ subApps:
                 - name: addTranslation
                 - name: exportTranslation
                 - name: publishAll
+                - name: import
+                - name: export
           availability:
             nodes: false
             root: true
@@ -83,7 +110,9 @@ subApps:
             - name: editActions
               items:
                 - name: editTranslation
+                - name: confirmDeletion
                 - name: exportTranslation
+                - name: export
             - name: activationActions
               items:
                 - name: activate
@@ -112,6 +141,13 @@ subApps:
               expandRatio: 1
               formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
               width: 46
+            moddate:
+              class: info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition
+              displayInChooseDialog: false
+              formatterClass: info.magnolia.ui.workbench.column.DateColumnFormatter
+              propertyName: mgnl:lastModified
+              sortable: true
+              width: 160
         search:
           class: com.aperto.magnolia.translation.TranslationSearchPresenterDefinition
           columns:
@@ -129,6 +165,13 @@ subApps:
               expandRatio: 1
               formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
               width: 46
+            moddate:
+              class: info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition
+              displayInChooseDialog: false
+              formatterClass: info.magnolia.ui.workbench.column.DateColumnFormatter
+              propertyName: mgnl:lastModified
+              sortable: true
+              width: 160
     contentConnector:
       defaultOrder: jcrName
       includeProperties: false

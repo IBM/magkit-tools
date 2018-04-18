@@ -3,12 +3,14 @@ package com.aperto.magnolia.translation;
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
+import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.AbstractTask;
 import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.NodeExistsDelegateTask;
 import info.magnolia.module.delta.TaskExecutionException;
 
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -69,13 +71,14 @@ public class AddTranslationTask extends AbstractTask {
     public void execute(InstallContext installContext) throws TaskExecutionException {
         ArrayDelegateTask task = new ArrayDelegateTask("Add translation key tasks");
         ResourceBundle bundle = ResourceBundle.getBundle(_baseName, _locale);
+        Calendar now = Calendar.getInstance();
 
         for (String key : bundle.keySet()) {
             String keyNodeName = getValidatedLabel(key);
             task.addTask(
                 new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, _basePath + keyNodeName, null,
                     new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
-                        getOp(keyNodeName, key, bundle.getString(key))
+                        getOp(keyNodeName, key, bundle.getString(key), now)
                     )
                 )
             );
@@ -83,10 +86,11 @@ public class AddTranslationTask extends AbstractTask {
         task.execute(installContext);
     }
 
-    private NodeOperation getOp(String keyNodeName, String key, String value) {
+    private NodeOperation getOp(String keyNodeName, String key, String value, final Calendar now) {
         NodeOperation addKeyNode = addNode(keyNodeName, Translation.NAME).then(
-            addProperty(Translation.PN_KEY, key),
-            addProperty(Translation.PREFIX_NAME + _locale.getLanguage(), value)
+            addProperty(Translation.PN_KEY, (Object) key),
+            addProperty(Translation.PREFIX_NAME + _locale.getLanguage(), (Object) value),
+            addProperty(NodeTypes.LastModified.LAST_MODIFIED, now)
         );
         return ROOT_PATH.equals(_basePath) ? addKeyNode : getOrAddNode(removeStart(_basePath, ROOT_PATH), Translation.NAME).then(addKeyNode);
     }
