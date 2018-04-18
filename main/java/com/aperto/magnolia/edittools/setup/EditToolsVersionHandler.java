@@ -118,7 +118,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
             getNode(NN_ACTIONS).then(
                 addOrGetContentNode(ACTION_EDIT_PAGE_PROPERTIES).then(
                     addOrGetContentNode("availability").then(
-                        getNode("rules/IsNotDeletedRule").then(
+                        addOrGetContentNode("rules/IsNotDeletedRule").then(
                             addOrSetProperty(PN_IMPL_CLASS, IsNotDeletedRule.class.getName())
                         ),
                         addOrSetProperty("writePermissionRequired", Boolean.TRUE)
