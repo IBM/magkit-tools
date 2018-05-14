@@ -2,12 +2,8 @@ package com.aperto.magnolia.edittools.action;
 
 import com.google.inject.Inject;
 import info.magnolia.jcr.util.NodeTypes;
-import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ActionExecutionException;
-import info.magnolia.ui.api.action.ConfiguredActionDefinition;
-import info.magnolia.ui.api.location.Location;
 import info.magnolia.ui.api.location.LocationController;
-import info.magnolia.ui.contentapp.browser.BrowserLocation;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,21 +20,19 @@ import static info.magnolia.jcr.util.NodeUtil.isNodeType;
  * @author frank.sommer
  * @since 15.01.16
  */
-public class OpenTreeOnCurrentPositionAction extends AbstractAction<ConfiguredActionDefinition> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenTreeOnCurrentPositionAction.class);
+public class OpenPageLocationAction extends AbstractOpenLocationAction {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenPageLocationAction.class);
 
     private final AbstractJcrNodeAdapter _nodeItemToPreview;
-    private final LocationController _locationController;
 
     @Inject
-    public OpenTreeOnCurrentPositionAction(ConfiguredActionDefinition definition, AbstractJcrNodeAdapter nodeItemToPreview, LocationController locationController) {
-        super(definition);
+    public OpenPageLocationAction(AbstractOpenLocationActionDefinition definition, AbstractJcrNodeAdapter nodeItemToPreview, LocationController locationController) {
+        super(definition, locationController);
         _nodeItemToPreview = nodeItemToPreview;
-        _locationController = locationController;
     }
 
     @Override
-    public void execute() throws ActionExecutionException {
+    protected String getNodePath() throws ActionExecutionException {
         Node pageNode = _nodeItemToPreview.getJcrItem();
         try {
             if (!isNodeType(pageNode, NodeTypes.Page.NAME)) {
@@ -48,11 +42,11 @@ public class OpenTreeOnCurrentPositionAction extends AbstractAction<ConfiguredAc
             if (pageNode == null) {
                 throw new ActionExecutionException("Not able to resolve page node from " + _nodeItemToPreview.getJcrItem().getPath());
             }
+            return pageNode.getPath();
 
-            Location location = new BrowserLocation("pages", "browser", pageNode.getPath() + ":treeview:");
-            _locationController.goTo(location);
         } catch (RepositoryException e) {
             LOGGER.error("Can't get page node for opening browser sub app", e);
+            throw new ActionExecutionException(e);
         }
     }
 }
