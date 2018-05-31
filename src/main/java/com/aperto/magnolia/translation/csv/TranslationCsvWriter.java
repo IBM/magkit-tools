@@ -1,4 +1,4 @@
-package com.aperto.magnolia.translation.export;
+package com.aperto.magnolia.translation.csv;
 
 import au.com.bytecode.opencsv.CSVWriter;
 import org.slf4j.Logger;
@@ -7,8 +7,10 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
+import static org.apache.commons.lang3.CharEncoding.UTF_8;
 
 /**
  * Create CSV file for all translations.
@@ -25,6 +28,7 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.P
 public class TranslationCsvWriter {
     private static final Logger LOGGER = LoggerFactory.getLogger(TranslationCsvWriter.class);
     private static final String FILE_EXTENSION = ".csv";
+    protected static final String COLUMN_KEY = "Key";
 
     private final File _file;
     private final File _path;
@@ -45,7 +49,7 @@ public class TranslationCsvWriter {
     public void writeCsv() {
         List<String[]> entries = new ArrayList<>();
         List<String> headerLine = new ArrayList<>();
-        headerLine.add("Key");
+        headerLine.add(COLUMN_KEY);
         for (Locale locale : _locales) {
             headerLine.add(locale.getDisplayName());
         }
@@ -60,7 +64,7 @@ public class TranslationCsvWriter {
         }
 
         try (
-            FileWriter fileWriter = new FileWriter(getFile());
+            Writer fileWriter = new OutputStreamWriter(new FileOutputStream(getFile()), UTF_8);
             CSVWriter writer = new CSVWriter(fileWriter)
         ) {
             writer.writeAll(entries);

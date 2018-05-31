@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PN_KEY;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static java.lang.Boolean.TRUE;
 
@@ -53,7 +54,7 @@ public abstract class AbstractListPresenterDefinition extends ConfiguredContentP
         for (ColumnDefinition column : oldColumns) {
             String columnName = column.getName();
             if (!columnName.startsWith(PREFIX_NAME)) {
-                if ("key".equals(columnName)) {
+                if (PN_KEY.equals(columnName)) {
                     newColumns.add(0, column);
                 } else {
                     newColumns.add(column);

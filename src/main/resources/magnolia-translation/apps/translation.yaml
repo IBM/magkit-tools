@@ -46,10 +46,16 @@ subApps:
       exportTranslation:
         class: info.magnolia.ui.api.action.ConfiguredActionDefinition
         icon: icon-export
-        implementationClass: com.aperto.magnolia.translation.export.ExportTranslationAsCsvAction
+        implementationClass: com.aperto.magnolia.translation.csv.ExportTranslationAsCsvAction
         availability:
           root: true
           multiple: true
+      importTranslation:
+        class: info.magnolia.ui.framework.action.OpenCreateDialogActionDefinition
+        icon: icon-import
+        dialogName: magnolia-translation:import
+        availability:
+          root: true
       publishAll:
         class: info.magnolia.ui.framework.action.ActivationActionDefinition
         command: activate
@@ -97,6 +103,7 @@ subApps:
               items:
                 - name: addTranslation
                 - name: exportTranslation
+                - name: importTranslation
                 - name: publishAll
                 - name: import
                 - name: export

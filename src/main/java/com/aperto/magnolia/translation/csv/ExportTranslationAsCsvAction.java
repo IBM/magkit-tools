@@ -1,4 +1,4 @@
-package com.aperto.magnolia.translation.export;
+package com.aperto.magnolia.translation.csv;
 
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import com.vaadin.server.Page;

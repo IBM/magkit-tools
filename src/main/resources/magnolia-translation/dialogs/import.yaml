@@ -1,0 +1,15 @@
+form:
+  tabs:
+    import:
+      fields:
+        name:
+          allowedMimeTypePattern: text/csv|application/csv|application/vnd.ms-excel
+          binaryNodeName: importCsv
+          class: info.magnolia.ui.form.field.definition.BasicUploadFieldDefinition
+          required: true
+actions:
+  commit:
+    class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+    implementationClass: com.aperto.magnolia.translation.csv.ImportCsvAction
+  cancel:
+    class: info.magnolia.ui.dialog.action.CancelDialogActionDefinition
