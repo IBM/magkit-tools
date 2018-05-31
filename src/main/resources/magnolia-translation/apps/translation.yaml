@@ -49,6 +49,7 @@ subApps:
         implementationClass: com.aperto.magnolia.translation.export.ExportTranslationAsCsvAction
         availability:
           root: true
+          multiple: true
       publishAll:
         class: info.magnolia.ui.framework.action.ActivationActionDefinition
         command: activate
