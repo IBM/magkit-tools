@@ -2,7 +2,7 @@ package com.aperto.magnolia.translation.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.aperto.magnolia.translation.TranslationNodeTypes;
-import com.vaadin.data.Item;
+import com.vaadin.v7.data.Item;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.event.EventBus;
