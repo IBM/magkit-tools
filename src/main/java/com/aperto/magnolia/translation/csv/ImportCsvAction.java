@@ -3,6 +3,7 @@ package com.aperto.magnolia.translation.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import com.aperto.magnolia.translation.TranslationNodeTypes;
 import com.vaadin.v7.data.Item;
+import com.vaadin.v7.data.Property;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.event.EventBus;
@@ -42,6 +43,7 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATIO
 import static info.magnolia.cms.core.Path.getValidatedLabel;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -88,7 +90,7 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
 
     private void doCsvImport(final String basePath, final AbstractJcrNodeAdapter importXml) {
         try (InputStream inputStream = ((BinaryImpl) importXml.getItemProperty("jcr:data").getValue()).getStream()) {
-            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, UTF_8));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8)), getPropertyValue("separator", ",").charAt(0));
             List<String[]> lines = csvReader.readAll();
             if (CollectionUtils.isNotEmpty(lines)) {
                 Map<Integer, String> indexedPropertyNames = detectColumns(lines.get(0));
@@ -99,6 +101,15 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
         } catch (RepositoryException | IOException e) {
             LOGGER.error("Error importing csv data.", e);
         }
+    }
+
+    private String getPropertyValue(final String propertyId, final String defaultValue) {
+        String encoding = defaultValue;
+        Property encProperty = _item.getItemProperty(propertyId);
+        if (encProperty != null) {
+            encoding = defaultIfEmpty((String) encProperty.getValue(), defaultValue);
+        }
+        return encoding;
     }
 
     private void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
