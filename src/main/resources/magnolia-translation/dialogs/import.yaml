@@ -11,18 +11,18 @@ form:
           class: info.magnolia.ui.form.field.definition.SelectFieldDefinition
           options:
             - name: utf8
-              value: UTF-8
+              value: "UTF-8"
               selected: true
             - name: ansi
-              value: ISO-8859-1
+              value: "ISO-8859-1"
         - name: separator
           class: info.magnolia.ui.form.field.definition.SelectFieldDefinition
           options:
             - name: komma
-              value: ,
+              value: ","
               selected: true
             - name: semicolon
-              value: ;
+              value: ";"
 actions:
   commit:
     class: info.magnolia.ui.api.action.ConfiguredActionDefinition
