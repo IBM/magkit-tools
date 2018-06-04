@@ -16,8 +16,8 @@ import info.magnolia.ui.api.event.AdmincentralEventBus;
 import info.magnolia.ui.api.event.ContentChangedEvent;
 import info.magnolia.ui.form.EditorCallback;
 import info.magnolia.ui.form.EditorValidator;
+import info.magnolia.ui.vaadin.integration.contentconnector.ContentConnector;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
-import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.jackrabbit.value.BinaryImpl;
 import org.slf4j.Logger;
@@ -60,14 +60,16 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
     private final EditorCallback _callback;
     private final EventBus _eventBus;
     private final Collection<Locale> _locales;
+    private final ContentConnector _contentConnector;
 
     @Inject
-    public ImportCsvAction(final ConfiguredActionDefinition definition, final Item item, final EditorValidator validator, final EditorCallback callback, @Named(AdmincentralEventBus.NAME) final EventBus eventBus, final I18nContentSupport i18nContentSupport) {
+    public ImportCsvAction(final ConfiguredActionDefinition definition, final Item item, final EditorValidator validator, final EditorCallback callback, @Named(AdmincentralEventBus.NAME) final EventBus eventBus, final ContentConnector contentConnector, final I18nContentSupport i18nContentSupport) {
         super(definition);
         _item = item;
         _validator = validator;
         _callback = callback;
         _eventBus = eventBus;
+        _contentConnector = contentConnector;
         _locales = i18nContentSupport.getLocales();
     }
 
@@ -82,7 +84,7 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             }
 
             _callback.onSuccess(getDefinition().getName());
-            _eventBus.fireEvent(new ContentChangedEvent(((JcrNodeAdapter) _item).getItemId()));
+            _eventBus.fireEvent(new ContentChangedEvent(_contentConnector.getDefaultItemId()));
         } else {
             LOGGER.info("Validation error(s) occurred. No Import performed.");
         }
