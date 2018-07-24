@@ -21,7 +21,6 @@ import info.magnolia.ui.workbench.tree.drop.TreeViewDropHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -47,7 +46,9 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
     private SimpleTranslator _i18n;
     private Provider<EditToolsModule> _moduleProvider;
 
-    @Inject
+    /**
+     * Constructor used for drag'n'drop.
+     */
     public ConfirmTreeViewDropHandler(TreeTable tree, DropConstraint constraint, UiContext uiContext, SimpleTranslator i18n, Provider<EditToolsModule> moduleProvider) {
         super(tree, constraint);
         _tree = tree;
@@ -57,6 +58,9 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
         _moduleProvider = moduleProvider;
     }
 
+    /**
+     * Constructor used for move dialog.
+     */
     public ConfirmTreeViewDropHandler() {
         super();
     }
