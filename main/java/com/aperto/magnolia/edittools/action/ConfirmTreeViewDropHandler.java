@@ -121,6 +121,14 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
 
     private void moveItems(final DragAndDropEvent dropEvent, final Object targetItemId, final VerticalDropLocation location) {
         Collection<Object> itemIdsToMove = getItemIdsToMove(dropEvent);
+        moveAllNodes(itemIdsToMove, targetItemId, location);
+    }
+
+    /**
+     * Iterates over all item ids to move the corresponding jcr nodes.
+     * Override if you want to do sth. more.
+     */
+    protected void moveAllNodes(final Collection<Object> itemIdsToMove, final Object targetItemId, final VerticalDropLocation location) {
         for (Object sourceItemId : itemIdsToMove) {
             moveNode(sourceItemId, targetItemId, location);
         }
