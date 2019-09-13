@@ -3,6 +3,7 @@
     <name>${project.artifactId}</name>
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
+    <class>com.aperto.magnolia.translation.setup.TranslationModule</class>
     <versionHandler>com.aperto.magnolia.translation.setup.ModuleVersionHandler</versionHandler>
     <version>${project.version}</version>
     <components>

@@ -2,11 +2,13 @@ package com.aperto.magnolia.translation.csv;
 
 import au.com.bytecode.opencsv.CSVReader;
 import com.aperto.magnolia.translation.TranslationNodeTypes;
+import com.aperto.magnolia.translation.setup.TranslationModule;
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.data.Property;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.event.EventBus;
+import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.jcr.util.PropertyUtil;
 import info.magnolia.ui.api.action.AbstractAction;
@@ -19,6 +21,7 @@ import info.magnolia.ui.form.EditorValidator;
 import info.magnolia.ui.vaadin.integration.contentconnector.ContentConnector;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.value.BinaryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +43,12 @@ import java.util.TreeMap;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PN_KEY;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static info.magnolia.cms.core.Path.getValidatedLabel;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static info.magnolia.objectfactory.Components.getComponent;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Translation import csv action.
@@ -80,7 +84,12 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             AbstractJcrNodeAdapter item = (AbstractJcrNodeAdapter) _item;
             AbstractJcrNodeAdapter importXml = item.getChild("importCsv");
             if (importXml != null) {
-                doCsvImport(getPathIfPossible(item.getJcrItem()), importXml);
+                String path = getPathIfPossible(item.getJcrItem());
+                final TranslationModule module = getComponent(TranslationModule.class);
+                if (StringUtils.equals(path, "/") && isNotBlank(module.getBasePath())) {
+                    path = module.getBasePath();
+                }
+                doCsvImport(path, importXml);
             }
 
             _callback.onSuccess(getDefinition().getName());
@@ -92,7 +101,7 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
 
     private void doCsvImport(final String basePath, final AbstractJcrNodeAdapter importXml) {
         try (InputStream inputStream = ((BinaryImpl) importXml.getItemProperty("jcr:data").getValue()).getStream()) {
-            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8)), getPropertyValue("separator", ",").charAt(0));
+            CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8.name())), getPropertyValue("separator", ",").charAt(0));
             List<String[]> lines = csvReader.readAll();
             if (CollectionUtils.isNotEmpty(lines)) {
                 Map<Integer, String> indexedPropertyNames = detectColumns(lines.get(0));
@@ -126,7 +135,7 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             for (int i = 1; i < lines.size(); i++) {
                 String[] values = lines.get(i);
                 String key = values[0];
-                String keyNodeName = getValidatedLabel(key);
+                String keyNodeName = getComponent(NodeNameHelper.class).getValidatedName(key);
 
                 Node t9nNode;
                 if (!baseNode.hasNode(keyNodeName)) {
