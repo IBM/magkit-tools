@@ -33,6 +33,7 @@ import static info.magnolia.jcr.util.NodeUtil.asIterable;
 import static info.magnolia.jcr.util.NodeUtil.asList;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Create CSV file for all translations or selected elements.
@@ -80,9 +81,10 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
                 String propertyName = PREFIX_NAME + locale.getLanguage();
                 translationProperties.put(propertyName, getString(t9nNode, propertyName));
             }
-            entries.put(getString(t9nNode, Translation.PN_KEY), translationProperties);
+            if (isNotBlank(getString(t9nNode, Translation.PN_KEY))) {
+                entries.put(getString(t9nNode, Translation.PN_KEY), translationProperties);
+            }
         }
-
         _entries = entries;
     }
 
