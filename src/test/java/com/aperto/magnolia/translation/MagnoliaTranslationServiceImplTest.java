@@ -1,15 +1,16 @@
 package com.aperto.magnolia.translation;
 
 import com.aperto.magkit.mockito.ComponentsMockUtils;
-import com.google.common.collect.ImmutableMap;
 import info.magnolia.cms.i18n.MessagesManager;
 import info.magnolia.i18nsystem.DefaultMessageBundlesLoader;
 import info.magnolia.i18nsystem.FixedLocaleProvider;
+import info.magnolia.i18nsystem.util.MessageFormatterUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.inject.Provider;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,14 +38,21 @@ public class MagnoliaTranslationServiceImplTest {
         MessagesManager messagesManager = ComponentsMockUtils.mockComponentInstance(MessagesManager.class);
         when(messagesManager.getDefaultLocale()).thenReturn(Locale.ENGLISH);
 
-        Provider messageProvider = mock(Provider.class);
+        Provider<DefaultMessageBundlesLoader> messageProvider = mock(Provider.class);
         DefaultMessageBundlesLoader messageBundlesLoader = mock(DefaultMessageBundlesLoader.class);
         when(messageProvider.get()).thenReturn(messageBundlesLoader);
 
         _translationService = new MagnoliaTranslationServiceImpl(null, messageProvider) {
             @Override
             String doMessageQuery(final String key, final String i18nProperty) {
-                Map<String, String> messagesFromApp = ImmutableMap.of("invalid'key", "---", "empty.key", "", "blank.key", " ", "existing.key", "valueFromApp");
+                Map<String, String> messagesFromApp = new HashMap<>();
+                messagesFromApp.put("invalid'key", "---");
+                messagesFromApp.put("empty.key", "");
+                messagesFromApp.put("blank.key", " ");
+                messagesFromApp.put("existing.key", "valueFromApp");
+                messagesFromApp.put("quote.key", "key'without");
+                messagesFromApp.put("placeholder.key", "key'with {0}");
+                messagesFromApp.put("escaped.key", "key''with {0}");
                 return messagesFromApp.get(key);
             }
         };
@@ -88,6 +96,22 @@ public class MagnoliaTranslationServiceImplTest {
     @Test
     public void existingKey() {
         assertThat(_translationService.translate(_localeProvider, "", new String[]{"existing.key"}), equalTo("valueFromApp"));
+    }
+
+    /**
+     * Values with single quote with placeholder and without.
+     */
+    @Test
+    public void replacementEscaping() {
+        assertThat(_translationService.translate(_localeProvider, "", new String[]{"quote.key"}), equalTo("key'without"));
+
+        String placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"placeholder.key"});
+        assertThat(placeholderValue, equalTo("key''with {0}"));
+        assertThat(MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"), equalTo("key'with replacement"));
+
+        placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"escaped.key"});
+        assertThat(placeholderValue, equalTo("key''with {0}"));
+        assertThat(MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"), equalTo("key'with replacement"));
     }
 
     @After

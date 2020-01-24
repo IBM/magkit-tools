@@ -21,6 +21,7 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATIO
 import static info.magnolia.cms.util.QueryUtil.search;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.contains;
 
 /**
  * Translation service for templates.
@@ -41,9 +42,17 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
 
     @Override
     public String translate(LocaleProvider localeProvider, String basename, String[] keys) {
-        // Performance: Query message properties only if needed - no acceptable message in App.
         String message = getAppMessage(localeProvider, keys);
+        message = escapeSingleQuotesIfPlaceholderMessage(message);
         return MESSAGE_CONDITION.test(message) ? message : super.translate(localeProvider, basename, keys);
+    }
+
+    private String escapeSingleQuotesIfPlaceholderMessage(final String message) {
+        String escapedMessage = message;
+        if (contains(escapedMessage, "'") && !contains(escapedMessage, "''") && escapedMessage.matches(".*\\{[0-9]}.*")) {
+            escapedMessage = escapedMessage.replace("'", "''");
+        }
+        return escapedMessage;
     }
 
     private String getAppMessage(LocaleProvider localeProvider, String[] keys) {
