@@ -7,6 +7,7 @@ import info.magnolia.context.MgnlContext;
 import info.magnolia.event.EventBus;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.jcr.util.NodeUtil;
+import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.framework.action.ActivationAction;
 import info.magnolia.ui.framework.action.ActivationActionDefinition;
@@ -23,15 +24,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static info.magnolia.objectfactory.Components.getComponent;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Get parent translation folder node and activate all sub nodes recursive.
  *
  * @author Janine.Naumann
  */
-public class PublishAllAction extends ActivationAction {
+public class PublishAllAction extends ActivationAction<ActivationActionDefinition> {
     private static final Logger LOGGER = LoggerFactory.getLogger(PublishAllAction.class);
 
     @Inject
@@ -41,23 +42,29 @@ public class PublishAllAction extends ActivationAction {
 
     @Override
     protected List<JcrItemAdapter> getSortedItems(final Comparator comparator) {
-        List<JcrItemAdapter> sortedItems = super.getSortedItems(comparator);
+        List<JcrItemAdapter> sortedItems = new ArrayList<>();
+
+        String path = getBasePath();
         try {
-            String path = "/";
-            final TranslationModule module = getComponent(TranslationModule.class);
-            if (isNotBlank(module.getBasePath())) {
-                path = module.getBasePath();
-            }
-            Session session = MgnlContext.getJCRSession("translation");
+            Session session = MgnlContext.getJCRSession(WS_TRANSLATION);
             Node rootNode = session.getNode(path);
             Iterable<Node> nodesToActivate = NodeUtil.getNodes(rootNode, TranslationNodeTypes.Translation.NAME);
-            sortedItems = new ArrayList<>();
             for (Node node : nodesToActivate) {
                 sortedItems.add(new JcrNodeAdapter(node));
             }
         } catch (RepositoryException e) {
             LOGGER.error("Error getting all child items.", e);
         }
+
         return sortedItems;
+    }
+
+    private String getBasePath() {
+        final TranslationModule module = Components.getComponent(TranslationModule.class);
+        String path = "/";
+        if (startsWith(module.getBasePath(), "/")) {
+            path = module.getBasePath();
+        }
+        return path;
     }
 }

@@ -13,8 +13,6 @@ import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
-
 /**
  * Action for opening the translation edit dialog.
  *
@@ -33,7 +31,7 @@ public class OpenEditTranslationDialogAction<D extends ConfiguredActionDefinitio
 
     @Override
     public void execute() throws ActionExecutionException {
-        FormDialogDefinition dialogDefinition = getDialogDefinition(PREFIX_NAME);
+        FormDialogDefinition dialogDefinition = getDialogDefinition();
         startPresenter(_itemToEdit, dialogDefinition);
     }
 }

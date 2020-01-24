@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
-import static org.apache.commons.lang3.CharEncoding.UTF_8;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Create CSV file for all translations.
@@ -53,14 +53,14 @@ public class TranslationCsvWriter {
         for (Locale locale : _locales) {
             headerLine.add(locale.getDisplayName());
         }
-        entries.add(headerLine.toArray(new String[headerLine.size()]));
+        entries.add(headerLine.toArray(new String[0]));
         for (Map.Entry<String, Map<String, String>> entry : _eventEntries.entrySet()) {
             List<String> line = new ArrayList<>();
             line.add(entry.getKey());
             for (Locale locale : _locales) {
                 line.add(entry.getValue().get(PREFIX_NAME + locale.getLanguage()));
             }
-            entries.add(line.toArray(new String[line.size()]));
+            entries.add(line.toArray(new String[0]));
         }
 
         try (

@@ -3,12 +3,11 @@ package com.aperto.magnolia.translation.csv;
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
-import info.magnolia.cms.core.Path;
+import info.magnolia.cms.core.FileSystemHelper;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.util.QueryUtil;
 import info.magnolia.jcr.util.NodeUtil;
 import info.magnolia.ui.api.action.AbstractAction;
-import info.magnolia.ui.api.action.ActionExecutionException;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import org.apache.commons.collections.CollectionUtils;
@@ -18,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.File;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -48,22 +46,26 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
 
     private I18nContentSupport _i18nContentSupport;
     private List<JcrItemAdapter> _items;
+    private FileSystemHelper _fileSystemHelper;
 
-    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, JcrItemAdapter item) throws ActionExecutionException {
-        this(definition, i18nContentSupport, newArrayList(item));
+    @SuppressWarnings("unused")
+    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, JcrItemAdapter item, final FileSystemHelper fileSystemHelper) {
+        this(definition, i18nContentSupport, newArrayList(item), fileSystemHelper);
     }
 
-    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, List<JcrItemAdapter> items) throws ActionExecutionException {
+    @SuppressWarnings("WeakerAccess")
+    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, List<JcrItemAdapter> items, final FileSystemHelper fileSystemHelper) {
         super(definition);
         _i18nContentSupport = i18nContentSupport;
         _items = items;
+        _fileSystemHelper = fileSystemHelper;
     }
 
     @Override
-    public void execute() throws ActionExecutionException {
+    public void execute() {
         Collection<Locale> locales = _i18nContentSupport.getLocales();
         setEntries(locales);
-        TranslationCsvWriter csvWriter = new TranslationCsvWriter(_entries, Path.getTempDirectory(), locales);
+        TranslationCsvWriter csvWriter = new TranslationCsvWriter(_entries, _fileSystemHelper.getTempDirectory(), locales);
         File file = csvWriter.getFile();
         if (file != null) {
             csvWriter.writeCsv();
@@ -111,12 +113,7 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     }
 
     private void streamFile(final TranslationCsvWriter csvWriter) {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() {
-            @Override
-            public InputStream getStream() {
-                return csvWriter.getStream();
-            }
-        };
+        StreamResource.StreamSource source = (StreamResource.StreamSource) csvWriter::getStream;
         String fileName = csvWriter.getFile().getName();
         StreamResource resource = new StreamResource(source, fileName);
         resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + fileName + "\"");

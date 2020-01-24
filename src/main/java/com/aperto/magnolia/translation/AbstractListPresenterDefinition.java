@@ -22,6 +22,8 @@ import static java.lang.Boolean.TRUE;
  * @since 1.0.3
  */
 public abstract class AbstractListPresenterDefinition extends ConfiguredContentPresenterDefinition {
+    private static final int EXPAND_RATIO = 2;
+
     private I18nContentSupport _i18nContentSupport;
 
     public AbstractListPresenterDefinition(Class<? extends AbstractContentPresenter> presenterClass, String viewType) {
@@ -40,7 +42,7 @@ public abstract class AbstractListPresenterDefinition extends ConfiguredContentP
             column.setPropertyName(PREFIX_NAME + locale.getLanguage());
             column.setEditable(TRUE);
             column.setSortable(TRUE);
-            column.setExpandRatio(2);
+            column.setExpandRatio(EXPAND_RATIO);
             column.setLabel(locale.getDisplayName());
             newColumns.add(column);
         }

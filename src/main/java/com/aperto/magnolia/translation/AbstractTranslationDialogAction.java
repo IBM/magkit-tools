@@ -48,7 +48,7 @@ public abstract class AbstractTranslationDialogAction<D extends ActionDefinition
         _eventBus = eventBus;
     }
 
-    protected FormDialogDefinition getDialogDefinition(String localeProperty) throws ActionExecutionException {
+    protected FormDialogDefinition getDialogDefinition() throws ActionExecutionException {
         DialogDefinitionRegistry dialogDefinitionRegistry = Components.getComponent(DialogDefinitionRegistry.class);
         DefinitionProvider<DialogDefinition> provider = dialogDefinitionRegistry.getProvider(TRANSLATION_DIALOG_NAME);
         ConfiguredFormDialogDefinition dialogDefinition = (ConfiguredFormDialogDefinition) provider.get();
@@ -60,21 +60,25 @@ public abstract class AbstractTranslationDialogAction<D extends ActionDefinition
         List<TabDefinition> tabs = dialogDefinition.getForm().getTabs();
         for (TabDefinition tab : tabs) {
             if ("main".equals(tab.getName())) {
-                for (Locale locale : _i18nContentSupport.getLocales()) {
-                    String displayName = localeProperty + locale.getLanguage();
-                    boolean hasFieldForDisplayName = hasField(tab, displayName);
-
-                    if (!hasFieldForDisplayName) {
-                        TextFieldDefinition field = new TextFieldDefinition();
-                        field.setName(displayName);
-                        field.setLabel(StringUtils.capitalize(locale.getDisplayLanguage()));
-                        tab.getFields().add(field);
-                    }
-                }
+                addFieldsForLocales(tab);
             }
         }
 
         return dialogDefinition;
+    }
+
+    private void addFieldsForLocales(final TabDefinition tab) {
+        for (Locale locale : _i18nContentSupport.getLocales()) {
+            String displayName = TranslationNodeTypes.Translation.PREFIX_NAME + locale.getLanguage();
+            boolean hasFieldForDisplayName = hasField(tab, displayName);
+
+            if (!hasFieldForDisplayName) {
+                TextFieldDefinition field = new TextFieldDefinition();
+                field.setName(displayName);
+                field.setLabel(StringUtils.capitalize(locale.getDisplayLanguage()));
+                tab.getFields().add(field);
+            }
+        }
     }
 
     private boolean hasField(TabDefinition tab, String name) {

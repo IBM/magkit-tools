@@ -11,8 +11,8 @@ import info.magnolia.event.EventBus;
 import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.jcr.util.PropertyUtil;
+import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.api.action.AbstractAction;
-import info.magnolia.ui.api.action.ActionExecutionException;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 import info.magnolia.ui.api.event.AdmincentralEventBus;
 import info.magnolia.ui.api.event.ContentChangedEvent;
@@ -44,11 +44,10 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.P
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static info.magnolia.objectfactory.Components.getComponent;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Translation import csv action.
@@ -65,6 +64,9 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
     private final EventBus _eventBus;
     private final Collection<Locale> _locales;
     private final ContentConnector _contentConnector;
+    private final NodeNameHelper _nodeNameHelper;
+
+    private TranslationModule _translationModule;
 
     @Inject
     public ImportCsvAction(final ConfiguredActionDefinition definition, final Item item, final EditorValidator validator, final EditorCallback callback, @Named(AdmincentralEventBus.NAME) final EventBus eventBus, final ContentConnector contentConnector, final I18nContentSupport i18nContentSupport) {
@@ -75,19 +77,20 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
         _eventBus = eventBus;
         _contentConnector = contentConnector;
         _locales = i18nContentSupport.getLocales();
+        _nodeNameHelper = Components.getComponent(NodeNameHelper.class);
     }
 
     @Override
-    public void execute() throws ActionExecutionException {
+    public void execute() {
         _validator.showValidation(true);
         if (_validator.isValid()) {
             AbstractJcrNodeAdapter item = (AbstractJcrNodeAdapter) _item;
             AbstractJcrNodeAdapter importXml = item.getChild("importCsv");
             if (importXml != null) {
                 String path = getPathIfPossible(item.getJcrItem());
-                final TranslationModule module = getComponent(TranslationModule.class);
-                if (StringUtils.equals(path, "/") && isNotBlank(module.getBasePath())) {
-                    path = module.getBasePath();
+                String basePath = getTranslationModule().getBasePath();
+                if (StringUtils.equals(path, "/") && startsWith(basePath, "/")) {
+                    path = basePath;
                 }
                 doCsvImport(path, importXml);
             }
@@ -132,30 +135,34 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             } else {
                 baseNode = jcrSession.getNode(basePath);
             }
-            for (int i = 1; i < lines.size(); i++) {
-                String[] values = lines.get(i);
-                String key = values[0];
-                String keyNodeName = getComponent(NodeNameHelper.class).getValidatedName(key);
-
-                Node t9nNode;
-                if (!baseNode.hasNode(keyNodeName)) {
-                    t9nNode = baseNode.addNode(keyNodeName, TranslationNodeTypes.Translation.NAME);
-                    PropertyUtil.setProperty(t9nNode, PN_KEY, key);
-                } else {
-                    t9nNode = baseNode.getNode(keyNodeName);
-                }
-
-                for (Map.Entry<Integer, String> column : indexedPropertyNames.entrySet()) {
-                    Integer keyIndex = column.getKey();
-                    if (keyIndex > 0) {
-                        PropertyUtil.setProperty(t9nNode, column.getValue(), values[keyIndex]);
-                    }
-                }
-                NodeTypes.LastModified.update(t9nNode);
-            }
+            createNodesForLines(baseNode, lines, indexedPropertyNames);
             jcrSession.save();
         } catch (RepositoryException e) {
             LOGGER.error("Error persisting CSV to JCR.", e);
+        }
+    }
+
+    private void createNodesForLines(final Node baseNode, final List<String[]> lines, final Map<Integer, String> indexedPropertyNames) throws RepositoryException {
+        for (int i = 1; i < lines.size(); i++) {
+            String[] values = lines.get(i);
+            String key = values[0];
+            String keyNodeName = _nodeNameHelper.getValidatedName(key);
+
+            Node t9nNode;
+            if (!baseNode.hasNode(keyNodeName)) {
+                t9nNode = baseNode.addNode(keyNodeName, TranslationNodeTypes.Translation.NAME);
+                PropertyUtil.setProperty(t9nNode, PN_KEY, key);
+            } else {
+                t9nNode = baseNode.getNode(keyNodeName);
+            }
+
+            for (Map.Entry<Integer, String> column : indexedPropertyNames.entrySet()) {
+                Integer keyIndex = column.getKey();
+                if (keyIndex > 0) {
+                    PropertyUtil.setProperty(t9nNode, column.getValue(), values[keyIndex]);
+                }
+            }
+            NodeTypes.LastModified.update(t9nNode);
         }
     }
 
@@ -176,5 +183,12 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             index++;
         }
         return cols;
+    }
+
+    private TranslationModule getTranslationModule() {
+        if (_translationModule == null) {
+            _translationModule = Components.getComponent(TranslationModule.class);
+        }
+        return _translationModule;
     }
 }
