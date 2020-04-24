@@ -3,23 +3,32 @@ package com.aperto.magnolia.translation;
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
 import info.magnolia.jcr.nodebuilder.NodeOperation;
 import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
-import info.magnolia.jcr.util.NodeTypes;
+import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.AbstractTask;
 import info.magnolia.module.delta.ArrayDelegateTask;
-import info.magnolia.module.delta.NodeExistsDelegateTask;
 import info.magnolia.module.delta.TaskExecutionException;
+import info.magnolia.objectfactory.Components;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
+import static com.aperto.magnolia.translation.MagnoliaTranslationServiceImpl.BASE_QUERY;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PN_KEY;
+import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static info.magnolia.cms.core.Path.getValidatedLabel;
+import static info.magnolia.cms.util.QueryUtil.search;
+import static info.magnolia.context.MgnlContext.doInSystemContext;
 import static info.magnolia.jcr.nodebuilder.Ops.addNode;
 import static info.magnolia.jcr.nodebuilder.Ops.addProperty;
 import static info.magnolia.jcr.nodebuilder.Ops.getOrAddNode;
 import static info.magnolia.jcr.nodebuilder.task.ErrorHandling.logging;
+import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.removeStart;
@@ -36,6 +45,8 @@ public class AddTranslationTask extends AbstractTask {
     private final String _baseName;
     private final Locale _locale;
     private final String _basePath;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
 
     /**
      * Constructor for messages bundle registration.
@@ -74,23 +85,39 @@ public class AddTranslationTask extends AbstractTask {
         Calendar now = Calendar.getInstance();
 
         for (String key : bundle.keySet()) {
-            String keyNodeName = getValidatedLabel(key);
-            task.addTask(
-                new NodeExistsDelegateTask("Check translation key", "Check translation key", WS_TRANSLATION, _basePath + keyNodeName, null,
-                    new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
-                        getOp(keyNodeName, key, bundle.getString(key), now)
-                    )
-                )
-            );
+            if (!keyExists(key)) {
+                String keyNodeName = Components.getComponent(NodeNameHelper.class).getValidatedName(key);
+                task.addTask(
+                        new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
+                                getOp(keyNodeName, key, bundle.getString(key), now)
+                        )
+                );
+            }
         }
         task.execute(installContext);
     }
 
+    private boolean keyExists(String key) {
+        boolean keyExists = false;
+        String statement = BASE_QUERY + '\'' + key + '\'';
+        try {
+            keyExists = doInSystemContext(
+                    () -> {
+                    NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
+                    return nodeIterator.hasNext();
+                }
+            );
+        } catch (RepositoryException e) {
+            LOGGER.error("Error on querying translation node for query {}.", statement, e);
+        }
+        return keyExists;
+    }
+
     private NodeOperation getOp(String keyNodeName, String key, String value, final Calendar now) {
         NodeOperation addKeyNode = addNode(keyNodeName, Translation.NAME).then(
-            addProperty(Translation.PN_KEY, (Object) key),
-            addProperty(Translation.PREFIX_NAME + _locale.getLanguage(), (Object) value),
-            addProperty(NodeTypes.LastModified.LAST_MODIFIED, now)
+                addProperty(PN_KEY, (Object) key),
+                addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),
+                addProperty(LAST_MODIFIED, now)
         );
         return ROOT_PATH.equals(_basePath) ? addKeyNode : getOrAddNode(removeStart(_basePath, ROOT_PATH), Translation.NAME).then(addKeyNode);
     }

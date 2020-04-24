@@ -32,7 +32,7 @@ import static org.apache.commons.lang3.StringUtils.contains;
 @Singleton
 public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
     private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
-    private static final String BASE_QUERY = "select * from [" + Translation.NAME + "] where key = ";
+    public static final String BASE_QUERY = "select * from [" + Translation.NAME + "] where key = ";
     private static final Predicate<String> MESSAGE_CONDITION = StringUtils::isNotEmpty;
 
     @Inject
