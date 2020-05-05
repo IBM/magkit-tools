@@ -23,7 +23,6 @@ import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.P
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 import static info.magnolia.cms.util.QueryUtil.search;
-import static info.magnolia.context.MgnlContext.doInSystemContext;
 import static info.magnolia.jcr.nodebuilder.Ops.addNode;
 import static info.magnolia.jcr.nodebuilder.Ops.addProperty;
 import static info.magnolia.jcr.nodebuilder.Ops.getOrAddNode;
@@ -40,13 +39,14 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
  */
 @SuppressWarnings("unused")
 public class AddTranslationTask extends AbstractTask {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
+
     private static final String ROOT_PATH = "/";
 
     private final String _baseName;
     private final Locale _locale;
     private final String _basePath;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
+    private NodeNameHelper _nodeNameHelper;
 
     /**
      * Constructor for messages bundle registration.
@@ -70,12 +70,13 @@ public class AddTranslationTask extends AbstractTask {
      * @param locale          locale
      * @param basePath        base path
      */
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "WeakerAccess"})
     public AddTranslationTask(String taskName, String taskDescription, String baseName, Locale locale, String basePath) {
         super(taskName, taskDescription);
         _baseName = baseName;
         _locale = locale;
         _basePath = defaultString(basePath) + "/";
+        _nodeNameHelper = Components.getComponent(NodeNameHelper.class);
     }
 
     @Override
@@ -86,12 +87,8 @@ public class AddTranslationTask extends AbstractTask {
 
         for (String key : bundle.keySet()) {
             if (!keyExists(key)) {
-                String keyNodeName = Components.getComponent(NodeNameHelper.class).getValidatedName(key);
-                task.addTask(
-                        new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION,
-                                getOp(keyNodeName, key, bundle.getString(key), now)
-                        )
-                );
+                String keyNodeName = _nodeNameHelper.getValidatedName(key);
+                task.addTask(new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION, getOp(keyNodeName, key, bundle.getString(key), now)));
             }
         }
         task.execute(installContext);
@@ -101,12 +98,8 @@ public class AddTranslationTask extends AbstractTask {
         boolean keyExists = false;
         String statement = BASE_QUERY + '\'' + key + '\'';
         try {
-            keyExists = doInSystemContext(
-                    () -> {
-                    NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
-                    return nodeIterator.hasNext();
-                }
-            );
+            NodeIterator nodeIterator = search(WS_TRANSLATION, statement);
+            keyExists = nodeIterator.hasNext();
         } catch (RepositoryException e) {
             LOGGER.error("Error on querying translation node for query {}.", statement, e);
         }
@@ -115,9 +108,9 @@ public class AddTranslationTask extends AbstractTask {
 
     private NodeOperation getOp(String keyNodeName, String key, String value, final Calendar now) {
         NodeOperation addKeyNode = addNode(keyNodeName, Translation.NAME).then(
-                addProperty(PN_KEY, (Object) key),
-                addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),
-                addProperty(LAST_MODIFIED, now)
+            addProperty(PN_KEY, (Object) key),
+            addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),
+            addProperty(LAST_MODIFIED, now)
         );
         return ROOT_PATH.equals(_basePath) ? addKeyNode : getOrAddNode(removeStart(_basePath, ROOT_PATH), Translation.NAME).then(addKeyNode);
     }
