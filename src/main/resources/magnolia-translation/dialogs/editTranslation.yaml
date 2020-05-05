@@ -6,8 +6,9 @@ form:
           class: info.magnolia.ui.form.field.definition.TextFieldDefinition
 actions:
   commit:
-    class: info.magnolia.ui.admincentral.dialog.action.SaveDialogActionDefinition
+    class: info.magnolia.ui.dialog.action.SaveDialogActionDefinition
+    implementationClass: com.aperto.magnolia.translation.TranslationSaveFormAction
     label: save changes
   cancel:
-    class: info.magnolia.ui.admincentral.dialog.action.CancelDialogActionDefinition
+    class: info.magnolia.ui.dialog.action.CancelDialogActionDefinition
     label: cancel

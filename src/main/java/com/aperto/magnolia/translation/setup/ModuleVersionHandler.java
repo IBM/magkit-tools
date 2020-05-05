@@ -28,6 +28,10 @@ public class ModuleVersionHandler extends DefaultModuleVersionHandler {
         DeltaBuilder update110 = DeltaBuilder.update("1.1.0", "Update to version 1.1.0.");
         update110.addTask(new NodeExistsDelegateTask("Remove apps in JCR", "/modules/magnolia-translation/apps", new RemoveNodeTask("Remove apps", "/modules/magnolia-translation/apps")));
         register(update110);
+
+        DeltaBuilder update141 = DeltaBuilder.update("1.4.1", "Update to version 1.4.1.");
+        update141.addTask(new NodeExistsDelegateTask("Remove dialogs in JCR", "/modules/magnolia-translation/dialogs", new RemoveNodeTask("Remove dialogs", "/modules/magnolia-translation/dialogs")));
+        register(update141);
     }
 
     @Override
