@@ -43,6 +43,7 @@ public class LinkService {
      *
      * @return page editor link
      */
+    @SuppressWarnings("unused")
     public String createPageEditorLink() {
         String editorLink = "";
         if (isNotEmpty(getAuthorBasePath())) {
