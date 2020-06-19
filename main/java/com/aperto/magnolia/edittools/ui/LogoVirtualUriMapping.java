@@ -13,9 +13,11 @@ import static org.apache.commons.lang.StringUtils.startsWithAny;
 /**
  * Uri mapping for logo replacement.
  *
+ * @deprecated will be deleted with version 1.4.0, no support in M6
  * @author frank.sommer
  * @since 14.06.2016
  */
+@Deprecated
 public class LogoVirtualUriMapping extends DefaultVirtualUriMapping {
 
     @Inject

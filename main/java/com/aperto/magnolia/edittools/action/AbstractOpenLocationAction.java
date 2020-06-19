@@ -8,10 +8,9 @@ import info.magnolia.ui.api.location.LocationController;
 import info.magnolia.ui.contentapp.browser.BrowserLocation;
 
 /**
- * Action to open the current node in a new browser location.
+ * Action to open the current node in a new browser location. See {@link info.magnolia.ui.framework.action.OpenLocationAction}
  *
  * @author jean-charles.robert
- * @see {@link info.magnolia.ui.framework.action.OpenLocationAction}
  * @since 09.05.18
  */
 public abstract class AbstractOpenLocationAction extends AbstractAction<AbstractOpenLocationActionDefinition> {
@@ -44,10 +43,6 @@ public abstract class AbstractOpenLocationAction extends AbstractAction<Abstract
     protected abstract String getNodePath() throws ActionExecutionException;
 
     private static String buildParameter(String viewType, String nodePath) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(nodePath);
-        sb.append(VIEW_SEPARATOR).append(viewType).append(VIEW_SEPARATOR);
-        return sb.toString();
+        return nodePath + VIEW_SEPARATOR + viewType + VIEW_SEPARATOR;
     }
-
 }
