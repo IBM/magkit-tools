@@ -14,12 +14,7 @@ pipeline {
     timeout time: 1, unit: 'HOURS'
   }
   parameters {
-    choice(name: 'INPUT_ENV', description: 'Choice of additional action', choices: ['Build', 'Sonar', 'Release'])
-  }
-  triggers {
-    parameterizedCron(env.BRANCH_NAME == 'develop' ? '''
-    H 4 5 * 1-5 %INPUT_ENV=Sonar
-    ''' : '')
+    choice(name: 'INPUT_ENV', description: 'Choice of additional action', choices: ['Build', 'Release'])
   }
   environment {
     NOTIFY_SUCCESS = true
@@ -31,13 +26,8 @@ pipeline {
         anyOf {
           branch 'master'; branch 'develop'; branch 'PR-*'
         }
-        allOf {
-          expression {
-            params.INPUT_ENV != 'Sonar'
-          }
-          expression {
-            params.INPUT_ENV != 'Release'
-          }
+        expression {
+          params.INPUT_ENV != 'Release'
         }
       }
       post {
@@ -54,7 +44,7 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = " deploy --batch-mode -Pci -T4 -U -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            def mavenParams = " deploy --batch-mode -Pci -U -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             acidExecuteMaven(this, [
               configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
@@ -66,9 +56,9 @@ pipeline {
     }
     stage('Sonar') {
       when {
-        branch 'develop'
+        branch 'master'
         expression {
-          params.INPUT_ENV == 'Sonar'
+          params.INPUT_ENV != 'Release'
         }
       }
       steps {
@@ -98,7 +88,7 @@ pipeline {
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
             def mavenParams = " release:clean release:prepare release:perform --batch-mode -Pci -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             acidExecuteMaven(this, [
-              configFileId: '43b0811f-4f12-4f37-a972-994571977dec',
+              configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
               suppressionsEnabled: true
             ])
