@@ -56,7 +56,7 @@ pipeline {
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
             def mavenParams = " deploy --batch-mode -Pci -T4 -U -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             acidExecuteMaven(this, [
-              configFileId: '43b0811f-4f12-4f37-a972-994571977dec',
+              configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
               suppressionsEnabled: true
             ])
