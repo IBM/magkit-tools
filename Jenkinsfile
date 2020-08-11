@@ -44,7 +44,7 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = " deploy --batch-mode -Pci -U -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            def mavenParams = " deploy --batch-mode -Pci -U -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             acidExecuteMaven(this, [
               configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
@@ -86,7 +86,7 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = " release:clean release:prepare release:perform --batch-mode -Pci -Dnexususer=$DEPLOY_USERNAME -Dnexuspassword=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            def mavenParams = " release:clean release:prepare release:perform --batch-mode -Pci -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             acidExecuteMaven(this, [
               configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
