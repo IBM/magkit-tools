@@ -38,7 +38,7 @@ pipeline {
       steps {
         script {
           def secrets = [
-            [$class: 'VaultSecret', path: "mobile-engineering/tools/nexus/acid.build", engineVersion: 1, secretValues: [
+            [$class: 'VaultSecret', path: "acid/tools/nexus/live", engineVersion: 2, secretValues: [
               [$class: 'VaultSecretValue', envVar: 'DEPLOY_PASSWORD', vaultKey: 'password'],
               [$class: 'VaultSecretValue', envVar: 'DEPLOY_USERNAME', vaultKey: 'username']
             ]]
@@ -80,7 +80,7 @@ pipeline {
         script {
           echo 'Release translation module'
           def secrets = [
-            [$class: 'VaultSecret', path: "mobile-engineering/tools/nexus/acid.build", engineVersion: 1, secretValues: [
+            [$class: 'VaultSecret', path: "acid/tools/nexus/live", engineVersion: 2, secretValues: [
               [$class: 'VaultSecretValue', envVar: 'DEPLOY_PASSWORD', vaultKey: 'password'],
               [$class: 'VaultSecretValue', envVar: 'DEPLOY_USERNAME', vaultKey: 'username']
             ]]
