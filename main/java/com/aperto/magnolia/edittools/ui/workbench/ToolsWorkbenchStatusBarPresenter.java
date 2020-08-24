@@ -3,7 +3,7 @@ package com.aperto.magnolia.edittools.ui.workbench;
 import com.aperto.magnolia.edittools.setup.EditToolsModule;
 import com.aperto.magnolia.edittools.util.LinkService;
 import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.Alignment;
+import com.vaadin.server.Page;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
@@ -84,6 +84,10 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
         _eventBus = eventBus;
         _activeContentPresenter = activeContentPresenter;
 
+        // override Magnolia CSS
+        Page.Styles styles = Page.getCurrent().getStyles();
+        styles.add(".browser .statusbar .v-expand .v-slot {display: inline-block;}");
+
         _view.addComponent(_selectionLabel, TOP_LEFT);
         ((HorizontalLayout) _view).setExpandRatio(_selectionLabel, 1);
 
@@ -95,7 +99,8 @@ public class ToolsWorkbenchStatusBarPresenter extends WorkbenchStatusBarPresente
         _linkToPublic.setTargetName("_blank");
         _linkToPublic.addStyleName("v-label");
         _linkToPublic.setPrimaryStyleName("noprimarystylename");
-        _view.addComponent(_linkToPublic, Alignment.TOP_RIGHT);
+        _view.addComponent(_linkToPublic, TOP_RIGHT);
+        ((HorizontalLayout) _view).setExpandRatio(_linkToPublic, 1);
 
         bindHandlers();
         refresh();
