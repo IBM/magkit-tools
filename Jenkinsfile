@@ -17,7 +17,10 @@ pipeline {
     choice(name: 'INPUT_ENV', description: 'Choice of additional action', choices: ['Build', 'Release'])
   }
   environment {
-    NOTIFY_SUCCESS = true
+    // notification Slack variables
+    SLACK_TOKEN = 'pn1bvDADqWbd1aNeKkInOF8F'
+    SLACK_BASE_URL = 'https://aperto.slack.com/services/hooks/jenkins-ci/'
+    SLACK_CHANNEL = '#cop-magnolia'
   }
 
   stages {
@@ -32,7 +35,7 @@ pipeline {
       }
       post {
         always {
-          acidSendNotifications (this, [projectOs: 'web', sendNoSlackSuccessNotification: NOTIFY_SUCCESS])
+          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
         }
       }
       steps {
@@ -61,6 +64,11 @@ pipeline {
           params.INPUT_ENV != 'Release'
         }
       }
+      post {
+        always {
+          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
+        }
+      }
       steps {
         acidExecuteSonar (this, "magnolia", [
           withCoverage: false,
@@ -74,6 +82,11 @@ pipeline {
         branch 'master'
         expression {
           params.INPUT_ENV == 'Release'
+        }
+      }
+      post {
+        always {
+          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: false])
         }
       }
       steps {
@@ -93,11 +106,6 @@ pipeline {
               suppressionsEnabled: true
             ])
           }
-        }
-      }
-      post {
-        always {
-          acidSendNotifications(this, [sendNoSlackSuccessNotification: NOTIFY_SUCCESS, projectOs: 'web'])
         }
       }
     } // end stage release
