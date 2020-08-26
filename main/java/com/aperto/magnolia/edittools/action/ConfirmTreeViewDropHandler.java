@@ -4,16 +4,15 @@ import com.aperto.magnolia.edittools.setup.EditToolsModule;
 import com.vaadin.event.Transferable;
 import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.shared.ui.dd.VerticalDropLocation;
+import com.vaadin.ui.Notification;
 import com.vaadin.v7.event.DataBoundTransferable;
 import com.vaadin.v7.ui.AbstractSelect;
 import com.vaadin.v7.ui.TreeTable;
 import info.magnolia.i18nsystem.SimpleTranslator;
-import info.magnolia.ui.api.context.UiContext;
-import info.magnolia.ui.api.overlay.ConfirmationCallback;
+import info.magnolia.ui.AlertBuilder;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
 import info.magnolia.ui.vaadin.integration.jcr.JcrItemUtil;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeItemId;
-import info.magnolia.ui.vaadin.overlay.MessageStyleTypeEnum;
 import info.magnolia.ui.workbench.tree.HierarchicalJcrContainer;
 import info.magnolia.ui.workbench.tree.MoveLocation;
 import info.magnolia.ui.workbench.tree.drop.DropConstraint;
@@ -42,18 +41,16 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
 
     private TreeTable _tree;
     private DropConstraint _constraint;
-    private UiContext _uiContext;
     private SimpleTranslator _i18n;
     private Provider<EditToolsModule> _moduleProvider;
 
     /**
      * Constructor used for drag'n'drop.
      */
-    public ConfirmTreeViewDropHandler(TreeTable tree, DropConstraint constraint, UiContext uiContext, SimpleTranslator i18n, Provider<EditToolsModule> moduleProvider) {
+    public ConfirmTreeViewDropHandler(TreeTable tree, DropConstraint constraint, SimpleTranslator i18n, Provider<EditToolsModule> moduleProvider) {
         super(tree, constraint);
         _tree = tree;
         _constraint = constraint;
-        _uiContext = uiContext;
         _i18n = i18n;
         _moduleProvider = moduleProvider;
     }
@@ -76,23 +73,13 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
                 LOGGER.debug("DropLocation is null. Do nothing.");
             } else {
                 if (showConfirmation((JcrNodeItemId) targetItemId)) {
-                    _uiContext.openConfirmation(
-                        MessageStyleTypeEnum.WARNING, getConfirmationQuestion(dropEvent),
-                        getBodyText(dropEvent),
-                        _i18n.translate("magkit.moveItem.confirmText"),
-                        _i18n.translate("magkit.moveItem.cancelText"),
-                        true,
-                        new ConfirmationCallback() {
-                            @Override
-                            public void onSuccess() {
-                                moveItems(dropEvent, targetItemId, location);
-                            }
-
-                            @Override
-                            public void onCancel() {
-                                // no method implementation necessary
-                            }
-                        });
+                    AlertBuilder.confirmDialog(getConfirmationQuestion(dropEvent))
+                        .withBody(getBodyText(dropEvent))
+                        .withLevel(Notification.Type.WARNING_MESSAGE)
+                        .withOkButtonCaption(_i18n.translate("magkit.moveItem.confirmText"))
+                        .withDeclineButtonCaption(_i18n.translate("magkit.moveItem.cancelText"))
+                        .withConfirmationHandler(() -> moveItems(dropEvent, targetItemId, location))
+                        .buildAndOpen();
                 } else {
                     moveItems(dropEvent, targetItemId, location);
                 }
@@ -149,7 +136,7 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
      * <li>only the dragging itemId if it's not selected</li>.
      * </ul>
      *
-     * @see TreeViewDropHandler#getItemIdsToMove(com.vaadin.event.dd.DragAndDropEvent)
+     * @see TreeViewDropHandler#getItemIdsToMove(DragAndDropEvent)
      */
     private Collection<Object> getItemIdsToMove(DragAndDropEvent dropEvent) {
         Transferable t = dropEvent.getTransferable();
@@ -170,7 +157,7 @@ public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
      * <p>
      * VerticalDropLocation indicating where the source node was dropped relative to the target node
      *
-     * @see TreeViewDropHandler#moveNode(java.lang.Object, java.lang.Object, com.vaadin.shared.ui.dd.VerticalDropLocation)
+     * @see TreeViewDropHandler#moveNode(Node, Node, MoveLocation)
      */
     private void moveNode(Object sourceItemId, Object targetItemId, VerticalDropLocation location) {
         LOGGER.debug("DropLocation: {}", location.name());
