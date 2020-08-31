@@ -299,6 +299,15 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
         );
         update120.addTasks(asList(removeCustomCopyPasteActions, removeExternalPreviewActionFromDetailSubApp));
         register(update120);
+
+        DeltaBuilder update140 = DeltaBuilder.update("1.4.0", "Update to version 1.4.0.");
+        update140.addTasks(asList(
+            selectModuleConfig("Remove virtual uri mapping", "Remove virtual uri mapping config.", "magnolia-editor-tools", removeIfExists("virtualURIMapping")),
+            selectModuleConfig("Remove dev actions", "Remove dev actions from pages app (legacy).", "pages",
+                getNode("apps/pages/subApps/browser/actions").then(removeIfExists("viewInJcr")),
+                getNode("apps/pages/subApps/detail/actions").then(removeIfExists("viewInJcr"))
+            )
+        ));
     }
 
     @Override
