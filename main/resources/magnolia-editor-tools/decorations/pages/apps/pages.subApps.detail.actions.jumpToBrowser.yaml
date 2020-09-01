@@ -1,0 +1,5 @@
+appName: pages
+class: com.aperto.magnolia.edittools.action.OpenPageLocationActionDefinition
+icon: icon-view-tree
+label: jumpToBrowser.label
+subAppId: browser
