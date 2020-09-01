@@ -71,4 +71,11 @@
             </resource>
         </resources>
     </build>
+
+    <repositories>
+        <repository>
+            <id>acid.magnolia.group</id>
+            <url>https://acid-repo.aperto.de/repository/magnolia/</url>
+        </repository>
+    </repositories>
 </project>
