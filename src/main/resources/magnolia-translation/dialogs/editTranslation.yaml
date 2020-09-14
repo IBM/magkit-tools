@@ -8,7 +8,7 @@ actions:
   commit:
     class: info.magnolia.ui.dialog.action.SaveDialogActionDefinition
     implementationClass: com.aperto.magnolia.translation.TranslationSaveFormAction
-    label: save changes
+    label: translation.action.save
   cancel:
     class: info.magnolia.ui.dialog.action.CancelDialogActionDefinition
-    label: cancel
+    label: translation.action.cancel
