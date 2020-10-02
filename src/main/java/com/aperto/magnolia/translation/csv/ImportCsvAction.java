@@ -3,34 +3,29 @@ package com.aperto.magnolia.translation.csv;
 import au.com.bytecode.opencsv.CSVReader;
 import com.aperto.magnolia.translation.TranslationNodeTypes;
 import com.aperto.magnolia.translation.setup.TranslationModule;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.data.Property;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.context.MgnlContext;
-import info.magnolia.event.EventBus;
 import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.jcr.util.NodeTypes;
 import info.magnolia.jcr.util.PropertyUtil;
 import info.magnolia.objectfactory.Components;
-import info.magnolia.ui.api.action.AbstractAction;
-import info.magnolia.ui.api.action.ConfiguredActionDefinition;
-import info.magnolia.ui.api.event.AdmincentralEventBus;
-import info.magnolia.ui.api.event.ContentChangedEvent;
-import info.magnolia.ui.form.EditorCallback;
-import info.magnolia.ui.form.EditorValidator;
-import info.magnolia.ui.vaadin.integration.contentconnector.ContentConnector;
-import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
+import info.magnolia.ui.CloseHandler;
+import info.magnolia.ui.ValueContext;
+import info.magnolia.ui.contentapp.Datasource;
+import info.magnolia.ui.contentapp.action.CommitAction;
+import info.magnolia.ui.contentapp.action.CommitActionDefinition;
+import info.magnolia.ui.editor.FormView;
+import info.magnolia.ui.observation.DatasourceObservation;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.jackrabbit.value.BinaryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,16 +33,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PN_KEY;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.lang3.StringUtils.defaultIfEmpty;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Translation import csv action.
@@ -55,55 +48,32 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
  * @author frank.sommer
  * @since 1.0.5
  */
-public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> {
+public class ImportCsvAction extends CommitAction<Node> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImportCsvAction.class);
 
-    private final Item _item;
-    private final EditorValidator _validator;
-    private final EditorCallback _callback;
-    private final EventBus _eventBus;
     private final Collection<Locale> _locales;
-    private final ContentConnector _contentConnector;
     private final NodeNameHelper _nodeNameHelper;
+    private final FormView<Node> _form;
 
     private TranslationModule _translationModule;
 
     @Inject
-    public ImportCsvAction(final ConfiguredActionDefinition definition, final Item item, final EditorValidator validator, final EditorCallback callback, @Named(AdmincentralEventBus.NAME) final EventBus eventBus, final ContentConnector contentConnector, final I18nContentSupport i18nContentSupport) {
-        super(definition);
-        _item = item;
-        _validator = validator;
-        _callback = callback;
-        _eventBus = eventBus;
-        _contentConnector = contentConnector;
+    public ImportCsvAction(CommitActionDefinition definition, CloseHandler closeHandler, ValueContext<Node> valueContext, FormView<Node> form, Datasource<Node> datasource, DatasourceObservation.Manual datasourceObservation, I18nContentSupport i18nContentSupport) {
+        super(definition, closeHandler, valueContext, form, datasource, datasourceObservation);
+        _form = form;
         _locales = i18nContentSupport.getLocales();
         _nodeNameHelper = Components.getComponent(NodeNameHelper.class);
     }
 
     @Override
-    public void execute() {
-        _validator.showValidation(true);
-        if (_validator.isValid()) {
-            AbstractJcrNodeAdapter item = (AbstractJcrNodeAdapter) _item;
-            AbstractJcrNodeAdapter importXml = item.getChild("importCsv");
-            if (importXml != null) {
-                String path = getPathIfPossible(item.getJcrItem());
-                String basePath = getTranslationModule().getBasePath();
-                if (StringUtils.equals(path, "/") && startsWith(basePath, "/")) {
-                    path = basePath;
-                }
-                doCsvImport(path, importXml);
-            }
-
-            _callback.onSuccess(getDefinition().getName());
-            _eventBus.fireEvent(new ContentChangedEvent(_contentConnector.getDefaultItemId()));
-        } else {
-            LOGGER.info("Validation error(s) occurred. No Import performed.");
-        }
+    public void write() {
+        Optional<File> importCsv = _form.getPropertyValue("importCsv");
+        String basePath = getTranslationModule().getBasePath();
+        importCsv.ifPresent(csvFile -> doCsvImport(basePath, csvFile));
     }
 
-    private void doCsvImport(final String basePath, final AbstractJcrNodeAdapter importXml) {
-        try (InputStream inputStream = ((BinaryImpl) importXml.getItemProperty("jcr:data").getValue()).getStream()) {
+    private void doCsvImport(final String basePath, final File csvFile) {
+        try (InputStream inputStream = new FileInputStream(csvFile)) {
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8.name())), getPropertyValue("separator", ",").charAt(0));
             List<String[]> lines = csvReader.readAll();
             if (CollectionUtils.isNotEmpty(lines)) {
@@ -112,18 +82,14 @@ public class ImportCsvAction extends AbstractAction<ConfiguredActionDefinition> 
             } else {
                 LOGGER.warn("No lines in csv file, skip ...");
             }
-        } catch (RepositoryException | IOException e) {
+        } catch (IOException e) {
             LOGGER.error("Error importing csv data.", e);
         }
     }
 
     private String getPropertyValue(final String propertyId, final String defaultValue) {
-        String encoding = defaultValue;
-        Property encProperty = _item.getItemProperty(propertyId);
-        if (encProperty != null) {
-            encoding = defaultIfEmpty((String) encProperty.getValue(), defaultValue);
-        }
-        return encoding;
+        Optional<String> propertyValue = _form.getPropertyValue(propertyId);
+        return propertyValue.orElse(defaultValue);
     }
 
     private void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {

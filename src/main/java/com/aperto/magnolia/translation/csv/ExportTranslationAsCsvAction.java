@@ -6,14 +6,13 @@ import com.vaadin.server.StreamResource;
 import info.magnolia.cms.core.FileSystemHelper;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.util.QueryUtil;
-import info.magnolia.jcr.util.NodeUtil;
+import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
-import info.magnolia.ui.vaadin.integration.jcr.JcrItemAdapter;
-import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.File;
@@ -22,13 +21,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static com.google.common.collect.Lists.newArrayList;
 import static info.magnolia.jcr.util.NodeUtil.asIterable;
 import static info.magnolia.jcr.util.NodeUtil.asList;
+import static info.magnolia.jcr.util.NodeUtil.getName;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -42,30 +43,23 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     private static final Logger LOGGER = LoggerFactory.getLogger(ExportTranslationAsCsvAction.class);
     private static final String QUERY_STATEMENT = "select * from [%s]";
 
-    private Map<String, Map<String, String>> _entries;
+    private final ValueContext<Node> _valueContext;
+    private final I18nContentSupport _i18nContentSupport;
+    private final FileSystemHelper _fileSystemHelper;
 
-    private I18nContentSupport _i18nContentSupport;
-    private List<JcrItemAdapter> _items;
-    private FileSystemHelper _fileSystemHelper;
-
-    @SuppressWarnings("unused")
-    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, JcrItemAdapter item, final FileSystemHelper fileSystemHelper) {
-        this(definition, i18nContentSupport, newArrayList(item), fileSystemHelper);
-    }
-
-    @SuppressWarnings("WeakerAccess")
-    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, I18nContentSupport i18nContentSupport, List<JcrItemAdapter> items, final FileSystemHelper fileSystemHelper) {
+    @Inject
+    public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, ValueContext<Node> valueContext, I18nContentSupport i18nContentSupport, FileSystemHelper fileSystemHelper) {
         super(definition);
+        _valueContext = valueContext;
         _i18nContentSupport = i18nContentSupport;
-        _items = items;
         _fileSystemHelper = fileSystemHelper;
     }
 
     @Override
     public void execute() {
         Collection<Locale> locales = _i18nContentSupport.getLocales();
-        setEntries(locales);
-        TranslationCsvWriter csvWriter = new TranslationCsvWriter(_entries, _fileSystemHelper.getTempDirectory(), locales);
+        Map<String, Map<String, String>> entries = getEntries(locales);
+        TranslationCsvWriter csvWriter = new TranslationCsvWriter(entries, _fileSystemHelper.getTempDirectory(), locales);
         File file = csvWriter.getFile();
         if (file != null) {
             csvWriter.writeCsv();
@@ -73,7 +67,7 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
         }
     }
 
-    private void setEntries(Collection<Locale> locales) {
+    private Map<String, Map<String, String>> getEntries(Collection<Locale> locales) {
         Map<String, Map<String, String>> entries = new TreeMap<>();
 
         List<Node> t9nNodes = retrieveTranslationNodes();
@@ -87,12 +81,12 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
                 entries.put(getString(t9nNode, Translation.PN_KEY), translationProperties);
             }
         }
-        _entries = entries;
+        return entries;
     }
 
     private List<Node> retrieveTranslationNodes() {
         List<Node> t9nNodes = new ArrayList<>();
-        if (CollectionUtils.isEmpty(_items) || containsOnlyRootNode()) {
+        if (_valueContext.getSingle().isEmpty() || containsOnlyRootNode()) {
             // query for all translation nodes
             String statement = String.format(QUERY_STATEMENT, Translation.NAME);
             try {
@@ -101,15 +95,14 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
                 LOGGER.error("Error querying all translations with query {}.", statement, e);
             }
         } else {
-            for (JcrItemAdapter item : _items) {
-                t9nNodes.add((Node) item.getJcrItem());
-            }
+            t9nNodes = _valueContext.get().collect(Collectors.toList());
         }
         return t9nNodes;
     }
 
     private boolean containsOnlyRootNode() {
-        return _items.size() == 1 && isEmpty(NodeUtil.getName((Node) _items.get(0).getJcrItem()));
+        Optional<Node> firstItem = _valueContext.getSingle();
+        return firstItem.isPresent() && isEmpty(getName(firstItem.get()));
     }
 
     private void streamFile(final TranslationCsvWriter csvWriter) {

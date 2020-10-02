@@ -1,31 +1,34 @@
 form:
-  tabs:
-    import:
-      fields:
-        - name: csv
-          allowedMimeTypePattern: text/csv|application/csv|application/vnd.ms-excel
-          binaryNodeName: importCsv
-          class: info.magnolia.ui.form.field.definition.BasicUploadFieldDefinition
-          required: true
-        - name: encoding
-          class: info.magnolia.ui.form.field.definition.SelectFieldDefinition
-          options:
-            - name: utf8
-              value: "UTF-8"
-              selected: true
-            - name: ansi
-              value: "ISO-8859-1"
-        - name: separator
-          class: info.magnolia.ui.form.field.definition.SelectFieldDefinition
-          options:
-            - name: komma
-              value: ","
-              selected: true
-            - name: semicolon
-              value: ";"
+  properties:
+    importCsv:
+      allowedMimeTypePattern: text/csv|application/csv|application/vnd.ms-excel
+      $type: uploadField
+      required: true
+    encoding:
+      $type: comboBoxField
+      defaultValue: "UTF-8"
+      emptySelectionAllowed: false
+      datasource:
+        $type: optionListDatasource
+        options:
+        - name: utf8
+          value: "UTF-8"
+        - name: ansi
+          value: "ISO-8859-1"
+    separator:
+      $type: comboBoxField
+      defaultValue: ","
+      emptySelectionAllowed: false
+      datasource:
+        $type: optionListDatasource
+        options:
+        - name: komma
+          value: ","
+        - name: semicolon
+          value: ";"
 actions:
   commit:
-    class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+    $type: commitAction
     implementationClass: com.aperto.magnolia.translation.csv.ImportCsvAction
   cancel:
-    class: info.magnolia.ui.dialog.action.CancelDialogActionDefinition
+    $type: closeAction

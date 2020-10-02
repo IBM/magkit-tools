@@ -1,48 +1,89 @@
-appClass: info.magnolia.ui.contentapp.ContentApp
-class: info.magnolia.ui.contentapp.ConfiguredContentAppDescriptor
+appClass: info.magnolia.ui.framework.app.BaseApp
 icon: icon-message
+class: info.magnolia.ui.contentapp.configuration.ContentAppDescriptor
 subApps:
   browser:
-    class: info.magnolia.ui.contentapp.browser.BrowserSubAppDescriptor
-    subAppClass: info.magnolia.ui.contentapp.browser.BrowserSubApp
+    class: info.magnolia.ui.contentapp.configuration.BrowserDescriptor
+    closable: false
+    datasource: &datasource
+      $type: jcrDatasource
+      workspace: translation
+      describeByProperty: key
+      allowedNodeTypes:
+        folder: mgnl:folder
+        asset: mgnl:translation
+    workbench:
+      contentViews:
+        - name : list
+          $type: listView
+          multiSelect: true
+          columns:
+            key:
+              filterComponent:
+                $type: textField
+              width: 300
+            jcrPublishingStatus:
+              $type: jcrStatusColumn
+              width: 68
+            mgnl:lastModified:
+              $type: dateColumn
+              width: 190
     actions:
+      confirmDeletion:
+        icon: icon-delete
+        $type: confirmationAction
+        successActionName: delete
+        availability:
+          multiple: true
+          nodeTypes:
+            t9n: mgnl:translation
+      delete:
+        $type: jcrCommandAction
+        asynchronous: true
+        command: delete
+      publish:
+        icon: icon-publish
+        $type: jcrCommandAction
+        command: publish
+        availability:
+          nodeTypes:
+            t9n: mgnl:translation
+      unpublish:
+        icon: icon-unpublish
+        $type: jcrCommandAction
+        command: unpublish
+        availability:
+          nodeTypes:
+            t9n: mgnl:translation
+      import:
+        icon: icon-import
+        $type: openDialogAction
+        dialogId: ui-framework-jcr:import
+        availability:
+          nodes: false
+          root: true
+      export:
+        icon: icon-export
+        $type: exportAction
+      editTranslation:
+        icon: icon-edit
+        $type: openDetailSubappAction
+        appName: translation
+        subAppName: jcrDetail
+        viewType: edit
+        availability:
+          nodeTypes:
+            t9n: mgnl:translation
       addTranslation:
-        class: info.magnolia.ui.api.action.ConfiguredActionDefinition
         icon: icon-add-item
-        implementationClass: com.aperto.magnolia.translation.OpenAddTranslationDialogAction
+        $type: openDetailSubappAction
+        appName: translation
+        subAppName: jcrDetail
+        viewType: add
         availability:
           root: true
           nodeTypes:
             folder: mgnl:folder
-          rules:
-            - name: IsNotDeletedRule
-              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
-      editTranslation:
-        class: info.magnolia.ui.api.action.ConfiguredActionDefinition
-        icon: icon-edit
-        implementationClass: com.aperto.magnolia.translation.OpenEditTranslationDialogAction
-        availability:
-          rules:
-            - name: IsNotDeletedRule
-              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
-      activate:
-        catalog: versioned
-        class: info.magnolia.ui.framework.action.ActivationActionDefinition
-        command: activate
-        icon: icon-publish
-        availability:
-          rules:
-            - name: IsNotDeletedRule
-              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
-      deactivate:
-        catalog: versioned
-        class: info.magnolia.ui.framework.action.ActivationActionDefinition
-        command: deactivate
-        icon: icon-unpublish
-        availability:
-          rules:
-            - name: IsNotDeletedRule
-              implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
       exportTranslation:
         class: info.magnolia.ui.api.action.ConfiguredActionDefinition
         icon: icon-export
@@ -51,141 +92,57 @@ subApps:
           root: true
           multiple: true
       importTranslation:
-        class: info.magnolia.ui.framework.action.OpenCreateDialogActionDefinition
+        $type: openDialogAction
         icon: icon-import
-        dialogName: magnolia-translation:import
+        dialogId: magnolia-translation:import
         availability:
+          nodes: false
           root: true
       publishAll:
-        class: info.magnolia.ui.framework.action.ActivationActionDefinition
-        command: activate
+        $type: jcrCommandAction
+        command: publish
         icon: icon-publish-incl-sub
         implementationClass: com.aperto.magnolia.translation.PublishAllAction
-        recursive: true
         availability:
           nodes: false
           root: true
-      saveItemProperty:
-        class: info.magnolia.ui.contentapp.browser.action.SaveItemPropertyActionDefinition
-        availability:
-          properties: true
-      confirmDeletion:
-        class: info.magnolia.ui.framework.action.DeleteConfirmationActionDefinition
-        icon: icon-delete
-        successActionName: delete
-        availability:
-          nodes: true
-          multiple: true
-      delete:
-        class: info.magnolia.ui.framework.action.DeleteActionDefinition
-        asynchronous: true
-        command: delete
-      export:
-        class: info.magnolia.ui.framework.action.OpenExportDialogActionDefinition
-        dialogName: ui-admincentral:export
-        icon: icon-export
-        availability:
-          root: true
-          nodes: true
-      import:
-        class: info.magnolia.ui.framework.action.OpenCreateDialogActionDefinition
-        dialogName: ui-admincentral:import
-        icon: icon-import
-        availability:
-          root: true
-          nodes: false
     actionbar:
       defaultAction: editTranslation
+      deleteAction: confirmDeletion
       sections:
-        - name: root
+        translation:
           groups:
-            - name: addActions
+            jcr:
               items:
                 - name: addTranslation
-                - name: exportTranslation
-                - name: importTranslation
-                - name: publishAll
-                - name: import
-                - name: export
-          availability:
-            nodes: false
-            root: true
-        - name: translation
-          groups:
-            - name: addActions
-              items:
-                - name: addTranslation
-            - name: editActions
-              items:
                 - name: editTranslation
                 - name: confirmDeletion
                 - name: exportTranslation
+                - name: importTranslation
+                - name: import
                 - name: export
-            - name: activationActions
+            activation:
               items:
-                - name: activate
-                - name: deactivate
+                - name: publish
+                - name: unpublish
+                - name: publishAll
           availability:
-            nodeTypes:
-              mgnl-translation: mgnl:translation
-    workbench:
-      dropConstraintClass: info.magnolia.ui.workbench.tree.drop.AlwaysTrueDropConstraint
-      editable: true
-      contentViews:
-        list:
-          class: com.aperto.magnolia.translation.TranslationListPresenterDefinition
-          columns:
-            key:
-              class: info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition
-              displayInChooseDialog: false
-              editable: false
-              expandRatio: 1.0
-              propertyName: key
-              sortable: true
-              width: 300
-            status:
-              class: info.magnolia.ui.workbench.column.definition.StatusColumnDefinition
-              displayInChooseDialog: false
-              expandRatio: 1
-              formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
-              width: 46
-            moddate:
-              class: info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition
-              displayInChooseDialog: false
-              formatterClass: info.magnolia.ui.workbench.column.DateColumnFormatter
-              propertyName: mgnl:lastModified
-              sortable: true
-              width: 160
-        search:
-          class: com.aperto.magnolia.translation.TranslationSearchPresenterDefinition
-          columns:
-            key:
-              class: info.magnolia.ui.workbench.column.definition.PropertyColumnDefinition
-              displayInChooseDialog: false
-              editable: false
-              expandRatio: 1.0
-              propertyName: key
-              sortable: true
-              width: 300
-            status:
-              class: info.magnolia.ui.workbench.column.definition.StatusColumnDefinition
-              displayInChooseDialog: false
-              expandRatio: 1
-              formatterClass: info.magnolia.ui.workbench.column.StatusColumnFormatter
-              width: 46
-            moddate:
-              class: info.magnolia.ui.workbench.column.definition.MetaDataColumnDefinition
-              displayInChooseDialog: false
-              formatterClass: info.magnolia.ui.workbench.column.DateColumnFormatter
-              propertyName: mgnl:lastModified
-              sortable: true
-              width: 160
-    contentConnector:
-      defaultOrder: jcrName
-      includeProperties: false
-      rootPath: /
-      workspace: translation
-      nodeTypes:
-        translation:
-          icon: icon-message
-          name: mgnl:translation
+            root: true
+  jcrDetail:
+    class: info.magnolia.ui.contentapp.detail.DetailDescriptor
+    datasource: *datasource
+    itemProvider:
+      $type: jcrNodeFromLocationProvider
+      nodeType: mgnl:translation
+    actions:
+      commit:
+        $type: commitAction
+        implementationClass: com.aperto.magnolia.translation.TranslationSaveFormAction
+      cancel:
+        $type: closeAction
+    form:
+      class: com.aperto.magnolia.translation.TranslationFormDefinition
+      properties:
+        key:
+          label: Text
+          $type: textField
