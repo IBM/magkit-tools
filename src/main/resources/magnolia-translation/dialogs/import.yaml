@@ -7,7 +7,6 @@ form:
     encoding:
       $type: comboBoxField
       defaultValue: "UTF-8"
-      emptySelectionAllowed: false
       datasource:
         $type: optionListDatasource
         options:
@@ -18,7 +17,6 @@ form:
     separator:
       $type: comboBoxField
       defaultValue: ","
-      emptySelectionAllowed: false
       datasource:
         $type: optionListDatasource
         options:

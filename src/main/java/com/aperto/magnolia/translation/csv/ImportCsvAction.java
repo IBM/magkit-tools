@@ -14,6 +14,7 @@ import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.contentapp.Datasource;
 import info.magnolia.ui.contentapp.action.CommitAction;
 import info.magnolia.ui.contentapp.action.CommitActionDefinition;
+import info.magnolia.ui.datasource.optionlist.Option;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import org.apache.commons.collections.CollectionUtils;
@@ -88,8 +89,8 @@ public class ImportCsvAction extends CommitAction<Node> {
     }
 
     private String getPropertyValue(final String propertyId, final String defaultValue) {
-        Optional<String> propertyValue = _form.getPropertyValue(propertyId);
-        return propertyValue.orElse(defaultValue);
+        Optional<Option> propertyValue = _form.getPropertyValue(propertyId);
+        return propertyValue.isPresent() ? propertyValue.get().getValue() : defaultValue;
     }
 
     private void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
