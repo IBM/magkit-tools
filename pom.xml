@@ -78,4 +78,10 @@
             <url>https://acid-repo.aperto.de/repository/magnolia/</url>
         </repository>
     </repositories>
+
+    <scm>
+        <connection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</connection>
+        <developerConnection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</developerConnection>
+        <url>https://acid-github.aperto.de/magkit/magnolia-translation</url>
+    </scm>
 </project>
