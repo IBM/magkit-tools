@@ -1,4 +1,4 @@
-@Library('jenkins-library-acid-base-github@0.47.0') _
+@Library('jenkins-library-acid-base-github@0.48.1') _
 
 pipeline {
   agent {
