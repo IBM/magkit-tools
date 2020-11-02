@@ -146,3 +146,7 @@ subApps:
         key:
           label: Text
           $type: textField
+permissions:
+  roles:
+    translation-base: translation-base
+    superuser: superuser
