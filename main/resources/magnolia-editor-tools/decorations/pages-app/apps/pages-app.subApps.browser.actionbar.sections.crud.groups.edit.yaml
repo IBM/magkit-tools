@@ -1,0 +1,11 @@
+items: !override
+  - name: preview
+  - name: previewExternal
+  - name: edit
+  - name: openPageProperties
+  - name: rename
+  - name: duplicate
+  - name: changeTemplate
+  - name: move
+  - name: copy
+  - name: paste

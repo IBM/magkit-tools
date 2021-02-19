@@ -1,0 +1,34 @@
+pageActions:
+  groups:
+    edit:
+      items: !override
+        - name: preview
+        - name: editPage
+    editingFlow:
+      items:
+        - name: viewPublishedPage
+        - name: jumpToBrowser
+areaActions:
+  groups:
+    preview:
+      items:
+        - name: openPageProperties
+    editingFlow:
+      items:
+        - name: viewPublishedPage
+        - name: jumpToBrowser
+pagePreviewActions:
+  groups:
+    editingFlow:
+      items:
+        - name: viewPublishedPage
+        - name: jumpToBrowser
+componentActions:
+  groups:
+    preview:
+      items:
+        - name: openPageProperties
+    editingFlow:
+      items:
+        - name: viewPublishedPage
+        - name: jumpToBrowser
