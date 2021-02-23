@@ -52,6 +52,22 @@
             <version>${magnolia.pages.version}/*</version>
         </dependency>
         <dependency>
+            <name>pages-app</name>
+            <version>${magnolia.pages.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app-core</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app-jcr</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
             <name>multisite</name>
             <version>${magnolia.multisite.version}/*</version>
         </dependency>
