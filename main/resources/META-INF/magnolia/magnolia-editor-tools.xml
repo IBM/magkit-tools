@@ -42,6 +42,14 @@
         </type-mapping>
     </components>
 
+    <components>
+        <id>admincentral</id>
+        <type-mapping>
+            <type>info.magnolia.ui.contentapp.browser.drop.RowDragger</type>
+            <implementation>com.aperto.magnolia.edittools.m6.ui.ConfirmRowDragger</implementation>
+        </type-mapping>
+    </components>
+
     <dependencies>
         <dependency>
             <name>core</name>

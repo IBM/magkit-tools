@@ -1,5 +1,6 @@
 package com.aperto.magnolia.edittools.action;
 
+import com.aperto.magnolia.edittools.m6.ui.ConfirmRowDragger;
 import com.aperto.magnolia.edittools.setup.EditToolsModule;
 import com.vaadin.event.Transferable;
 import com.vaadin.event.dd.DragAndDropEvent;
@@ -35,7 +36,9 @@ import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
  * Extended handler for drag and drop.
  *
  * @author janine.naumann, frank sommer
+ * @deprecated for Magnolia 6 use {@link ConfirmRowDragger}
  */
+@Deprecated
 public class ConfirmTreeViewDropHandler extends TreeViewDropHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmTreeViewDropHandler.class);
 
