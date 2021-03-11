@@ -50,6 +50,14 @@
         </type-mapping>
     </components>
 
+    <components>
+        <id>app-dam-jcrBrowser</id>
+        <component>
+            <type>info.magnolia.ui.contentapp.ItemDescriber</type>
+            <implementation>com.aperto.magnolia.edittools.m6.ui.AssetUsageItemDescriber</implementation>
+        </component>
+    </components>
+
     <dependencies>
         <dependency>
             <name>core</name>
