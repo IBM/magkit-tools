@@ -32,7 +32,9 @@ import static info.magnolia.jcr.util.NodeUtil.getNearestAncestorOfType;
  *
  * @author Philipp Güttler (Aperto AG)
  * @since 30.06.2015
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.action.OpenPagePropertiesAction}.
  */
+@Deprecated
 public class EditPageAction extends EditElementAction {
     private final AbstractElement _element;
     private final SubAppContext _subAppContext;

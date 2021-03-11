@@ -19,7 +19,9 @@ import static info.magnolia.jcr.util.NodeUtil.isNodeType;
  *
  * @author frank.sommer
  * @since 15.01.16
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.action.OpenPageBrowserLocationAction}
  */
+@Deprecated
 public class OpenPageLocationAction extends AbstractOpenLocationAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenPageLocationAction.class);
 

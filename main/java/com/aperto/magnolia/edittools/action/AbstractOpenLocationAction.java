@@ -12,7 +12,9 @@ import info.magnolia.ui.contentapp.browser.BrowserLocation;
  *
  * @author jean-charles.robert
  * @since 09.05.18
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.action.OpenAppViewLocationAction}
  */
+@Deprecated
 public abstract class AbstractOpenLocationAction extends AbstractAction<AbstractOpenLocationActionDefinition> {
 
     public static final String TREE_VIEW = "treeview";

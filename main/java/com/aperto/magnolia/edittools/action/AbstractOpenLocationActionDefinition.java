@@ -8,7 +8,9 @@ import info.magnolia.ui.framework.action.OpenLocationActionDefinition;
  * @author jean-charles.robert
  * @see OpenLocationActionDefinition
  * @since 14.05.18
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.action.OpenAppViewLocationActionDefinition}
  */
+@Deprecated
 public abstract class AbstractOpenLocationActionDefinition extends OpenLocationActionDefinition {
 
     private String _viewType = AbstractOpenLocationAction.TREE_VIEW;

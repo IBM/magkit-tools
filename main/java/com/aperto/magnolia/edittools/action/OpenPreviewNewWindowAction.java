@@ -22,7 +22,9 @@ import static info.magnolia.jcr.util.NodeUtil.isNodeType;
  *
  * @author diana.racho (Aperto AG)
  * @since 05.02.15
+ * @deprecated detail view contains a button 'preview in tab'
  */
+@Deprecated
 public class OpenPreviewNewWindowAction extends AbstractAction<ConfiguredActionDefinition> {
     private static final Logger LOGGER = LoggerFactory.getLogger(OpenPreviewNewWindowAction.class);
 

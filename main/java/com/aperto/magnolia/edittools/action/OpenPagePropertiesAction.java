@@ -34,7 +34,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * @author frank.sommer
  * @see OpenEditDialogActionDefinition
  * @since 1.2.3
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.action.OpenPagePropertiesAction}
  */
+@Deprecated
 public class OpenPagePropertiesAction extends AbstractAction<OpenEditDialogActionDefinition> {
     private final Item _itemToEdit;
     private final SimpleTranslator _i18n;

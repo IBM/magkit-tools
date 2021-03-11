@@ -28,7 +28,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  *
  * @author Philipp Güttler (Aperto AG)
  * @since 30.06.2015
+ * @deprecated for Magnolia 6 use {@link com.aperto.magnolia.edittools.m6.rule.IsPagePropertiesEditableRule}
  */
+@Deprecated
 public class IsElementEditableRule extends AbstractElementAvailabilityRule<AbstractElement> {
     private static final Logger LOGGER = LoggerFactory.getLogger(IsElementEditableRule.class);
 
