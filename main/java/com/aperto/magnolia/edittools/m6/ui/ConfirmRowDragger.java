@@ -60,7 +60,7 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
             return 0;
         });
         setTargetDataProviderUpdater((TargetDataProviderUpdater<T>) (dropEffect, dataProvider, index, items) -> {
-            if (dropConstraint.isAllowedAt(items, _target, _dropLocation)) {
+            if (dropConstraint.isAllowedAt(items, getTarget(), getDropLocation())) {
                 if (showConfirmation(datasource)) {
                     AlertBuilder.confirmDialog(createConfirmTitle(items))
                         .withBody(createConfirmContent(items))
@@ -98,7 +98,7 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
     }
 
     protected void doMoveItems(final Datasource<T> datasource, final Grid<T> grid, final Collection<T> items) {
-        datasource.moveItems(items, _target, _dropLocation);
+        datasource.moveItems(items, getTarget(), getDropLocation());
         grid.getDataProvider().refreshAll();
     }
 
@@ -129,5 +129,13 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
             return _simpleTranslator.translate("magkit.moveItem.m6.confirmationQuestionManyItems", items.size());
         }
         return _simpleTranslator.translate("magkit.moveItem.m6.confirmationQuestionOneItem");
+    }
+
+    protected T getTarget() {
+        return _target;
+    }
+
+    protected DropLocation getDropLocation() {
+        return _dropLocation;
     }
 }
