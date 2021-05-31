@@ -3,7 +3,6 @@ icon: icon-edit
 implementationClass: com.aperto.magnolia.edittools.action.OpenPagePropertiesAction
 label: pages.detail.actions.editProperties.label
 availability:
-  implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
   writePermissionRequired: true
   rules:
     IsNotDeletedRule:
