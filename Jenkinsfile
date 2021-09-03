@@ -1,4 +1,4 @@
-@Library('jenkins-library-acid-base-github@0.48.1') _
+@Library('jenkins-library-acid-base-github@latest') _
 
 pipeline {
   agent {
@@ -51,7 +51,7 @@ pipeline {
             acidExecuteMaven(this, [
               configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
-              suppressionsEnabled: true
+              executeDependencyCheck: false
             ])
           }
         }
@@ -103,7 +103,7 @@ pipeline {
             acidExecuteMaven(this, [
               configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
               params: mavenParams,
-              suppressionsEnabled: true
+              executeDependencyCheck: false
             ])
           }
         }
