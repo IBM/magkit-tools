@@ -40,6 +40,10 @@ pipeline {
       }
       steps {
         script {
+          def mavenBaseCommand = "deploy"
+          if (BRANCH_NAME ==~ /^PR-.*/ ) {
+            mavenBaseCommand = "package"
+          }
           def secrets = [
             [$class: 'VaultSecret', path: "acid/tools/nexus/live", engineVersion: 2, secretValues: [
               [$class: 'VaultSecretValue', envVar: 'DEPLOY_PASSWORD', vaultKey: 'password'],
@@ -47,12 +51,10 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = " deploy --batch-mode -Pci -U -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
-            acidExecuteMaven(this, [
-              configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
-              params: mavenParams,
-              executeDependencyCheck: false
-            ])
+            def mavenParams = "${mavenBaseCommand} -Pci -U -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            withMaven {
+              sh "mvn $mavenParams"
+            }
           }
         }
       }
@@ -99,12 +101,10 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = " release:clean release:prepare release:perform --batch-mode -Pci -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
-            acidExecuteMaven(this, [
-              configFileId: '5ff62c62-4015-4854-8ab8-29bd275a1a92',
-              params: mavenParams,
-              executeDependencyCheck: false
-            ])
+            def mavenParams = "release:clean release:prepare release:perform -Pci -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            withMaven {
+              sh "mvn $mavenParams"
+            }
           }
         }
       }
