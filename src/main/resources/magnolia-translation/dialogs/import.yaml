@@ -1,7 +1,7 @@
 form:
   properties:
     importCsv:
-      allowedMimeTypePattern: text/csv|application/csv|application/vnd.ms-excel
+      allowedMimeTypePattern: text/csv,application/csv,application/vnd.ms-excel
       $type: uploadField
       required: true
     encoding:
