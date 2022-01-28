@@ -51,7 +51,7 @@ pipeline {
             ]]
           ]
           wrap([$class: 'VaultBuildWrapper', vaultSecrets: secrets]) {
-            def mavenParams = "${mavenBaseCommand} -Pci -U -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
+            def mavenParams = "${mavenBaseCommand} -Pci,coverage -U -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD -Djenkins.gitBranch=${GIT_BRANCH} -Djenkins.buildNumber=${BUILD_NUMBER}"
             withMaven {
               sh "mvn $mavenParams"
             }
@@ -61,7 +61,9 @@ pipeline {
     }
     stage('Sonar') {
       when {
-        branch 'master'
+        anyOf {
+          branch 'master'; branch 'develop'; branch 'PR-*'
+        }
         expression {
           params.INPUT_ENV != 'Release'
         }
@@ -72,11 +74,9 @@ pipeline {
         }
       }
       steps {
-        acidExecuteSonar (this, "magnolia", [
-          withCoverage: false,
-          jdk: 'openJDK11',
-          maven: 'maven360'
-        ])
+        withSonarQubeEnv('SonarQube') {
+          sh "mvn sonar:sonar -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD"
+        }
       }
     }
     stage('Release') {
