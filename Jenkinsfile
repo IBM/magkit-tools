@@ -75,7 +75,7 @@ pipeline {
       }
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh "mvn sonar:sonar -Duser=$DEPLOY_USERNAME -Dpw=$DEPLOY_PASSWORD"
+          sh "mvn sonar:sonar"
         }
       }
     }
