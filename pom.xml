@@ -6,7 +6,7 @@
         <artifactId>mgnl-pom</artifactId>
         <version>1.2.1</version>
     </parent>
-    <version>1.5.2</version>
+    <version>1.5.3-SNAPSHOT</version>
     <name>Magnolia Translation Module</name>
     <description>App to manage translations for various languages from different properties files.</description>
     <artifactId>magnolia-translation</artifactId>
@@ -75,6 +75,6 @@
         <connection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</connection>
         <developerConnection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</developerConnection>
         <url>https://acid-github.aperto.de/magkit/magnolia-translation</url>
-      <tag>magnolia-translation-1.5.2</tag>
+      <tag>HEAD</tag>
   </scm>
 </project>
