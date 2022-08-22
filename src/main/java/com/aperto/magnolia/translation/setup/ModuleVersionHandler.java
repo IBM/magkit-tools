@@ -1,30 +1,22 @@
 package com.aperto.magnolia.translation.setup;
 
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
-import info.magnolia.jcr.nodebuilder.task.ErrorHandling;
-import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
-import info.magnolia.jcr.util.NodeTypes.ContentNode;
 import info.magnolia.module.DefaultModuleVersionHandler;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.DeltaBuilder;
 import info.magnolia.module.delta.NodeExistsDelegateTask;
 import info.magnolia.module.delta.QueryTask;
 import info.magnolia.module.delta.RemoveNodeTask;
-import info.magnolia.module.delta.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static info.magnolia.jcr.nodebuilder.Ops.addNode;
 import static info.magnolia.jcr.util.NodeTypes.Activatable.LAST_ACTIVATED_VERSION;
 import static info.magnolia.jcr.util.NodeTypes.Activatable.LAST_ACTIVATED_VERSION_CREATED;
 import static info.magnolia.jcr.util.NodeUtil.getNodePathIfPossible;
-import static info.magnolia.repository.RepositoryConstants.CONFIG;
 
 /**
  * Module version handler for this module.
@@ -61,12 +53,5 @@ public class ModuleVersionHandler extends DefaultModuleVersionHandler {
             }
         });
         register(update151);
-    }
-
-    @Override
-    protected List<Task> getExtraInstallTasks(final InstallContext installContext) {
-        List<Task> tasks = new ArrayList<>();
-        tasks.add(new NodeBuilderTask("Register translation app", "Register translation app in admin central.", ErrorHandling.logging, CONFIG, "/modules/ui-admincentral/config/appLauncherLayout/groups/edit/apps", addNode("translation", ContentNode.NAME)));
-        return tasks;
     }
 }
