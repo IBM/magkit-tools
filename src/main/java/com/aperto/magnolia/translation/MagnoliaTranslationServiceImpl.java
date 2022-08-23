@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
 import static info.magnolia.cms.util.QueryUtil.search;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
-import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
@@ -73,7 +73,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         // get first acceptable translation for list of keys:
         String message = null;
         for (String key : keys) {
-            if (!key.contains("'")) {
+            if (!contains(key, "'")) {
                 String newMessage = doMessageQuery(key, i18nProperty, fallbackProperty);
                 if (MESSAGE_CONDITION.test(newMessage)) {
                     message = newMessage;
