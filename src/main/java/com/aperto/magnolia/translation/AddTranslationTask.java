@@ -46,7 +46,7 @@ public class AddTranslationTask extends AbstractTask {
     private final String _baseName;
     private final Locale _locale;
     private final String _basePath;
-    private NodeNameHelper _nodeNameHelper;
+    private final NodeNameHelper _nodeNameHelper;
 
     /**
      * Constructor for messages bundle registration.

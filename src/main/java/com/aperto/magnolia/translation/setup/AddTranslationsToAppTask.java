@@ -1,9 +1,10 @@
 package com.aperto.magnolia.translation.setup;
 
 import com.aperto.magnolia.translation.TranslationNodeTypes.Translation;
+import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.AbstractTask;
-import info.magnolia.module.delta.TaskExecutionException;
+import info.magnolia.objectfactory.Components;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.jcr.Node;
@@ -13,13 +14,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import static com.aperto.magnolia.translation.TranslationNodeTypes.WS_TRANSLATION;
-import static info.magnolia.cms.core.Path.getValidatedLabel;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static info.magnolia.jcr.util.PropertyUtil.setProperty;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.join;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -32,6 +34,7 @@ public class AddTranslationsToAppTask extends AbstractTask {
     private final String _baseName;
     private final String[] _languages;
     private final String _basePath;
+    private final NodeNameHelper _nodeNameHelper;
 
     public AddTranslationsToAppTask(String baseName, String... languages) {
         this("Add translations for " + baseName,
@@ -47,17 +50,19 @@ public class AddTranslationsToAppTask extends AbstractTask {
         _baseName = baseName;
         _languages = languages;
         _basePath = StringUtils.defaultString(basePath) + "/";
+        _nodeNameHelper = Components.getComponent(NodeNameHelper.class);
     }
 
     @Override
-    public void execute(final InstallContext installContext) throws TaskExecutionException {
+    public void execute(final InstallContext installContext) {
         if (isNotBlank(_baseName) && _languages != null) {
             try {
                 Session session = installContext.getJCRSession(WS_TRANSLATION);
                 for (String language : _languages) {
-                    ResourceBundle bundle = ResourceBundle.getBundle(_baseName, new Locale(language));
+                    Locale locale = retrieveLocale(language);
+                    ResourceBundle bundle = ResourceBundle.getBundle(_baseName, locale);
                     for (String key : bundle.keySet()) {
-                        String keyNodeName = getValidatedLabel(key);
+                        String keyNodeName = _nodeNameHelper.getValidatedName(key);
                         if (session.itemExists(_basePath + keyNodeName)) {
                             Node translationNode = session.getNode(_basePath + keyNodeName);
                             String currentTranslation = getString(translationNode, Translation.PREFIX_NAME + language, "");
@@ -76,5 +81,15 @@ public class AddTranslationsToAppTask extends AbstractTask {
                 installContext.error("Can not write translations.", e);
             }
         }
+    }
+
+    private Locale retrieveLocale(String language) {
+        Locale locale;
+        if (language.contains("_")) {
+            locale = new Locale(substringBefore(language, "_"), substringAfter(language, "_"));
+        } else {
+            locale = new Locale(language);
+        }
+        return locale;
     }
 }

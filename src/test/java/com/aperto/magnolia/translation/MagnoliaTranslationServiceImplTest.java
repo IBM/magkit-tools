@@ -44,7 +44,7 @@ public class MagnoliaTranslationServiceImplTest {
 
         _translationService = new MagnoliaTranslationServiceImpl(null, messageProvider) {
             @Override
-            String doMessageQuery(final String key, final String i18nProperty) {
+            String doMessageQuery(final String key, final String i18nProperty, String fallbackProperty) {
                 Map<String, String> messagesFromApp = new HashMap<>();
                 messagesFromApp.put("invalid'key", "---");
                 messagesFromApp.put("empty.key", "");
