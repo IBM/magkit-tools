@@ -64,6 +64,36 @@
         </resources>
     </build>
 
+    <profiles>
+        <profile>
+            <id>jdk8</id>
+            <properties>
+                <source.javaversion>8</source.javaversion>
+                <target.javaversion>8</target.javaversion>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>JDK8</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jdk8</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
     <repositories>
         <repository>
             <id>acid.magnolia.group</id>
