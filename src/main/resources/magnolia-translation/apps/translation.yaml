@@ -9,6 +9,9 @@ subApps:
       $type: jcrDatasource
       workspace: translation
       describeByProperty: key
+      # need to add ordering explicitly so entries stop moving out of viewport after status change
+      sortBy:
+        key: ascending
       allowedNodeTypes:
         folder: mgnl:folder
         asset: mgnl:translation
