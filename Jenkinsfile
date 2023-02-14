@@ -1,4 +1,4 @@
-@Library('jenkins-library-acid-base-github@latest') _
+@Library('ix-jenkins-library@latest') _
 
 pipeline {
   agent {
@@ -35,7 +35,7 @@ pipeline {
       }
       post {
         always {
-          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
+          ixSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
         }
       }
       steps {
@@ -70,7 +70,7 @@ pipeline {
       }
       post {
         always {
-          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
+          ixSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: true])
         }
       }
       steps {
@@ -88,7 +88,7 @@ pipeline {
       }
       post {
         always {
-          acidSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: false])
+          ixSendNotifications (this, [projectOs: 'magnolia', sendNoSlackSuccessNotification: false])
         }
       }
       steps {
