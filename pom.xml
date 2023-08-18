@@ -28,6 +28,7 @@
             <artifactId>opencsv</artifactId>
         </dependency>
 
+        <!-- test scope deps -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -40,6 +41,7 @@
             <groupId>com.aperto.magkit</groupId>
             <artifactId>magkit-test</artifactId>
             <version>3.5.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
