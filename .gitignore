@@ -1,0 +1,11 @@
+# idea
+.idea
+*.iml
+
+# eclipse
+.project
+.settings
+
+# build files
+target
+.DS_Store
