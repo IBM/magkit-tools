@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -46,7 +46,7 @@ public class QueryResultViewImpl extends BaseResultViewImpl implements QueryResu
         super(subAppContext, componentProvider, formBuilder, i18n);
 
         CssLayout resultSection = getResultSection();
-        BrowserFrame browserFrame = new BrowserFrame("Tipps zu JCR-SQL2", new ExternalResource(MgnlContext.getContextPath() + "/.resources/extended-tools/webresources/JcrQueryHelp.html"));
+        BrowserFrame browserFrame = new BrowserFrame("Tipps zu JCR-SQL2", new ExternalResource(MgnlContext.getContextPath() + "/.resources/magkit-tools-app/webresources/JcrQueryHelp.html"));
         browserFrame.setWidth("100%");
         browserFrame.setHeight("640px");
         browserFrame.addStyleName("help-frame");

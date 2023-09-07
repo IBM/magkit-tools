@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,6 @@ import static de.ibmix.magkit.setup.delta.StandardTasks.PN_CLASS;
 import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.addOrGetContentNode;
 import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.addOrSetProperty;
 import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.getNode;
-import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.removeIfExists;
 import static de.ibmix.magkit.setup.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 
@@ -44,9 +43,6 @@ import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
  * @since 12.11.12
  */
 public class ToolsModuleVersionHandler extends BootstrapModuleVersionHandler {
-    private static final String ACTION_VIEW_DIALOG_CMP = "viewDialogDefinition";
-    private static final String ACTION_VIEW_SOURCE_CMP = "viewSource";
-    private static final String ACTION_VIEW_TEMPLATE_CMP = "viewTemplateDefinition";
 
     private static final String PN_LABEL = "label";
     private static final String PN_NAME = "name";
@@ -55,7 +51,6 @@ public class ToolsModuleVersionHandler extends BootstrapModuleVersionHandler {
 
     private static final String MODULE_PAGES = "pages";
     private static final String MODULE_SECURITY_APP = "security-app";
-
 
     private final Task _addIdentifierToEditPageDialog = selectModuleConfig("Add identifier to editPage dialog.", "Add identifier to editPage dialog.", MODULE_PAGES,
         getNode("dialogs/editPage/form/tabs/tabPage/fields").then(
@@ -80,25 +75,6 @@ public class ToolsModuleVersionHandler extends BootstrapModuleVersionHandler {
         ),
         addOrGetContentNode("dialogs/group/form/tabs/aclOverview").then(
             addOrSetProperty(PN_EXTENDS, "/modules/security-app/dialogs/user/form/tabs/aclOverview")
-        )
-    );
-
-    private final Task _removeDevActionBarSections = selectModuleConfig("Remove dev action bar", "Remove dev action bar sections.", MODULE_PAGES,
-        getNode("apps/pages/subApps/detail/actions").then(
-            removeIfExists(ACTION_VIEW_DIALOG_CMP),
-            removeIfExists(ACTION_VIEW_SOURCE_CMP),
-            removeIfExists(ACTION_VIEW_TEMPLATE_CMP)
-        ),
-        getNode("apps/pages/subApps/detail/actionbar/sections").then(
-            removeIfExists("pageActionsForDevs"),
-            removeIfExists("areaActionsForDevs"),
-            removeIfExists("componentActionsForDevs")
-        )
-    );
-
-    private final Task _removeStatusBarConfig = selectModuleConfig("Remove statusBarConfig", "Remove statusBarConfig from this module.", "src/main/resources/extended-tools",
-        getNode("config").then(
-            removeIfExists("statusBarConfig")
         )
     );
 
