@@ -1,0 +1,12 @@
+icon: icon-export
+$type: exportSinglePageAction
+label: Export Single Page
+catalog: ibmIx
+availability:
+  rules:
+    notDeleted:
+    $type: jcrIsDeletedRule
+    negate: true
+permissions:
+  roles:
+    superuser: superuser
