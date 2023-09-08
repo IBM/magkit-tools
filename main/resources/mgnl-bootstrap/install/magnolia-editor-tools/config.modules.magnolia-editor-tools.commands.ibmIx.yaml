@@ -23,3 +23,16 @@ ibmIx:
             mgnlLastActivatedBy: mgnl:lastActivatedBy
             mgnllastActivatedVersion: mgnl:lastActivatedVersion
             mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated
+  exportSinglePage:
+    class: com.aperto.magnolia.edittools.m6.command.JcrExportSinglePageCommand
+    filters:
+      website:
+        class: info.magnolia.importexport.command.JcrExportCommand$DefaultFilter
+        propertyPredicate:
+          class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
+          excludedNames:
+            mgnlActivationStatus: mgnl:activationStatus
+            mgnlLastActivated: mgnl:lastActivated
+            mgnlLastActivatedBy: mgnl:lastActivatedBy
+            mgnllastActivatedVersion: mgnl:lastActivatedVersion
+            mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated

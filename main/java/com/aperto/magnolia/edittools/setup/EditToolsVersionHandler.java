@@ -35,7 +35,7 @@ public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
 
     private final Task _workspaceMoveConfig = new BootstrapConditionally("Add move workspace config", "/mgnl-bootstrap/install/magnolia-editor-tools/config.modules.magnolia-editor-tools.config.moveConfirmWorkspaces.xml");
-    private final Task _addIbmIxCommand = new BootstrapConditionally("add ibmIx Catalog To ExportAction in magnolia-editor-tools", "/mgnl-bootstrap/install/magnolia-editor-tools/config.modules.magnolia-editor-tools.commands.ibmIx.yaml");
+    private final Task _addIbmIxCommand = new BootstrapConditionally("add ibmIx commands to magnolia-editor-tools", "/mgnl-bootstrap/install/magnolia-editor-tools/config.modules.magnolia-editor-tools.commands.ibmIx.yaml");
 
     public EditToolsVersionHandler() {
         DeltaBuilder update140 = DeltaBuilder.update("1.4.0", "Update to version 1.4.0.");
