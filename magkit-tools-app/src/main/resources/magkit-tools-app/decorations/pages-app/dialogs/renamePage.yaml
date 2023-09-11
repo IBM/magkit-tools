@@ -1,0 +1,7 @@
+form:
+  properties:
+    identifier:
+      $type: textField
+      label: paged.editPage.identifier
+      name: jcr:uuid
+      readOnly: true

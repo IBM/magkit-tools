@@ -25,7 +25,7 @@
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
     <class>de.ibmix.magkit.tools.app.ToolsModule</class>
-    <versionHandler>de.ibmix.magkit.tools.app.ToolsModuleVersionHandler</versionHandler>
+    <versionHandler>de.ibmix.magkit.setup.BootstrapModuleVersionHandler</versionHandler>
     <version>${project.version}</version>
 
     <components>
