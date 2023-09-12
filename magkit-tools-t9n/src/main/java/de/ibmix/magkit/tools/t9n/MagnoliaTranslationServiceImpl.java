@@ -39,7 +39,6 @@ import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.function.Predicate;
 
-import static info.magnolia.cms.util.QueryUtil.search;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
