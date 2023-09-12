@@ -1,0 +1,32 @@
+form:
+  properties:
+    importCsv:
+      allowedMimeTypePattern: text/csv,application/csv,application/vnd.ms-excel
+      $type: uploadField
+      required: true
+    encoding:
+      $type: comboBoxField
+      defaultValue: "UTF-8"
+      datasource:
+        $type: optionListDatasource
+        options:
+        - name: utf8
+          value: "UTF-8"
+        - name: ansi
+          value: "ISO-8859-1"
+    separator:
+      $type: comboBoxField
+      defaultValue: ","
+      datasource:
+        $type: optionListDatasource
+        options:
+        - name: komma
+          value: ","
+        - name: semicolon
+          value: ";"
+actions:
+  commit:
+    $type: commitAction
+    implementationClass: com.aperto.magnolia.translation.csv.ImportCsvAction
+  cancel:
+    $type: closeAction
