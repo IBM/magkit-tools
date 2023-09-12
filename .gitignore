@@ -1,10 +1,11 @@
-*.iml
-*~
-target
+# idea
 .idea
-.target
-rebel.xml
-.classpath
+*.iml
+
+# eclipse
 .project
-.settings/**
-pom.xml.versionsBackup
+.settings
+
+# build files
+target
+.DS_Store

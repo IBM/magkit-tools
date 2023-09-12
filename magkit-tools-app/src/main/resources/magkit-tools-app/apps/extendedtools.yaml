@@ -1,0 +1,56 @@
+'appClass': 'de.ibmix.magkit.tools.app.ToolsBaseApp'
+'icon': 'icon-user-system'
+'name': 'extendedtools'
+'theme': 'extendedtools'
+'subApps':
+  'jcrQueries':
+    'class': 'de.ibmix.magkit.tools.app.FormSubAppDescriptorImpl'
+    'closable': 'false'
+    'subAppClass': 'de.ibmix.magkit.tools.app.QuerySubApp'
+    'form':
+      'tabs':
+        'mainTab':
+          'fields':
+            'workspace':
+              'class': 'info.magnolia.module.cache.app.field.WorkspaceSelectFieldDefinition'
+            'queryLanguage':
+              'class': 'info.magnolia.jcrtools.field.QueryLanguageSelectFieldDefinition'
+            'showPaths':
+              'class': 'info.magnolia.ui.form.field.definition.CheckboxFieldDefinition'
+              'defaultValue': 'true'
+            'showCols':
+              'class': 'info.magnolia.ui.form.field.definition.CheckboxFieldDefinition'
+            'statement':
+              'class': 'info.magnolia.ui.form.field.definition.TextFieldDefinition'
+              'required': 'true'
+              'rows': '4'
+  'versionPrune':
+    'class': 'de.ibmix.magkit.tools.app.FormSubAppDescriptorImpl'
+    'closable': 'false'
+    'subAppClass': 'de.ibmix.magkit.tools.app.VersionPruneSubApp'
+    'form':
+      'tabs':
+        'mainTab':
+          'fields':
+            'versions':
+              'class': 'info.magnolia.ui.form.field.definition.TextFieldDefinition'
+              'required': 'true'
+              'defaultValue': '0'
+              'type': 'Long'
+            'path':
+              'class': 'info.magnolia.ui.form.field.definition.TextFieldDefinition'
+              'required': 'true'
+              'defaultValue': '/'
+              'validators':
+                - name: zip
+                  class: info.magnolia.ui.form.validator.definition.RegexpValidatorDefinition
+                  pattern: ^/(.*)?$
+                  errorMessage: Enter a valid path beginning with a slash.
+            'workspace':
+              'class': 'info.magnolia.module.cache.app.field.WorkspaceSelectFieldDefinition'
+'permissions':
+  'roles':
+    'extendedtools-base': 'extendedtools-base'
+    'superuser': 'superuser'
+
+
