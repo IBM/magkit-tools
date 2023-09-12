@@ -14,10 +14,12 @@
 
     <modules>
         <module>magkit-tools-app</module>
+        <module>magkit-tools-t9n</module>
     </modules>
 
     <properties>
         <version.magkit>1.0.0-SNAPSHOT</version.magkit>
+        <version.magkit.test>1.0.0-SNAPSHOT</version.magkit.test>
     </properties>
 
     <dependencyManagement>
@@ -31,6 +33,12 @@
                 <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-setup</artifactId>
                 <version>${version.magkit}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.ibmix.magkit</groupId>
+                <artifactId>magkit-test-cms</artifactId>
+                <version>${version.magkit.test}</version>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
