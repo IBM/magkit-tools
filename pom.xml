@@ -1,37 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>de.ibmix.magkit</groupId>
-        <artifactId>magkit-pom</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <groupId>com.aperto.magkit</groupId>
+        <artifactId>mgnl-pom</artifactId>
+        <version>1.2.1</version>
     </parent>
-    <artifactId>magkit-tools</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-    <name>IBM iX Magnolia Kit Tools</name>
-    <packaging>pom</packaging>
+    <version>1.5.4-SNAPSHOT</version>
+    <name>Magnolia Translation Module</name>
+    <description>App to manage translations for various languages from different properties files.</description>
+    <artifactId>magnolia-translation</artifactId>
+    <packaging>jar</packaging>
 
-    <modules>
-        <module>magkit-tools-app</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>info.magnolia.ui</groupId>
+            <artifactId>magnolia-ui-admincentral</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.magnolia</groupId>
+            <artifactId>magnolia-i18n</artifactId>
+        </dependency>
 
-    <properties>
-        <version.magkit>1.0.0-SNAPSHOT</version.magkit>
-    </properties>
+        <!-- CSV -->
+        <dependency>
+            <groupId>net.sf.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+        </dependency>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>de.ibmix.magkit</groupId>
-                <artifactId>magkit-core</artifactId>
-                <version>${version.magkit}</version>
-            </dependency>
-            <dependency>
-                <groupId>de.ibmix.magkit</groupId>
-                <artifactId>magkit-setup</artifactId>
-                <version>${version.magkit}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <!-- test scope deps -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.aperto.magkit</groupId>
+            <artifactId>magkit-test</artifactId>
+            <version>3.5.0</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>magnolia-translation</finalName>
+        <resources>
+            <!-- Filter all *.properties files within resources directory and keep
+                other files as they are. -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/META-INF/magnolia/*.xml</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/META-INF/magnolia/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>jdk8</id>
+            <properties>
+                <source.javaversion>8</source.javaversion>
+                <target.javaversion>8</target.javaversion>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>JDK8</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jdk8</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>acid.magnolia.group</id>
+            <url>https://acid-repo.aperto.de/repository/magnolia/</url>
+        </repository>
+    </repositories>
+
+    <scm>
+        <connection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</connection>
+        <developerConnection>scm:git:git@acid-github.aperto.de:magkit/magnolia-translation.git</developerConnection>
+        <url>https://acid-github.aperto.de/magkit/magnolia-translation</url>
+      <tag>HEAD</tag>
+  </scm>
 </project>
