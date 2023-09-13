@@ -1,14 +1,13 @@
 # MagKit Tools
 
-<!-- Build Status, is a great thing to have at the top of your repository, it shows that you take your CI/CD as first class citizens -->
-<!-- [![Build Status](https://travis-ci.org/jjasghar/ibm-cloud-cli.svg?branch=master)](https://travis-ci.org/jjasghar/ibm-cloud-cli) -->
+[![build-module](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml/badge.svg)](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml)
 
-<!-- Not always needed, but a scope helps the user understand in a short sentence like below, why this repo exists -->
 ## Scope
 
-The purpose of this project is to provide a template for new open source repositories.
+Multi module project contains MagKit tools libraries.
+1. magkit-tools-app
+2. magkit-tools-t9n
 
-<!-- A more detailed Usage or detailed explanation of the repository here -->
 ## Usage
 
 This repository contains some example best practices for open source repositories:
@@ -20,17 +19,13 @@ This repository contains some example best practices for open source repositorie
 <!-- A Changelog allows you to track major changes and things that happen, https://github.com/github-changelog-generator/github-changelog-generator can help automate the process -->
 * [CHANGELOG.md](CHANGELOG.md)
 
-These may be copied into a new or existing project to make it easier for developers not on a project team to collaborate.
+### Issue tracking
 
-<!-- A notes section is useful for anything that isn't covered in the Usage or Scope. Like what we have below. -->
-## Notes
+Issues are tracked at [GitHub](https://github.com/IBM/magkit-tools/issues).
 
-<!-- Questions can be useful but optional, this gives you a place to say, "This is how to contact this project maintainers or create PRs -->
-If you have any questions or issues you can create a new [issue here][issues].
-
-Pull requests are very welcome! Make sure your patches are well tested.
-Ideally create a topic branch for every separate change you make. For
-example:
+Any bug reports, improvement or feature pull requests are very welcome!
+Make sure your patches are well tested. Ideally create a topic branch for every separate change you make.
+For example:
 
 1. Fork the repo
 2. Create your feature branch (`git checkout -b my-new-feature`)
@@ -38,24 +33,38 @@ example:
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
 
+### Maven artifacts in Magnolia's Nexus
+
+The code is built by [GitHub actions](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml).
+You can browse available artifacts through [Magnolia's Nexus](https://nexus.magnolia-cms.com/#nexus-search;quick~magkit-tools)
+
+### Maven dependency
+
+```xml
+    <dependencies>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-tools-app</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-tools-t9n</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+    </dependencies>
+```
+
 ## License
 
-All source files must include a Copyright and License header. The SPDX license header is 
+All source files must include a Copyright and License header. The SPDX license header is
 preferred because it can be easily scanned.
 
 If you would like to see the detailed LICENSE click [here](LICENSE).
 
 ```text
 #
-# Copyright IBM Corp. 2020-
+# Copyright 2020- IBM Inc. All rights reserved
 # SPDX-License-Identifier: Apache2.0
 #
 ```
-## Authors
-
-Optionally, you may include a list of authors, though this is redundant with the built-in
-GitHub list of contributors.
-
-- Author: New OpenSource IBMer <new-opensource-ibmer@ibm.com>
-
-[issues]: https://github.com/IBM/repo-template/issues/new

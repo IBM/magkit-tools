@@ -24,7 +24,7 @@
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
     <class>de.ibmix.magkit.tools.t9n.setup.TranslationModule</class>
-    <versionHandler>de.ibmix.magkit.tools.t9n.setup.ModuleVersionHandler</versionHandler>
+    <versionHandler>info.magnolia.module.DefaultModuleVersionHandler</versionHandler>
     <version>${project.version}</version>
     <components>
         <id>main</id>
