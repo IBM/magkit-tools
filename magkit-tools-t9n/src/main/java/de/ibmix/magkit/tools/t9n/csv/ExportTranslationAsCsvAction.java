@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n.csv;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,17 +20,16 @@ package de.ibmix.magkit.tools.t9n.csv;
  * #L%
  */
 
-import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
+import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
 import info.magnolia.cms.core.FileSystemHelper;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.util.QueryUtil;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -59,8 +58,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  *
  * @author diana.racho (IBM iX)
  */
+@Slf4j
 public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActionDefinition> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExportTranslationAsCsvAction.class);
     private static final String QUERY_STATEMENT = "select * from [%s]";
 
     private final ValueContext<Node> _valueContext;
@@ -126,7 +125,7 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     }
 
     private void streamFile(final TranslationCsvWriter csvWriter) {
-        StreamResource.StreamSource source = (StreamResource.StreamSource) csvWriter::getStream;
+        StreamResource.StreamSource source = csvWriter::getStream;
         String fileName = csvWriter.getFile().getName();
         StreamResource resource = new StreamResource(source, fileName);
         resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + fileName + "\"");

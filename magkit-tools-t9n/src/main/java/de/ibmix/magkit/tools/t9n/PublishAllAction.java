@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,8 +20,8 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
-import de.ibmix.magkit.tools.t9n.setup.TranslationModule;
 import com.google.inject.Inject;
+import de.ibmix.magkit.tools.t9n.setup.TranslationModule;
 import info.magnolia.commands.CommandsManager;
 import info.magnolia.context.Context;
 import info.magnolia.context.MgnlContext;
@@ -32,8 +32,7 @@ import info.magnolia.ui.contentapp.action.JcrCommandAction;
 import info.magnolia.ui.contentapp.action.JcrCommandActionDefinition;
 import info.magnolia.ui.contentapp.async.AsyncActionExecutor;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -49,8 +48,8 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
  *
  * @author Janine.Naumann
  */
+@Slf4j
 public class PublishAllAction extends JcrCommandAction<Node, JcrCommandActionDefinition> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PublishAllAction.class);
 
     @Inject
     public PublishAllAction(JcrCommandActionDefinition definition, CommandsManager commandsManager, ValueContext<Node> valueContext, Context context, AsyncActionExecutor asyncActionExecutor, JcrDatasource datasource) {

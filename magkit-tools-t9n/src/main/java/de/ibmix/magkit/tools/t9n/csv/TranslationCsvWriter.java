@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n.csv;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,8 +21,7 @@ package de.ibmix.magkit.tools.t9n.csv;
  */
 
 import au.com.bytecode.opencsv.CSVWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,8 +44,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  *
  * @author diana.racho (IBM iX)
  */
+@Slf4j
 public class TranslationCsvWriter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TranslationCsvWriter.class);
     private static final String FILE_EXTENSION = ".csv";
     protected static final String COLUMN_KEY = "Key";
 
@@ -54,7 +53,7 @@ public class TranslationCsvWriter {
     private final File _path;
 
     private final Map<String, Map<String, String>> _eventEntries;
-    private Collection<Locale> _locales;
+    private final Collection<Locale> _locales;
 
     public TranslationCsvWriter(Map<String, Map<String, String>> entries, File path, Collection<Locale> locales) {
         _path = path;

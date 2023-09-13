@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n.csv;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,9 +37,8 @@ import info.magnolia.ui.contentapp.action.CommitActionDefinition;
 import info.magnolia.ui.datasource.optionlist.Option;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -69,8 +68,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @author frank.sommer
  * @since 1.0.5
  */
+@Slf4j
 public class ImportCsvAction extends CommitAction<Node> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ImportCsvAction.class);
 
     private final Collection<Locale> _locales;
     private final NodeNameHelper _nodeNameHelper;

@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,9 +26,8 @@ import info.magnolia.i18nsystem.DefaultMessageBundlesLoader;
 import info.magnolia.i18nsystem.LocaleProvider;
 import info.magnolia.i18nsystem.TranslationServiceImpl;
 import info.magnolia.i18nsystem.module.I18nModule;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -51,9 +50,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *
  * @author diana.racho (IBM iX)
  */
+@Slf4j
 @Singleton
 public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MagnoliaTranslationServiceImpl.class);
     public static final String BASE_QUERY = "select * from [" + TranslationNodeTypes.Translation.NAME + "] where key = ";
     private static final Predicate<String> MESSAGE_CONDITION = StringUtils::isNotEmpty;
 
