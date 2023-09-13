@@ -1,0 +1,125 @@
+icon: icon-jcr-tools
+class: info.magnolia.ui.contentapp.configuration.ContentAppDescriptor
+appClass: info.magnolia.ui.framework.app.BaseApp
+label: Scheduler App
+subApps:
+  browser:
+    class: info.magnolia.ui.contentapp.configuration.BrowserDescriptor
+    actions:
+      editJob:
+        icon: icon-edit
+        $type: openDetailSubappAction
+        appName: scheduler
+        subAppName: detail
+        viewType: edit
+        availability:
+          writePermissionRequired: true
+          nodeTypes:
+            job: mgnl:contentNode
+          rules:
+            notDeleted:
+              $type: jcrIsDeletedRule
+              negate: true
+      goToConfig:
+        icon: icon-view-tree
+        $type: openDetailSubappAction
+        appName: configuration
+        subAppName: browser
+        viewType: treeview
+        availability:
+          root: true
+          nodeTypes:
+            job: mgnl:contentNode
+      runJob:
+        icon: icon-publish
+        class: info.magnolia.ui.api.action.CommandActionDefinition
+        implementationClass: de.ibmix.magkit.scheduler.JobCommandAction
+        asynchronous: true
+    actionbar:
+      defaultAction: editJob
+      sections:
+        - name: job
+          groups:
+            - name: default
+              items:
+                - name: goToConfig
+                - name: editJob
+                - name: runJob
+          availability:
+            nodeTypes:
+              job: mgnl:contentNode
+        - name: root
+          groups:
+            - name: default
+              items:
+                - name: goToConfig
+          availability:
+            root: true
+            nodes: false
+    workbench:
+      contentViews:
+        - name: list
+          $type: listView
+          readOnly: true
+          multiSelect: false
+          columns:
+            - name: jcrName
+              $type: jcrTitleColumn
+              valueProvider: de.ibmix.magkit.scheduler.JobNodeTitleProvider
+              nodeTypeToIcon:
+                mgnl:contentNode: icon-datepicker
+            - name: enabled
+              $type: enabledColumn
+              width: 130
+            - name: next-run
+              #TODO: show next run in column
+              width: 200
+            - name: status
+              $type: jcrStatusColumn
+              width: 130
+  detail:
+    class: info.magnolia.ui.contentapp.detail.DetailDescriptor
+    itemProvider:
+      $type: jcrNodeFromLocationProvider
+      nodeType: mgnl:contentNode
+    form:
+      properties:
+        description:
+          $type: textField
+          required: true
+        enabled:
+          $type: checkBoxField
+        cron:
+          $type: textField
+          required: true
+        command:
+          $type: textField
+          required: true
+        catalog:
+          $type: textField
+          required: true
+          defaultValue: default
+        isConcurrent:
+          $type: checkBoxField
+        params:
+          $type: jcrMultiField
+          field:
+            $type: compositeField
+            itemProvider:
+              $type: jcrGetProperty
+            properties:
+              name:
+                $type: textField
+                required: true
+              value:
+                $type: textField
+                required: true
+datasource:
+  $type: jcrDatasource
+  workspace: config
+  rootPath: /modules/scheduler/config/jobs
+  allowedNodeTypes:
+    - mgnl:contentNode
+permissions:
+  roles:
+    superuser: superuser

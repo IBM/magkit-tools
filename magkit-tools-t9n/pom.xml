@@ -8,6 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>magkit-tools-t9n</artifactId>
+    <name>IBM iX Magnolia Kit Tools Translation</name>
+    <description>Magkit t9n provides an app for translating global text fragments.</description>
 
     <dependencies>
         <dependency>

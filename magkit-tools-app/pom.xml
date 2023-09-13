@@ -8,6 +8,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>magkit-tools-app</artifactId>
+    <name>IBM iX Magnolia Kit Tools App</name>
+    <description>Magkit tools app provides an app for executing JCR queries and prune JCR versions.</description>
 
     <dependencies>
         <dependency>
