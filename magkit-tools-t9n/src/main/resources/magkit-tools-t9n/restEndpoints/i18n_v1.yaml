@@ -1,0 +1,2 @@
+class: info.magnolia.rest.registry.ConfiguredEndpointDefinition
+implementationClass: de.ibmix.magkit.tools.t9n.rest.I18nEndpoint
