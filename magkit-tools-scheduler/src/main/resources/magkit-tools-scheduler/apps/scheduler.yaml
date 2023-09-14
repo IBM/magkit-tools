@@ -33,7 +33,7 @@ subApps:
       runJob:
         icon: icon-publish
         class: info.magnolia.ui.api.action.CommandActionDefinition
-        implementationClass: de.ibmix.magkit.scheduler.JobCommandAction
+        implementationClass: de.ibmix.magkit.tools.scheduler.JobCommandAction
         asynchronous: true
     actionbar:
       defaultAction: editJob
@@ -65,7 +65,7 @@ subApps:
           columns:
             - name: jcrName
               $type: jcrTitleColumn
-              valueProvider: de.ibmix.magkit.scheduler.JobNodeTitleProvider
+              valueProvider: de.ibmix.magkit.tools.scheduler.JobNodeTitleProvider
               nodeTypeToIcon:
                 mgnl:contentNode: icon-datepicker
             - name: enabled

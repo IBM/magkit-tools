@@ -1,4 +1,4 @@
-package de.ibmix.magkit.scheduler;
+package de.ibmix.magkit.tools.scheduler;
 
 /*-
  * #%L
