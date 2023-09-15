@@ -1,7 +1,7 @@
 icon: icon-export
-$type: exportSinglePageAction
+$type: exportAction
 label: Export Single Page
-catalog: ibmIx
+catalog: exportSinglePage
 availability:
   rules:
     notDeleted:
