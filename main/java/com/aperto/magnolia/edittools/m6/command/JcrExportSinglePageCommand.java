@@ -1,7 +1,6 @@
 package com.aperto.magnolia.edittools.m6.command;
 
 import com.aperto.magnolia.edittools.export.YamlSinglePageExporter;
-import com.google.common.collect.Lists;
 import info.magnolia.context.Context;
 import info.magnolia.importexport.DataTransporter;
 import info.magnolia.importexport.command.JcrExportCommand;
@@ -9,21 +8,15 @@ import info.magnolia.importexport.command.JcrImportCommand;
 import info.magnolia.importexport.contenthandler.YamlContentHandler;
 import info.magnolia.importexport.filters.NamespaceFilter;
 import info.magnolia.jcr.decoration.ContentDecorator;
-import info.magnolia.jcr.decoration.NodePredicateContentDecorator;
-import info.magnolia.jcr.predicate.AbstractPredicate;
-import info.magnolia.jcr.predicate.NodeFilteringPredicate;
-import info.magnolia.jcr.predicate.PropertyFilteringPredicate;
 import info.magnolia.objectfactory.Classes;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.commons.xml.Exporter;
 import org.xml.sax.ContentHandler;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
 import javax.jcr.Session;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -141,50 +134,6 @@ public class JcrExportSinglePageCommand extends JcrImportCommand {
     public void setPrettyPrint(boolean prettyPrint) {
         _prettyPrint = prettyPrint;
     }
-
-    /**
-     * Default filters for {@link info.magnolia.importexport.command.JcrExportCommand}.
-     */
-    public static class DefaultFilter extends NodePredicateContentDecorator {
-
-        public DefaultFilter() {
-            final NodeFilteringPredicate nodePredicate = new NodeFilteringPredicate();
-            nodePredicate.setNodeTypes(Lists.newArrayList("rep:AccessControl", "rep:root", "rep:system"));
-            final PropertyFilteringPredicate propertyPredicate = new PropertyFilteringPredicate();
-            propertyPredicate.setExcludedNames(Lists.newArrayList("jcr:createdBy", JcrConstants.JCR_CREATED));
-            setPropertyPredicate(propertyPredicate);
-            setNodePredicate(nodePredicate);
-        }
-
-        @Override
-        public PropertyFilteringPredicate getPropertyPredicate() {
-            return (PropertyFilteringPredicate) super.getPropertyPredicate();
-        }
-
-        @Override
-        public void setPropertyPredicate(AbstractPredicate<Property> propertyPredicate) {
-            if (propertyPredicate instanceof PropertyFilteringPredicate) {
-                super.setPropertyPredicate(propertyPredicate);
-            } else {
-                throw new IllegalArgumentException(String.format("Expected instances of {%s} but got {%s}", PropertyFilteringPredicate.class, propertyPredicate.getClass()));
-            }
-        }
-
-        @Override
-        public NodeFilteringPredicate getNodePredicate() {
-            return (NodeFilteringPredicate) super.getNodePredicate();
-        }
-
-        @Override
-        public void setNodePredicate(AbstractPredicate<Node> propertyPredicate) {
-            if (propertyPredicate instanceof NodeFilteringPredicate) {
-                super.setNodePredicate(propertyPredicate);
-            } else {
-                throw new IllegalArgumentException(String.format("Expected instances of {%s} but got {%s}", PropertyFilteringPredicate.class, propertyPredicate.getClass()));
-            }
-        }
-    }
-
 
     /**
      * Export format.
