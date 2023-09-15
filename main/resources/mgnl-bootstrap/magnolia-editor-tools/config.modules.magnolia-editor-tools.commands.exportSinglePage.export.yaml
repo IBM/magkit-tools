@@ -1,4 +1,4 @@
-exportSinglePage:
+export:
   class: com.aperto.magnolia.edittools.m6.command.JcrExportSinglePageCommand
   filters:
     website:
@@ -11,3 +11,10 @@ exportSinglePage:
           mgnlLastActivatedBy: mgnl:lastActivatedBy
           mgnllastActivatedVersion: mgnl:lastActivatedVersion
           mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated
+      nodePredicate:
+        class: info.magnolia.jcr.predicate.NodeFilteringPredicate
+        nodeTypes:
+          mgnlcomponentVariants: mgnl:componentVariants
+          rep:AccessControl: rep:AccessControl
+          rep:root: rep:root
+          rep:system: rep:system
