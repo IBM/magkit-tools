@@ -20,6 +20,10 @@
             <groupId>info.magnolia.rest</groupId>
             <artifactId>magnolia-rest-integration</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
 
         <!-- CSV -->
         <dependency>
