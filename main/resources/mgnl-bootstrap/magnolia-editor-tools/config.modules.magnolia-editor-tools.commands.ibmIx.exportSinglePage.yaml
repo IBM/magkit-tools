@@ -1,4 +1,4 @@
-export:
+exportSinglePage:
   class: info.magnolia.importexport.command.JcrExportCommand
   filters:
     website:
