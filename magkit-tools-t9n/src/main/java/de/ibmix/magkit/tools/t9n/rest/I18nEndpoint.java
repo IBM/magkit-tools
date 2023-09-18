@@ -25,8 +25,10 @@ import info.magnolia.context.MgnlContext;
 import info.magnolia.jcr.predicate.NodeTypePredicate;
 import info.magnolia.jcr.util.NodeUtil;
 import info.magnolia.rest.AbstractEndpoint;
-import info.magnolia.rest.DynamicPath;
 import info.magnolia.rest.registry.ConfiguredEndpointDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -51,8 +53,10 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
  * @author frank.sommer
  * @since 13.07.2022
  */
-@DynamicPath
-@Path("/")
+@Path("/i18n/v1")
+@Tag(
+    name = "Translations API"
+)
 @Slf4j
 public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition> {
 
@@ -64,8 +68,8 @@ public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition>
     @Path("/{language:[a-z]{2}}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response translate(@PathParam("language") String language) {
-        Response response;
+    @Operation(summary = "Get available translations for a language.")
+    public Response translate(@Parameter(description = "An ISO 639 alpha-2 or alpha-3 language code", example = "en", required = true) @PathParam("language") String language) {
 
         Map<String, String> labels = MgnlContext.doInSystemContext(() -> {
             Map<String, String> keyValues = new TreeMap<>();
@@ -80,8 +84,6 @@ public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition>
             return keyValues;
         });
 
-        response = Response.ok().entity(labels).build();
-
-        return response;
+        return Response.ok().entity(labels).build();
     }
 }
