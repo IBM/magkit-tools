@@ -1,20 +1,21 @@
 export:
-  class: com.aperto.magnolia.edittools.m6.command.JcrExportSinglePageCommand
+  class: info.magnolia.importexport.command.JcrExportCommand
   filters:
     website:
-      class: info.magnolia.importexport.command.JcrExportCommand$DefaultFilter
+      class: com.aperto.magnolia.edittools.export.SinglePageNodeFilter
       propertyPredicate:
         class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
         excludedNames:
+          jcrCreated: jcr:created
+          jcrCreatedBy: jcr:createdBy
           mgnlActivationStatus: mgnl:activationStatus
           mgnlLastActivated: mgnl:lastActivated
           mgnlLastActivatedBy: mgnl:lastActivatedBy
           mgnllastActivatedVersion: mgnl:lastActivatedVersion
           mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated
       nodePredicate:
-        class: info.magnolia.jcr.predicate.NodeFilteringPredicate
+        class: com.aperto.magnolia.edittools.export.SinglePageNodeFilteringPredicate
         nodeTypes:
-          mgnlcomponentVariants: mgnl:componentVariants
           rep:AccessControl: rep:AccessControl
           rep:root: rep:root
           rep:system: rep:system
