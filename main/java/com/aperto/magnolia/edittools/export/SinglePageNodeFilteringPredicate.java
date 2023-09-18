@@ -29,12 +29,27 @@ public class SinglePageNodeFilteringPredicate extends NodeFilteringPredicate {
         boolean evaluated = super.evaluateTyped(node);
         try {
             if (evaluated && NodeUtil.isNodeType(node, NodeTypes.Page.NAME)) {
+                String originNodePath = determineOriginNodePath(node);
+
                 // info.magnolia.jcr.decoration.NodePredicateContentDecorator.evaluateNode checks current and ancestor nodes
-                evaluated = _basePageNodePath.startsWith(node.getPath());
+                evaluated = _basePageNodePath.startsWith(originNodePath);
             }
         } catch (RepositoryException e) {
             LOGGER.error("Error evaluate node type.", e);
         }
         return evaluated;
+    }
+
+    /**
+     * Check for page variant nodes.
+     */
+    private static String determineOriginNodePath(Node node) throws RepositoryException {
+        String originNodePath = node.getPath();
+        // node is a page variant
+        if (NodeUtil.hasMixin(node, "mgnl:variant")) {
+            // the grandparent node should be the origin node
+            originNodePath = node.getParent().getParent().getPath();
+        }
+        return originNodePath;
     }
 }
