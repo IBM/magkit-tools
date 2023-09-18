@@ -6,6 +6,8 @@ export:
       propertyPredicate:
         class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
         excludedNames:
+          jcrCreated: jcr:created
+          jcrCreatedBy: jcr:createdBy
           mgnlActivationStatus: mgnl:activationStatus
           mgnlLastActivated: mgnl:lastActivated
           mgnlLastActivatedBy: mgnl:lastActivatedBy
@@ -16,6 +18,8 @@ export:
       propertyPredicate:
         class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
         excludedNames:
+          jcrCreated: jcr:created
+          jcrCreatedBy: jcr:createdBy
           mgnlActivationStatus: mgnl:activationStatus
           mgnlLastActivated: mgnl:lastActivated
           mgnlLastActivatedBy: mgnl:lastActivatedBy
