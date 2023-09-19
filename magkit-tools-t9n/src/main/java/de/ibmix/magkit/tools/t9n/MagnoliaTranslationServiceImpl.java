@@ -38,11 +38,8 @@ import javax.jcr.RepositoryException;
 import java.util.Locale;
 import java.util.function.Predicate;
 
-import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.contains;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Translation service for templates.
@@ -78,20 +75,14 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
 
     private String getAppMessage(LocaleProvider localeProvider, String[] keys) {
         final Locale locale = localeProvider.getLocale();
-        final String language = locale.getLanguage();
-        String i18nProperty = TranslationNodeTypes.Translation.PREFIX_NAME + language;
-        String fallbackProperty = null;
 
-        final String country = locale.getCountry();
-        if (isNotEmpty(country)) {
-            fallbackProperty = i18nProperty;
-            i18nProperty = TranslationNodeTypes.Translation.PREFIX_NAME + language + "_" + country;
-        }
+        final String[] i18nPropertyNames = TranslationNodeTypes.Translation.LOCALE_TO_PROPERTY_NAMES.apply(locale);
+
         // get first acceptable translation for list of keys:
         String message = null;
         for (String key : keys) {
             if (!contains(key, "'")) {
-                String newMessage = doMessageQuery(key, i18nProperty, fallbackProperty);
+                String newMessage = doMessageQuery(key, i18nPropertyNames);
                 if (MESSAGE_CONDITION.test(newMessage)) {
                     message = newMessage;
                     break;
@@ -104,7 +95,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
     /**
      * Override for testing.
      */
-    String doMessageQuery(final String key, final String i18nProperty, final String fallbackProperty) {
+    String doMessageQuery(final String key, final String[] i18nPropertyNames) {
         String message = null;
         // Replace string formatting - simple string concatenation is about 8 times faster.
         String statement = BASE_QUERY + '\'' + key + '\'';
@@ -116,10 +107,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
                     NodeIterator nodeIterator = QueryUtil.search(TranslationNodeTypes.WS_TRANSLATION, statement);
                     if (nodeIterator.hasNext()) {
                         final Node node = nodeIterator.nextNode();
-                        foundMsg = getString(node, i18nProperty, EMPTY);
-                        if (isEmpty(foundMsg) && isNotEmpty(fallbackProperty)) {
-                            foundMsg = getString(node, fallbackProperty, EMPTY);
-                        }
+                        foundMsg = TranslationNodeTypes.Translation.retrieveValue(node, i18nPropertyNames);
                     }
                     return foundMsg;
                 }

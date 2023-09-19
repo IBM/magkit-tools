@@ -39,13 +39,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
 import static info.magnolia.jcr.util.PropertyUtil.getString;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
  * I18N endpoint for translations from the translation app.
@@ -65,11 +66,11 @@ public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition>
         super(endpointDefinition);
     }
 
-    @Path("/{language:[a-z]{2}}")
+    @Path("/{locale:[a-z]{2}(_[A-Z]{2})?}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Operation(summary = "Get available translations for a language.")
-    public Response translate(@Parameter(description = "An ISO 639 alpha-2 or alpha-3 language code", example = "en", required = true) @PathParam("language") String language) {
+    @Operation(summary = "Get available translations for a locale.")
+    public Response translate(@Parameter(description = "A locale containing the ISO-639 language code and optional an ISO-3166 country code. Possible values are 'de' or 'de_DE'.", example = "en", required = true) @PathParam("locale") String locale) {
 
         Map<String, String> labels = MgnlContext.doInSystemContext(() -> {
             Map<String, String> keyValues = new TreeMap<>();
@@ -77,7 +78,10 @@ public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition>
                 final var jcrSession = MgnlContext.getJCRSession(WS_TRANSLATION);
                 final var rootNode = jcrSession.getRootNode();
                 final var nodes = NodeUtil.asList(NodeUtil.getNodes(rootNode, new NodeTypePredicate(TranslationNodeTypes.Translation.NAME)));
-                nodes.forEach(n -> keyValues.put(getString(n, TranslationNodeTypes.Translation.PN_KEY), getString(n, PREFIX_NAME + language, EMPTY)));
+                final Locale asLocale = new Locale(substringBefore(locale, "_"), substringAfter(locale, "_"));
+                final String[] propertyNames = TranslationNodeTypes.Translation.LOCALE_TO_PROPERTY_NAMES.apply(asLocale);
+
+                nodes.forEach(n -> keyValues.put(getString(n, TranslationNodeTypes.Translation.PN_KEY), TranslationNodeTypes.Translation.retrieveValue(n, propertyNames)));
             } catch (RepositoryException e) {
                 LOGGER.error("Error getting translation labels.", e);
             }

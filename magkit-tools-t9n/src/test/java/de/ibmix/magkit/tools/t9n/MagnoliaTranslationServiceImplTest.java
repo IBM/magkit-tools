@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,13 +29,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.inject.Provider;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -57,13 +56,11 @@ public class MagnoliaTranslationServiceImplTest {
         MessagesManager messagesManager = ComponentsMockUtils.mockComponentInstance(MessagesManager.class);
         when(messagesManager.getDefaultLocale()).thenReturn(Locale.ENGLISH);
 
-        Provider<DefaultMessageBundlesLoader> messageProvider = mock(Provider.class);
         DefaultMessageBundlesLoader messageBundlesLoader = mock(DefaultMessageBundlesLoader.class);
-        when(messageProvider.get()).thenReturn(messageBundlesLoader);
 
-        _translationService = new MagnoliaTranslationServiceImpl(null, messageProvider) {
+        _translationService = new MagnoliaTranslationServiceImpl(null, () -> messageBundlesLoader) {
             @Override
-            String doMessageQuery(final String key, final String i18nProperty, String fallbackProperty) {
+            String doMessageQuery(final String key, final String[] i18nPropertyNames) {
                 Map<String, String> messagesFromApp = new HashMap<>();
                 messagesFromApp.put("invalid'key", "---");
                 messagesFromApp.put("empty.key", "");
