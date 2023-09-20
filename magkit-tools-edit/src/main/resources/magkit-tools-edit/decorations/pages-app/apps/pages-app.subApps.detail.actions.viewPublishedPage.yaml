@@ -1,0 +1,7 @@
+$type: openPagePublishedLocation
+label: viewPublishedPage.label
+icon: icon-view
+availability:
+  rules:
+    isPublishedRule:
+      $type: jcrPublishedRule

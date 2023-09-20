@@ -1,0 +1,5 @@
+items: !override
+  - name: publish
+  - name: publishRecursive
+  - name: viewPublishedPage
+  - name: unpublish

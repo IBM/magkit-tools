@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  IBM iX Magnolia Kit Tools Edit
+  %%
+  Copyright (C) 2023 IBM iX
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<!DOCTYPE module SYSTEM "module.dtd" >
+<module>
+    <name>${project.artifactId}</name>
+    <displayName>${project.name}</displayName>
+    <description>${project.description}</description>
+    <class>de.ibmix.magkit.tools.edit.setup.EditToolsModule</class>
+    <versionHandler>de.ibmix.magkit.tools.edit.setup.EditToolsVersionHandler</versionHandler>
+    <version>${project.version}</version>
+
+    <components>
+        <id>${project.artifactId}</id>
+        <component>
+            <type>de.ibmix.magkit.tools.edit.util.LinkService</type>
+            <implementation>de.ibmix.magkit.tools.edit.util.LinkService</implementation>
+            <scope>singleton</scope>
+        </component>
+    </components>
+
+    <components>
+        <!-- set custom view impl for the pages app -->
+        <id>app-pages-detail</id>
+        <component>
+            <type>info.magnolia.pages.app.editor.statusbar.activationstatus.ActivationStatusView</type>
+            <implementation>de.ibmix.magkit.tools.edit.views.EditorToolsActivationStatusViewImpl</implementation>
+        </component>
+    </components>
+
+    <components>
+        <id>subapp</id>
+        <component>
+            <type>info.magnolia.ui.workbench.WorkbenchStatusBarPresenter</type>
+            <implementation>de.ibmix.magkit.tools.edit.ui.workbench.ToolsWorkbenchStatusBarPresenter</implementation>
+        </component>
+    </components>
+
+    <components>
+        <id>admincentral</id>
+        <type-mapping>
+            <type>info.magnolia.ui.workbench.tree.MoveHandler</type>
+            <implementation>de.ibmix.magkit.tools.edit.action.ConfirmTreeViewDropHandler</implementation>
+        </type-mapping>
+    </components>
+
+    <components>
+        <id>admincentral</id>
+        <type-mapping>
+            <type>info.magnolia.ui.contentapp.browser.drop.RowDragger</type>
+            <implementation>de.ibmix.magkit.tools.edit.m6.ui.ConfirmRowDragger</implementation>
+        </type-mapping>
+    </components>
+
+    <components>
+        <id>app-dam-jcrBrowser</id>
+        <component>
+            <type>info.magnolia.ui.contentapp.ItemDescriber</type>
+            <implementation>de.ibmix.magkit.tools.edit.m6.ui.AssetUsageItemDescriber</implementation>
+        </component>
+    </components>
+
+    <dependencies>
+        <dependency>
+            <name>core</name>
+            <version>${magnolia.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>pages</name>
+            <version>${magnolia.pages.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>pages-app</name>
+            <version>${magnolia.pages.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app-core</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>dam-app-jcr</name>
+            <version>${magnolia.dam.jcr.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>multisite</name>
+            <version>${magnolia.multisite.version}/*</version>
+        </dependency>
+        <dependency>
+            <name>magkit</name>
+            <version>${magkit.version}/*</version>
+        </dependency>
+    </dependencies>
+</module>

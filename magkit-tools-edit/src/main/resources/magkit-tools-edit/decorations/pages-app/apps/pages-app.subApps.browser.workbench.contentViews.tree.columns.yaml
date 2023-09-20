@@ -1,0 +1,10 @@
+mgnl:lastModifiedBy:
+  label: column.lastModUser.label
+  width: 150
+  filterComponent:
+    $type: textField
+mgnl:createdBy:
+  label: column.createdByUser.label
+  width: 150
+  filterComponent:
+    $type: textField

@@ -1,0 +1,5 @@
+appName: pages
+class: de.ibmix.magkit.tools.edit.action.OpenPageLocationActionDefinition
+icon: icon-view-tree
+label: jumpToBrowser.label
+subAppId: browser

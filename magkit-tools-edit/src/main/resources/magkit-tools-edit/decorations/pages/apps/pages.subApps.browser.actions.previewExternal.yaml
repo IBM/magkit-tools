@@ -1,0 +1,8 @@
+class: info.magnolia.ui.api.action.ConfiguredActionDefinition
+icon: icon-view
+implementationClass: de.ibmix.magkit.tools.edit.action.OpenPreviewNewWindowAction
+label: previewExternal.label
+availability:
+  rules:
+    isNotDeleted:
+      implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule

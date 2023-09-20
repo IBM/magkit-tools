@@ -1,0 +1,10 @@
+$type: openPagePublishedLocation
+label: viewPublishedPage.label
+icon: icon-view
+availability:
+  rules:
+    isNotDeletedRule:
+      $type: jcrIsDeletedRule
+      negate: true
+    isPublishedRule:
+      $type: jcrPublishedRule

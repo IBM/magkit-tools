@@ -1,0 +1,5 @@
+$type: openPageBrowserLocation
+icon: icon-view-tree
+label: jumpToBrowser.label
+appName: pages-app
+subAppId: browser

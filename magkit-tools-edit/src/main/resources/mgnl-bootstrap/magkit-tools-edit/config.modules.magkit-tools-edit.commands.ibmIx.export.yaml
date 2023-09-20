@@ -1,0 +1,27 @@
+export:
+  class: info.magnolia.importexport.command.JcrExportCommand
+  filters:
+    website:
+      class: info.magnolia.importexport.command.JcrExportCommand$DefaultFilter
+      propertyPredicate:
+        class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
+        excludedNames:
+          jcrCreated: jcr:created
+          jcrCreatedBy: jcr:createdBy
+          mgnlActivationStatus: mgnl:activationStatus
+          mgnlLastActivated: mgnl:lastActivated
+          mgnlLastActivatedBy: mgnl:lastActivatedBy
+          mgnllastActivatedVersion: mgnl:lastActivatedVersion
+          mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated
+    dam:
+      class: info.magnolia.importexport.command.JcrExportCommand$DefaultFilter
+      propertyPredicate:
+        class: info.magnolia.jcr.predicate.PropertyFilteringPredicate
+        excludedNames:
+          jcrCreated: jcr:created
+          jcrCreatedBy: jcr:createdBy
+          mgnlActivationStatus: mgnl:activationStatus
+          mgnlLastActivated: mgnl:lastActivated
+          mgnlLastActivatedBy: mgnl:lastActivatedBy
+          mgnllastActivatedVersion: mgnl:lastActivatedVersion
+          mgnllastActivatedVersionCreated: mgnl:lastActivatedVersionCreated
