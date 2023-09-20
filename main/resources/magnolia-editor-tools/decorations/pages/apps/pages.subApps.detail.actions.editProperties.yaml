@@ -1,6 +1,0 @@
-class: com.aperto.magnolia.edittools.action.EditPageActionDefinition
-icon: icon-edit
-availability:
-  rules:
-    isPageEditable:
-      implementationClass: com.aperto.magnolia.edittools.rule.IsElementEditableRule

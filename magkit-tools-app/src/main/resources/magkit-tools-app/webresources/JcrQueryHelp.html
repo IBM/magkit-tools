@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  magkit-tools-app
+  %%
+  Copyright (C) 2023 IBM iX
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+
+<html lang="de">
+<head>
+    <title>JCR-SQL2 Query</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body style="background-color: white; font-family: sans-serif;">
+    <h4>Links</h4>
+    <ul>
+        <li><a href="http://wiki.magnolia-cms.com/display/WIKI/JCR+Query+Cheat+Sheet" target="_blank">Magnolia-Beispiele</a></li>
+        <li><a href="http://www.day.com/specs/jcr/2.0/6_Query.html" target="_blank">JCR-SQL2-Spezifikation</a></li>
+    </ul>
+
+    <h4>Query-Beispiele</h4>
+    <h5>Seiten mit einem bestimmten Template (hier '/modules/my-module/templates/pages/myPage'), sortiert nach Erzeugungsdatum:</h5>
+    select * from [mgnl:page] as page where [mgnl:template] = 'my-module:pages/myPage' order by [mgnl:created]
+
+    <h5>Alle Areas unterhalb von /bs/fr:</h5>
+    select * from [mgnl:area] where isdescendantnode([/bs/fr])
+
+    <h4>Ein paar Anhaltspunkte:</h4>
+    <ul>
+        <li>Score und Path k&ouml;nnen nicht selektiert werden, k&ouml;nnen in Java &uuml;ber
+            rowIterator.nextRow().getScore(&quot;&lt;selector&gt;&quot;) und ...getPath(&quot;&lt;selector&gt;&quot;)
+            ermittelt werden.
+        </li>
+        <li>name() und localname() k&ouml;nnen auch nicht selektiert werden</li>
+    </ul>
+    <h5>Was kann selektiert werden:</h5>
+    <ul>
+        <li>select * from ... =&gt; die Properties [jcr:uuid], [jcr:createdBy], [jcr:created] und [jcr:primaryType]</li>
+        <li>select page.* from [mgnl:page] as page ... =&gt; nur uuid, createdBy, created und primaryType des Selektors "page" (bei Joins)</li>
+    </ul>
+
+    <h5>Was kann NICHT selektiert werden:</h5>
+    <ul>
+        <li>localname(), name(), path() etc.</li>
+        <li>ischildnode(), issamenode() etc.</li>
+    </ul>
+
+    <h5>Sortierung:</h5>
+    <ul>
+        <li>order by score(&lt;selector&gt;) desc =&gt; absteigend nach Score (sinnvoll vor allem bei Verwendung von "contains(...)")</li>
+    </ul>
+
+    <h5>Verwendbar in Joins und Where-Conditions:</h5>
+    <ul>
+        <li>issamenode(nodeA, nodeB)</li>
+        <li>ischildnode(child, parent)</li>
+        <li>isdescendantnode(descendant, ancestor)</li>
+    </ul>
+
+    <h5>Verwendbar in Joins, Where-Conditions und Order-By-Clauses:</h5>
+    <ul>
+        <li>localname()</li>
+        <li>score()</li>
+    </ul>
+
+    <h5>Existiert ein Property:</h5>
+    <ul>
+        <li>&lt;property&gt; is not null</li>
+    </ul>
+
+    <h4>Full Text Search:</h4>
+    <ul>
+        <li>contains(&lt;selector&gt;.*, 'termA OR (termB AND -termC) OR *some?wildcardterm*') => Durchsucht alle Properties von &lt;selektor&gt; nach "termA" oder "termB aber nicht termC" oder dem Teilwort "some?wildcardterm"</li>
+        <li>contains(&lt;selector&gt;.&lt;property&gt;, 'termA OR (termB AND -termC) OR *some?wildcardterm*') => Durchsucht das Property &lt;property&gt; von &lt;selektor&gt;</li>
+    </ul>
+
+    Aus der Spezifikation f&uuml;r Suchterme:
+    <ul>
+        <li>A term not preceded with &#8220;-&#8221; (minus sign) is satisfied only if the value contains that term.</li>
+        <li>A term preceded with &#8220;-&#8221; (minus sign) is satisfied only if the value does not contain that term.</li>
+        <li>Terms separated by whitespace are implicitly &#8220;ANDed&#8221;.</li>
+        <li>Terms separated by &#8220;OR&#8221; are &#8220;ORed&#8221;.</li>
+        <li>&#8220;AND&#8221; has higher precedence than &#8220;OR&#8221;.</li>
+        <li>Within a term, each &#8220;&quot;&#8221; (double quote), &#8220;-&#8221; (minus sign), and &#8220;\&#8221;
+            (backslash) must be escaped by a preceding &#8220;\&#8221;.
+        </li>
+    </ul>
+
+    In Magnolia:
+    <ul>
+        <li>Escaping mit &quot;\&quot; scheint nicht zu funktionieren.</li>
+        <li>Wildcards sind &quot;*&quot; (viele Zeichen) und &quot;?&quot; (einzelnes Zeichen).</li>
+        <li>AND und OR m&uuml;ssen vollst&auml;ndig GROSS geschrieben werden.</li>
+        <li>Terme finden ganze W&ouml;rter, Teilw&ouml;rter k&ouml;nnen mit '*teilwort*' gesucht werden.</li>
+    </ul>
+</body>
+</html>

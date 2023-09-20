@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>magkit-tools</artifactId>
+        <groupId>de.ibmix.magkit</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>magkit-tools-scheduler</artifactId>
+    <name>IBM iX Magnolia Kit Tools Scheduler</name>
+    <description>Magkit scheduler provides an app for test and maintain scheduler jobs inside Magnolia CMS.</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>info.magnolia.scheduler</groupId>
+            <artifactId>magnolia-module-scheduler</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>info.magnolia.ui</groupId>
+            <artifactId>magnolia-ui-framework-jcr</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
+</project>

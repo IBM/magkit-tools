@@ -1,0 +1,52 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>magkit-tools</artifactId>
+        <groupId>de.ibmix.magkit</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>magkit-tools-edit</artifactId>
+    <name>IBM iX Magnolia Kit Tools Edit</name>
+    <description>Nice tools for Magnolia 6.2 and above. Helps developers and editors to fasten development and editing.</description>
+
+    <dependencies>
+        <!-- magnolia dependencies -->
+        <dependency>
+            <groupId>info.magnolia</groupId>
+            <artifactId>magnolia-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.magnolia.pages</groupId>
+            <artifactId>magnolia-pages-app-compatibility</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.magnolia.dam</groupId>
+            <artifactId>magnolia-dam-jcr</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- magkit -->
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-setup</artifactId>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-test-cms</artifactId>
+        </dependency>
+    </dependencies>
+</project>
