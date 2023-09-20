@@ -14,8 +14,9 @@
 
     <modules>
         <module>magkit-tools-app</module>
-        <module>magkit-tools-t9n</module>
         <module>magkit-tools-scheduler</module>
+        <module>magkit-tools-t9n</module>
+        <module>magkit-tools-edit</module>
     </modules>
 
     <properties>
