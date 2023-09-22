@@ -8,9 +8,9 @@
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
   You may obtain a copy of the License at
-  
+
        http://www.apache.org/licenses/LICENSE-2.0
-  
+
   Unless required by applicable law or agreed to in writing, software
   distributed under the License is distributed on an "AS IS" BASIS,
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -80,36 +80,19 @@
 
     <dependencies>
         <dependency>
-            <name>core</name>
-            <version>${magnolia.version}/*</version>
-        </dependency>
-        <dependency>
             <name>pages</name>
-            <version>${magnolia.pages.version}/*</version>
         </dependency>
         <dependency>
             <name>pages-app</name>
-            <version>${magnolia.pages.version}/*</version>
         </dependency>
         <dependency>
             <name>dam-app</name>
-            <version>${magnolia.dam.jcr.version}/*</version>
         </dependency>
         <dependency>
             <name>dam-app-core</name>
-            <version>${magnolia.dam.jcr.version}/*</version>
         </dependency>
         <dependency>
             <name>dam-app-jcr</name>
-            <version>${magnolia.dam.jcr.version}/*</version>
-        </dependency>
-        <dependency>
-            <name>multisite</name>
-            <version>${magnolia.multisite.version}/*</version>
-        </dependency>
-        <dependency>
-            <name>magkit</name>
-            <version>${magkit.version}/*</version>
         </dependency>
     </dependencies>
 </module>
