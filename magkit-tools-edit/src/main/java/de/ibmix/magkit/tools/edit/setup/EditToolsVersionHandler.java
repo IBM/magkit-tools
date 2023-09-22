@@ -27,10 +27,6 @@ import info.magnolia.module.model.Version;
 
 import java.util.List;
 
-import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.getNode;
-import static de.ibmix.magkit.setup.nodebuilder.NodeOperationFactory.removeIfExists;
-import static de.ibmix.magkit.setup.nodebuilder.task.NodeBuilderTaskFactory.selectModuleConfig;
-
 /**
  * Version Handler for the edit tools.
  *
@@ -39,24 +35,15 @@ import static de.ibmix.magkit.setup.nodebuilder.task.NodeBuilderTaskFactory.sele
  */
 public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
-    private static final String MODULE_DAM = "dam-app";
-
-    private final Task _workspaceMoveConfig = new BootstrapConditionally("Add move workspace config", "/mgnl-bootstrap/install/magkit-tools-edit/config.modules.magkit-tools-edit.config.moveConfirmWorkspaces.xml");
-
-    public EditToolsVersionHandler() {
-        Task removeJcrAssetsAppConfig = selectModuleConfig("Remove jcr configs", "Remove jcr configs in assets app.", MODULE_DAM,
-            getNode("apps/assets/subApps/browser/workbench/contentViews/list/columns").then(
-                removeIfExists("lastModUser"),
-                removeIfExists("createdByUser")
-            )
-        );
-    }
+    private final Task _statusBarConfig = new BootstrapConditionally("Add move workspace config", "/mgnl-bootstrap/install/magkit-tools-edit/config.modules.magkit-tools-edit.config.moveConfirmWorkspaces.xml");
+    private final Task _workspaceMoveConfig = new BootstrapConditionally("Add status bar config", "/mgnl-bootstrap/install/magkit-tools-edit/config.modules.magkit-tools-edit.config.statusBarConfig.xml");
 
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);
 
         // conditionally install bootstrap tasks
+        tasks.add(_statusBarConfig);
         tasks.add(_workspaceMoveConfig);
 
         return tasks;
