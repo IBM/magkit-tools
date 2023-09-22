@@ -14,11 +14,6 @@
     <dependencies>
         <!-- magnolia dependencies -->
         <dependency>
-            <groupId>info.magnolia</groupId>
-            <artifactId>magnolia-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>info.magnolia.pages</groupId>
             <artifactId>magnolia-pages-app-compatibility</artifactId>
             <scope>provided</scope>

@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.edit.action;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,95 +20,49 @@ package de.ibmix.magkit.tools.edit.action;
  * #L%
  */
 
-import com.vaadin.v7.data.Item;
-import info.magnolia.event.EventBus;
-import info.magnolia.i18nsystem.SimpleTranslator;
-import info.magnolia.objectfactory.Components;
-import info.magnolia.rendering.template.TemplateDefinition;
-import info.magnolia.rendering.template.registry.TemplateDefinitionRegistry;
-import info.magnolia.ui.api.action.AbstractAction;
+import de.ibmix.magkit.core.utils.NodeUtils;
+import info.magnolia.i18nsystem.I18nizer;
+import info.magnolia.pages.app.action.browser.EditPagePropertiesAction;
+import info.magnolia.rendering.template.assignment.TemplateDefinitionAssignment;
+import info.magnolia.ui.UIComponent;
+import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.ActionExecutionException;
-import info.magnolia.ui.api.context.UiContext;
-import info.magnolia.ui.api.event.AdmincentralEventBus;
-import info.magnolia.ui.api.event.ContentChangedEvent;
-import info.magnolia.ui.dialog.callback.DefaultEditorCallback;
-import info.magnolia.ui.dialog.formdialog.FormDialogPresenter;
-import info.magnolia.ui.dialog.formdialog.FormDialogPresenterFactory;
-import info.magnolia.ui.framework.action.OpenEditDialogActionDefinition;
-import info.magnolia.ui.vaadin.integration.contentconnector.ContentConnector;
-import info.magnolia.ui.vaadin.integration.jcr.JcrNodeAdapter;
-import info.magnolia.ui.vaadin.overlay.MessageStyleTypeEnum;
+import info.magnolia.ui.api.i18n.I18NAuthoringSupport;
+import info.magnolia.ui.dialog.DialogDefinitionRegistry;
+import info.magnolia.ui.dialog.actions.OpenDialogActionDefinition;
+import info.magnolia.ui.editor.LocaleContext;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.jcr.Node;
-
-import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Opens the page properties dialog for editing a page node.
  *
  * @author frank.sommer
- * @see OpenEditDialogActionDefinition
+ * @see EditPagePropertiesAction
  * @since 1.2.3
- * @deprecated for Magnolia 6 use {@link de.ibmix.magkit.tools.edit.m6.action.OpenPagePropertiesAction}
  */
-@Deprecated
-public class OpenPagePropertiesAction extends AbstractAction<OpenEditDialogActionDefinition> {
-    private final Item _itemToEdit;
-    private final SimpleTranslator _i18n;
-    private final FormDialogPresenterFactory _formDialogPresenterFactory;
-    private final UiContext _uiContext;
-    private final EventBus _eventBus;
-    private final ContentConnector _contentConnector;
+public class OpenPagePropertiesAction extends EditPagePropertiesAction {
+
+    private final ValueContext<Node> _valueContext;
 
     @Inject
-    public OpenPagePropertiesAction(OpenEditDialogActionDefinition definition, Item itemToEdit, FormDialogPresenterFactory formDialogPresenterFactory, UiContext uiContext, @Named(AdmincentralEventBus.NAME) final EventBus eventBus, SimpleTranslator i18n, ContentConnector contentConnector) {
-        super(definition);
-        _itemToEdit = itemToEdit;
-        _i18n = i18n;
-        _formDialogPresenterFactory = formDialogPresenterFactory;
-        _uiContext = uiContext;
-        _eventBus = eventBus;
-        _contentConnector = contentConnector;
+    // CHECKSTYLE:OFF // parameter count
+    public OpenPagePropertiesAction(final OpenDialogActionDefinition definition, final LocaleContext localeContext, final ValueContext<Node> valueContext, final UIComponent parentView,
+                                    final I18NAuthoringSupport<Node> i18nAuthoringSupport, final DialogDefinitionRegistry dialogDefinitionRegistry,
+                                    final TemplateDefinitionAssignment templateDefinitionAssignment, final I18nizer i18nizer) {
+        // CHECKSTYLE:ON
+        super(definition, localeContext, valueContext, parentView, i18nAuthoringSupport, dialogDefinitionRegistry, templateDefinitionAssignment, i18nizer);
+        _valueContext = valueContext;
     }
 
     @Override
     public void execute() throws ActionExecutionException {
-        String dialogId = retrieveDialog();
+        _valueContext.getSingle()
+            .map(node -> NodeUtils.getAncestorOrSelf(node, NodeUtils.IS_PAGE))
+            .ifPresent(_valueContext::set);
 
-        if (isBlank(dialogId)) {
-            _uiContext.openNotification(MessageStyleTypeEnum.ERROR, false, _i18n.translate("ui-framework.actions.no.dialog.definition", getDefinition().getName()));
-        } else {
-            final FormDialogPresenter formDialogPresenter = _formDialogPresenterFactory.createFormDialogPresenter(dialogId);
-            if (formDialogPresenter == null) {
-                _uiContext.openNotification(MessageStyleTypeEnum.ERROR, false, _i18n.translate("ui-framework.actions.dialog.not.registered", dialogId));
-            } else {
-                formDialogPresenter.start(_itemToEdit, dialogId, _uiContext, new DefaultEditorCallback(formDialogPresenter) {
-                    @Override
-                    public void onSuccess(String actionName) {
-                        _eventBus.fireEvent(new ContentChangedEvent(_contentConnector.getItemId(_itemToEdit), true));
-                        super.onSuccess(actionName);
-                    }
-                });
-            }
-        }
+        super.execute();
     }
 
-    private String retrieveDialog() {
-        String dialogId = EMPTY;
-        if (_itemToEdit instanceof JcrNodeAdapter) {
-            Node jcrItem = ((JcrNodeAdapter) _itemToEdit).getJcrItem();
-            String template = getTemplate(jcrItem);
-            if (isNotEmpty(template)) {
-                TemplateDefinitionRegistry templateDefinitionRegistry = Components.getComponent(TemplateDefinitionRegistry.class);
-                TemplateDefinition templateDefinition = templateDefinitionRegistry.getProvider(template).get();
-                dialogId = templateDefinition.getDialog();
-            }
-        }
-        return dialogId;
-    }
 }
