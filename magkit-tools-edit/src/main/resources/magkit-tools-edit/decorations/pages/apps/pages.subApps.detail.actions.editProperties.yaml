@@ -1,6 +1,0 @@
-class: de.ibmix.magkit.tools.edit.action.EditPageActionDefinition
-icon: icon-edit
-availability:
-  rules:
-    isPageEditable:
-      implementationClass: de.ibmix.magkit.tools.edit.rule.IsElementEditableRule

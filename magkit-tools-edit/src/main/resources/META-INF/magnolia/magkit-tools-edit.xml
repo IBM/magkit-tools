@@ -57,16 +57,8 @@
     <components>
         <id>admincentral</id>
         <type-mapping>
-            <type>info.magnolia.ui.workbench.tree.MoveHandler</type>
-            <implementation>de.ibmix.magkit.tools.edit.action.ConfirmTreeViewDropHandler</implementation>
-        </type-mapping>
-    </components>
-
-    <components>
-        <id>admincentral</id>
-        <type-mapping>
             <type>info.magnolia.ui.contentapp.browser.drop.RowDragger</type>
-            <implementation>de.ibmix.magkit.tools.edit.m6.ui.ConfirmRowDragger</implementation>
+            <implementation>de.ibmix.magkit.tools.edit.ui.ConfirmRowDragger</implementation>
         </type-mapping>
     </components>
 
@@ -74,19 +66,13 @@
         <id>app-dam-jcrBrowser</id>
         <component>
             <type>info.magnolia.ui.contentapp.ItemDescriber</type>
-            <implementation>de.ibmix.magkit.tools.edit.m6.ui.AssetUsageItemDescriber</implementation>
+            <implementation>de.ibmix.magkit.tools.edit.ui.AssetUsageItemDescriber</implementation>
         </component>
     </components>
 
     <dependencies>
         <dependency>
-            <name>pages</name>
-        </dependency>
-        <dependency>
             <name>pages-app</name>
-        </dependency>
-        <dependency>
-            <name>dam-app</name>
         </dependency>
         <dependency>
             <name>dam-app-core</name>

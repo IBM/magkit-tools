@@ -1,9 +1,0 @@
-class: info.magnolia.ui.framework.action.OpenEditDialogActionDefinition
-icon: icon-edit
-implementationClass: de.ibmix.magkit.tools.edit.action.OpenPagePropertiesAction
-label: pages.detail.actions.editProperties.label
-availability:
-  writePermissionRequired: true
-  rules:
-    IsNotDeletedRule:
-      implementationClass: info.magnolia.ui.framework.availability.IsNotDeletedRule
