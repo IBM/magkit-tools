@@ -110,7 +110,12 @@ public class AddTranslationEntryTask extends AbstractTask {
     @Override
     public void execute(InstallContext installContext) throws TaskExecutionException {
         ArrayDelegateTask task = new ArrayDelegateTask("Add translation key tasks");
-        addTranslationNodeTasks(task, installContext);
+        try {
+            addTranslationNodeTasks(task, installContext);
+        } catch (ResourceOrigin.ResourceNotFoundException e) {
+            installContext.warn(e.getLocalizedMessage());
+            LOGGER.error("Error reading translation message bundle.", e);
+        }
         task.execute(installContext);
     }
 
