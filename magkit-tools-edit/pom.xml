@@ -15,7 +15,7 @@
         <!-- magnolia dependencies -->
         <dependency>
             <groupId>info.magnolia.pages</groupId>
-            <artifactId>magnolia-pages-app-compatibility</artifactId>
+            <artifactId>magnolia-pages-app</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>

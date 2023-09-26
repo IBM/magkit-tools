@@ -38,23 +38,6 @@
     </components>
 
     <components>
-        <!-- set custom view impl for the pages app -->
-        <id>app-pages-detail</id>
-        <component>
-            <type>info.magnolia.pages.app.editor.statusbar.activationstatus.ActivationStatusView</type>
-            <implementation>de.ibmix.magkit.tools.edit.views.EditorToolsActivationStatusViewImpl</implementation>
-        </component>
-    </components>
-
-    <components>
-        <id>subapp</id>
-        <component>
-            <type>info.magnolia.ui.workbench.WorkbenchStatusBarPresenter</type>
-            <implementation>de.ibmix.magkit.tools.edit.ui.workbench.ToolsWorkbenchStatusBarPresenter</implementation>
-        </component>
-    </components>
-
-    <components>
         <id>admincentral</id>
         <type-mapping>
             <type>info.magnolia.ui.contentapp.browser.drop.RowDragger</type>
