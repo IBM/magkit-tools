@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.edit.util;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,7 +22,6 @@ package de.ibmix.magkit.tools.edit.util;
 
 import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import de.ibmix.magkit.tools.edit.setup.PublicLinkConfig;
-
 import info.magnolia.module.site.ConfiguredSite;
 import info.magnolia.module.site.Site;
 import info.magnolia.module.site.SiteManager;
@@ -36,8 +35,8 @@ import java.util.Map;
 
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
-import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubContextPath;
+import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertThat;
@@ -89,22 +88,22 @@ public class LinkServiceTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         cleanContext();
     }
 
     @Test
-    public void testNotExistingNodePath() throws Exception {
+    public void testNotExistingNodePath() {
         assertThat(_linkService.getPublicLink("/site1/not-existing"), equalTo(""));
     }
 
     @Test
-    public void testDefaultLinkRendering() throws Exception {
+    public void testDefaultLinkRendering() {
         assertThat(_linkService.getPublicLink("/site1/de"), equalTo("http://www.domain.ch/site1/de.html"));
     }
 
     @Test
-    public void testSiteLinkRendering() throws Exception {
+    public void testSiteLinkRendering() {
         assertThat(_linkService.getPublicLink("/site2/de"), equalTo("http://www.public.ch/site2/de.html"));
     }
 }

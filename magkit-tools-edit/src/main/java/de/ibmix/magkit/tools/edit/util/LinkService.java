@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.edit.util;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,6 +32,8 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 import java.util.Map;
 
+import static de.ibmix.magkit.core.utils.NodeUtils.IS_PAGE;
+import static de.ibmix.magkit.core.utils.NodeUtils.getAncestorOrSelf;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static info.magnolia.repository.RepositoryConstants.WEBSITE;
 import static org.apache.commons.lang.StringUtils.defaultString;
@@ -82,10 +84,12 @@ public class LinkService {
      */
     public String getPublicLink(final String nodePath) {
         String url = "";
-        final Node node = SessionUtil.getNode(WEBSITE, nodePath);
+        Node node = SessionUtil.getNode(WEBSITE, nodePath);
 
         if (node != null) {
             final String contextPath = MgnlContext.getContextPath();
+            node = getAncestorOrSelf(node, IS_PAGE);
+
             url = createExternalLink(node);
             if (isNotEmpty(contextPath)) {
                 url = remove(url, contextPath);
@@ -129,4 +133,5 @@ public class LinkService {
     public void setMagnoliaConfigurationProperties(final MagnoliaConfigurationProperties magnoliaConfigurationProperties) {
         _magnoliaConfigurationProperties = magnoliaConfigurationProperties;
     }
+
 }
