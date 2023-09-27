@@ -1,8 +1,0 @@
-$type: openPageExternalLocation
-icon: icon-view
-label: pages-app.preview.tab
-availability:
-  rules:
-    IsNotDeletedRule:
-      $type: jcrIsDeletedRule
-      negate: true

@@ -1,6 +1,5 @@
 items: !override
   - name: preview
-  - name: previewExternal
   - name: edit
   - name: openPageProperties
   - name: rename
