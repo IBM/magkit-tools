@@ -20,7 +20,6 @@ package de.ibmix.magkit.tools.edit.ui;
  * #L%
  */
 
-import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import com.vaadin.shared.ui.dnd.DragSourceState;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.shared.ui.grid.DropLocation;
@@ -29,6 +28,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.components.grid.GridRowDragger;
 import com.vaadin.ui.components.grid.TargetDataProviderUpdater;
+import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.AlertBuilder;
 import info.magnolia.ui.contentapp.Datasource;
@@ -146,9 +146,9 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
 
     protected String createConfirmTitle(Collection<T> items) {
         if (items.size() > 1) {
-            return _simpleTranslator.translate("magkit.moveItem.m6.confirmationQuestionManyItems", items.size());
+            return _simpleTranslator.translate("magkit.moveItem.confirmationQuestionManyItems", items.size());
         }
-        return _simpleTranslator.translate("magkit.moveItem.m6.confirmationQuestionOneItem");
+        return _simpleTranslator.translate("magkit.moveItem.confirmationQuestionOneItem");
     }
 
     protected T getTarget() {
