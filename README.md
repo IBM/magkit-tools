@@ -6,7 +6,9 @@
 
 Multi module project contains MagKit tools libraries.
 1. magkit-tools-app
-2. magkit-tools-t9n
+2. magkit-tools-edit
+3. magkit-tools-scheduler
+4. magkit-tools-t9n
 
 ## Usage
 
@@ -45,6 +47,16 @@ You can browse available artifacts through [Magnolia's Nexus](https://nexus.magn
         <dependency>
             <groupId>de.ibmix.magkit</groupId>
             <artifactId>magkit-tools-app</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-tools-edit</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-tools-scheduler</artifactId>
             <version>1.0.0</version>
         </dependency>
         <dependency>
