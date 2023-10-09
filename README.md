@@ -40,33 +40,6 @@ For example:
 The code is built by [GitHub actions](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml).
 You can browse available artifacts through [Magnolia's Nexus](https://nexus.magnolia-cms.com/#nexus-search;quick~magkit-tools)
 
-### Maven dependency
-
-```xml
-    <dependencies>
-        <dependency>
-            <groupId>de.ibmix.magkit</groupId>
-            <artifactId>magkit-tools-app</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.ibmix.magkit</groupId>
-            <artifactId>magkit-tools-edit</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.ibmix.magkit</groupId>
-            <artifactId>magkit-tools-scheduler</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.ibmix.magkit</groupId>
-            <artifactId>magkit-tools-t9n</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-    </dependencies>
-```
-
 ## License
 
 All source files must include a Copyright and License header. The SPDX license header is
