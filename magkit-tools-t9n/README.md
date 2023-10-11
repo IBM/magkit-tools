@@ -14,7 +14,7 @@ App to manage translations for various languages form different properties files
 New app for maintaining message properties. All new messages are automatically added to the app during module update.
 However, this requires adding the de.ibmix.magkit.tools.t9n.AddTranslationsTask for the corresponding properties files in the ModuleVersionHandler:
 ```java
-new AddTranslationsTask("New translations",  "Check and add translation keys to translation app.", "mgnl-i18n.module-bmo-messages", GERMAN);
+new AddTranslationsTask("New translations",  "Check and add translation keys to translation app.", "mgnl-i18n.module-bmo-messages", "", GERMAN);
 ```
 
 The module brings its own TranslationService, which is set in the module descriptor:
