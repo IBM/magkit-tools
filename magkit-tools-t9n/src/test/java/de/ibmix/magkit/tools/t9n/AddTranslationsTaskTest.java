@@ -20,7 +20,7 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
-import de.ibmix.magkit.test.jcr.QueryMockUtils;
+import de.ibmix.magkit.test.jcr.query.QueryMockUtils;
 import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.ArrayDelegateTask;
@@ -42,8 +42,8 @@ import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubJcrSession;
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
-import static de.ibmix.magkit.test.jcr.QueryMockUtils.mockQueryManager;
 import static de.ibmix.magkit.test.jcr.SessionMockUtils.mockSession;
+import static de.ibmix.magkit.test.jcr.query.QueryMockUtils.mockQueryManager;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
