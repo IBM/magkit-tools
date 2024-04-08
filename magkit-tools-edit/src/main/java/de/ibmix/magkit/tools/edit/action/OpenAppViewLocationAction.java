@@ -56,6 +56,9 @@ public abstract class OpenAppViewLocationAction extends AbstractAction<OpenAppVi
 
     /**
      * Implement this method to get the path to open.
+     *
+     * @return node path
+     * @throws ActionExecutionException action execution exception
      */
     protected abstract String getNodePath() throws ActionExecutionException;
 

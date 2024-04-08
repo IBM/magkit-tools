@@ -56,12 +56,14 @@ public class LinkService {
 
     /**
      * Creates a link directly to the page editor if property "magnolia.author.basePath" was set as tomcat variable.
-     * <p/>
-     * Used in ftl-Templates on public:
-     * [#assign pageEditorLink = createPageEditorLink()!]
-     * [#if cmsfn.publicInstance && pageEditorLink?has_content]
-     * <a href="${pageEditorLink}" style="color: #FF9900" target="_blank">EDIT mode on author</a>
-     * [/#if]
+     * <br><br>
+     * Used in ftl-Templates on public:<br>
+     * <code>
+     * [#assign pageEditorLink = createPageEditorLink()!]<br>
+     * [#if cmsfn.publicInstance &amp;&amp; pageEditorLink?has_content]<br>
+     * &lt;a href="${pageEditorLink}" style="color: #FF9900" target="_blank"&gt;EDIT mode on author&lt;/a&gt;<br>
+     * [/#if]<br>
+     * </code>
      *
      * @return page editor link
      */
@@ -81,6 +83,7 @@ public class LinkService {
      * Gets the public link for a node.
      *
      * @param nodePath node path for link creation
+     * @return public link
      */
     public String getPublicLink(final String nodePath) {
         String url = "";
