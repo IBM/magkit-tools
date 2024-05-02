@@ -52,6 +52,8 @@ import static org.mockito.Mockito.when;
 public class LinkServiceTest {
 
     private LinkService _linkService;
+    private Node _site1Node;
+    private Node _site2Node;
 
     @Before
     public void setUp() throws Exception {
@@ -59,23 +61,23 @@ public class LinkServiceTest {
         _linkService = new LinkService() {
             @Override
             protected String createExternalLink(final Node node) {
-                return "http://www.domain.ch/author" + getPathIfPossible(node) + ".html";
+                return "https://www.domain.ch/author" + getPathIfPossible(node) + ".html";
             }
         };
 
-        final Node site1Node = mockPageNode("/site1/de");
-        final Node site2Node = mockPageNode("/site2/de");
+        _site1Node = mockPageNode("/site1/de");
+        _site2Node = mockPageNode("/site2/de");
 
         final SiteManager siteManager = mock(SiteManager.class);
-        when(siteManager.getAssignedSite(site1Node)).thenReturn(createSite("site1"));
-        when(siteManager.getAssignedSite(site2Node)).thenReturn(createSite("site2"));
+        when(siteManager.getAssignedSite(_site1Node)).thenReturn(createSite("site1"));
+        when(siteManager.getAssignedSite(_site2Node)).thenReturn(createSite("site2"));
         _linkService.setSiteManager(siteManager);
 
         final EditToolsModule editToolsModule = new EditToolsModule();
         final PublicLinkConfig publicLinkConfig = new PublicLinkConfig();
         publicLinkConfig.setExtendedLinkGeneration(true);
         Map<String, String> siteHosts = new HashMap<>();
-        siteHosts.put("site2", "http://www.public.ch");
+        siteHosts.put("site2", "https://www.public.ch");
         publicLinkConfig.setSiteHosts(siteHosts);
         editToolsModule.setPublicLinkConfig(publicLinkConfig);
         _linkService.setEditToolsModule(editToolsModule);
@@ -94,16 +96,16 @@ public class LinkServiceTest {
 
     @Test
     public void testNotExistingNodePath() {
-        assertThat(_linkService.getPublicLink("/site1/not-existing"), equalTo(""));
+        assertThat(_linkService.getPublicLink(null), equalTo(""));
     }
 
     @Test
     public void testDefaultLinkRendering() {
-        assertThat(_linkService.getPublicLink("/site1/de"), equalTo("http://www.domain.ch/site1/de.html"));
+        assertThat(_linkService.getPublicLink(_site1Node), equalTo("https://www.domain.ch/site1/de.html"));
     }
 
     @Test
     public void testSiteLinkRendering() {
-        assertThat(_linkService.getPublicLink("/site2/de"), equalTo("http://www.public.ch/site2/de.html"));
+        assertThat(_linkService.getPublicLink(_site2Node), equalTo("https://www.public.ch/site2/de.html"));
     }
 }

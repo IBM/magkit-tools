@@ -24,7 +24,6 @@ import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import de.ibmix.magkit.tools.edit.setup.PublicLinkConfig;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.init.MagnoliaConfigurationProperties;
-import info.magnolia.jcr.util.SessionUtil;
 import info.magnolia.link.LinkUtil;
 import info.magnolia.module.site.SiteManager;
 
@@ -35,7 +34,6 @@ import java.util.Map;
 import static de.ibmix.magkit.core.utils.NodeUtils.IS_PAGE;
 import static de.ibmix.magkit.core.utils.NodeUtils.getAncestorOrSelf;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static info.magnolia.repository.RepositoryConstants.WEBSITE;
 import static org.apache.commons.lang.StringUtils.defaultString;
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
 import static org.apache.commons.lang.StringUtils.remove;
@@ -85,15 +83,14 @@ public class LinkService {
      * @param nodePath node path for link creation
      * @return public link
      */
-    public String getPublicLink(final String nodePath) {
+    public String getPublicLink(final Node node) {
         String url = "";
-        Node node = SessionUtil.getNode(WEBSITE, nodePath);
 
         if (node != null) {
             final String contextPath = MgnlContext.getContextPath();
-            node = getAncestorOrSelf(node, IS_PAGE);
+            final Node page = getAncestorOrSelf(node, IS_PAGE);
 
-            url = createExternalLink(node);
+            url = createExternalLink(page);
             if (isNotEmpty(contextPath)) {
                 url = remove(url, contextPath);
             }
