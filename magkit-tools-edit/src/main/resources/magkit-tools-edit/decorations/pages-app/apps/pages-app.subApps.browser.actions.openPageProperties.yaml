@@ -1,9 +1,0 @@
-$type: openPageProperties
-icon: icon-edit
-label: pages-app.detail.actions.editPage.label
-availability:
-  writePermissionRequired: true
-  rules:
-    IsNotDeletedRule:
-      $type: jcrIsDeletedRule
-      negate: true
