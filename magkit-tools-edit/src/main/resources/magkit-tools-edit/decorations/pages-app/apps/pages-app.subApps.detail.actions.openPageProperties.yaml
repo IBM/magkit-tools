@@ -1,7 +1,0 @@
-$type: openPageProperties
-label: pages-app.detail.actions.editPage.label
-icon: icon-edit
-availability:
-  rules:
-    isPageEditable:
-      $type: isPagePropertiesEditable

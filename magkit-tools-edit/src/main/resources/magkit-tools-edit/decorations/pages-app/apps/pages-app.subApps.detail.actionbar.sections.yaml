@@ -10,9 +10,6 @@ pageActions:
         - name: jumpToBrowser
 areaActions:
   groups:
-    preview:
-      items:
-        - name: openPageProperties
     editingFlow:
       items:
         - name: viewPublishedPage
@@ -25,9 +22,6 @@ pagePreviewActions:
         - name: jumpToBrowser
 componentActions:
   groups:
-    preview:
-      items:
-        - name: openPageProperties
     editingFlow:
       items:
         - name: viewPublishedPage
