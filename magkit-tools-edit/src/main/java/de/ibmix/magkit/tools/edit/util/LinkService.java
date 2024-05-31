@@ -80,7 +80,7 @@ public class LinkService {
     /**
      * Gets the public link for a node.
      *
-     * @param nodePath node path for link creation
+     * @param node node for link creation
      * @return public link
      */
     public String getPublicLink(final Node node) {
