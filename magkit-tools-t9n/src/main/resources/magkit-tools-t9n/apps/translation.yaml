@@ -49,6 +49,7 @@ subApps:
         $type: jcrCommandAction
         command: publish
         availability:
+          multiple: true
           nodeTypes:
             t9n: mgnl:translation
       unpublish:
@@ -56,6 +57,7 @@ subApps:
         $type: jcrCommandAction
         command: unpublish
         availability:
+          multiple: true
           nodeTypes:
             t9n: mgnl:translation
       import:
