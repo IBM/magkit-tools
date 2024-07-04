@@ -99,7 +99,7 @@ subApps:
       importTranslation:
         $type: openDialogAction
         icon: icon-import
-        dialogId: magnolia-translation:import
+        dialogId: magkit-tools-t9n:import
         availability:
           nodes: false
           root: true
@@ -147,10 +147,6 @@ subApps:
         $type: closeAction
     form:
       class: de.ibmix.magkit.tools.t9n.TranslationFormDefinition
-      properties:
-        key:
-          label: Text
-          $type: textField
 permissions:
   roles:
     translation-base: translation-base

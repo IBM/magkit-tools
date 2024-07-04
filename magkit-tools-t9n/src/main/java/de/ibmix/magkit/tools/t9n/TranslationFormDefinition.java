@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,6 +22,7 @@ package de.ibmix.magkit.tools.t9n;
 
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.context.MgnlContext;
+import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.editor.ConfiguredFormDefinition;
 import info.magnolia.ui.field.EditorPropertyDefinition;
@@ -44,7 +45,14 @@ public class TranslationFormDefinition extends ConfiguredFormDefinition {
 
     @Override
     public List<EditorPropertyDefinition> getProperties() {
-        List<EditorPropertyDefinition> properties = new ArrayList<>(super.getProperties());
+        List<EditorPropertyDefinition> properties = new ArrayList<>();
+
+        final TextFieldDefinition keyProperty = new TextFieldDefinition();
+        keyProperty.setName(TranslationNodeTypes.Translation.PN_KEY);
+        final SimpleTranslator simpleTranslator = Components.getComponent(SimpleTranslator.class);
+        keyProperty.setLabel(simpleTranslator.translate("translation.jcrDetail.main.key.label"));
+        properties.add(keyProperty);
+
         I18nContentSupport i18nContentSupport = Components.getComponent(I18nContentSupport.class);
         final Locale userLocale = new Locale(MgnlContext.getUser().getLanguage());
         for (Locale locale : i18nContentSupport.getLocales()) {

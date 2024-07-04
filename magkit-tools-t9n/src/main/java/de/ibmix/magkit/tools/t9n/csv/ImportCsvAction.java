@@ -159,8 +159,9 @@ public class ImportCsvAction extends CommitAction<Node> {
             if (heading.equals(TranslationCsvWriter.COLUMN_KEY)) {
                 cols.put(index, PN_KEY);
             } else {
+                final Locale currentLocale = new Locale(MgnlContext.getUser().getLanguage());
                 for (Locale locale : _locales) {
-                    if (heading.equals(locale.getDisplayName())) {
+                    if (heading.equals(locale.getDisplayName(currentLocale)) || heading.equals(locale.getDisplayName())) {
                         cols.put(index, PREFIX_NAME + locale.getLanguage());
                         break;
                     }

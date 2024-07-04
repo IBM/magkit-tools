@@ -22,6 +22,7 @@ package de.ibmix.magkit.tools.t9n;
 
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.security.User;
+import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.field.EditorPropertyDefinition;
 import org.junit.After;
 import org.junit.Before;
@@ -37,6 +38,7 @@ import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubU
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -52,6 +54,9 @@ public class TranslationFormDefinitionTest {
         final User user = mock(User.class);
         when(user.getLanguage()).thenReturn("en");
         mockWebContext(stubUser(user));
+
+        final SimpleTranslator simpleTranslator = mockComponentInstance(SimpleTranslator.class);
+        when(simpleTranslator.translate(anyString())).thenReturn("Key");
     }
 
     @Test
@@ -62,9 +67,10 @@ public class TranslationFormDefinitionTest {
         final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
 
-        assertThat(properties.size(), is(2));
-        assertThat(properties.get(0).getLabel(), equalTo("English"));
-        assertThat(properties.get(1).getLabel(), equalTo("English (United Kingdom)"));
+        assertThat(properties.size(), is(3));
+        assertThat(properties.get(0).getLabel(), equalTo("Key"));
+        assertThat(properties.get(1).getLabel(), equalTo("English"));
+        assertThat(properties.get(2).getLabel(), equalTo("English (United Kingdom)"));
     }
 
     @After
