@@ -1,20 +1,25 @@
 # Magnolia Kit Tools Translation App #
-App to manage translations for various languages form different properties files.
+App to manage translations for various languages from various properties files.
 
+[![build-module](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml/badge.svg)](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml)
+[![Magnolia compatibility](https://img.shields.io/badge/magnolia-6.2-brightgreen.svg)](https://www.magnolia-cms.com)
 ### Maven dependency
 ```xml
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
 ## General Description ##
-New app for maintaining message properties. All new messages are automatically added to the app during module update.
-However, this requires adding the de.ibmix.magkit.tools.t9n.AddTranslationsTask for the corresponding properties files in the ModuleVersionHandler:
+This module gives you the possibility to maintain translations of global texts from 
+message properties by an editor. By that changes in these texts or introducing new languages 
+could be rolled out without a deployment. 
+All new messages are automatically added to the app during the module update of your module. You 
+only have to add the `de.ibmix.magkit.tools.t9n.AddTranslationsTask` for the corresponding properties files into your ModuleVersionHandler:
 ```java
-new AddTranslationsTask("New translations",  "Check and add translation keys to translation app.", "mgnl-i18n.module-bmo-messages", "", GERMAN);
+new AddTranslationsTask("your-module.i18n.messages", Locale.ENGLISH);
 ```
 
 The module brings its own TranslationService, which is set in the module descriptor:
@@ -25,16 +30,19 @@ The module brings its own TranslationService, which is set in the module descrip
     <scope>singleton</scope>
 </component>
 ```
+By that it is fully transparent to get the translation for any property key.
 
-In the app there is an "Export CSV" function that exports all existing translations, 
-and an "Import CSV" function that imports your translations into the magnolia.
+Furthermore, the app provides a CSV export action to export marked translations, 
+and a CSV import action to import edited translations into the same or to another Magnolia instance.
 
+## Configuration
+
+### Access control rights
 There are 2 roles translation-user and translation-base, which have Read/Write or Read-only rights to the translation workspace.
 
-The language fields in the dialog are based on the available languages in the multisite configuration.
-This means that if a new language is added, the app and the dialog will automatically expand.
-
-The language columns displayed in the app if you add an app decoration (translation.subApps.browser.workbench.contentViews.yaml).
+### App columns
+The language columns in the app could be enhanced by decoration. 
+You could add an app decoration file (translation.subApps.browser.workbench.contentViews.yaml) in to your module to add any language column you like.
 ```yaml
 #  This is only one example:
 - name : list
@@ -43,11 +51,11 @@ The language columns displayed in the app if you add an app decoration (translat
       filterComponent:
       $type: textField
       width: 300
-    translation_de:
+    translation_en:
       filterComponent:
       $type: textField
       expandRatio: 2
-    translation_en:
+    translation_de:
       filterComponent:
       $type: textField
       expandRatio: 2
@@ -58,3 +66,8 @@ The language columns displayed in the app if you add an app decoration (translat
       $type: dateColumn
       width: 190
 ```
+## Headless support
+
+The module provides a REST endpoint for the headless integration. 
+Your frontend could request the Magnolia backend for all translation for 
+a language, e.g. all German translations `/.rest/i18n/v1/de`
