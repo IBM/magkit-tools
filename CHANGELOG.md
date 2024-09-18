@@ -3,11 +3,13 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+## [1.0.3] - 2024-07-05
+## [1.0.2] - 2024-05-31
+## [1.0.1] - 2024-05-31
+## [1.0.0] - 2024-04-08
 
-## [0.0.1] - 2019-02-15
-
-### Added
-- Added a changelog
-
-[unreleased]: https://github.com/ibm/repo-template/compare/v0.0.1...HEAD
-[0.0.1]: https://github.com/ibm/repo-template/releases/tag/v0.0.1
+[unreleased]: https://github.com/IBM/magkit-tools/compare/magkit-tools-1.0.3...HEAD
+[1.0.3]: https://github.com/IBM/magkit-tools/releases/tag/magkit-tools-1.0.3
+[1.0.2]: https://github.com/IBM/magkit-tools/releases/tag/magkit-tools-1.0.2
+[1.0.1]: https://github.com/IBM/magkit-tools/releases/tag/magkit-tools-1.0.1
+[1.0.0]: https://github.com/IBM/magkit-tools/releases/tag/magkit-tools-1.0.0

@@ -3,6 +3,7 @@ App to manage translations for various languages from various properties files.
 
 [![build-module](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml/badge.svg)](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml)
 [![Magnolia compatibility](https://img.shields.io/badge/magnolia-6.2-brightgreen.svg)](https://www.magnolia-cms.com)
+
 ### Maven dependency
 ```xml
 <dependency>
@@ -11,6 +12,7 @@ App to manage translations for various languages from various properties files.
     <version>1.0.3</version>
 </dependency>
 ```
+See [change log](../CHANGELOG.md) for further versions.
 
 ## General Description ##
 This module gives you the possibility to maintain translations of global texts from 

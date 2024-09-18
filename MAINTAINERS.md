@@ -1,4 +1,4 @@
 # MAINTAINERS
 
-Frank Sommer - frank.sommer@ibmix.de
-Wolf Bubenik - wolf.bubenik@ibmix.de
+Frank Sommer - frank.sommer1@ibm.com\
+Wolf Bubenik - wolf.bubenik@ibm.com
