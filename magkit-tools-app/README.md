@@ -6,7 +6,7 @@ Extended Tools Module for Magnolia.
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-app</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.3</version>
 </dependency>
 ```
 
@@ -18,11 +18,11 @@ This tool deletes content versions for the selected JCR workspace.
 ### Improved JCR query page ###
 1. Also supports SQL2 queries that contain joins.
 2. Represents besides the _Path Score_ and other _properties_.
-3. Remembers last entered query in session
+3. Remembers the last entered query in session
 
 ### Developer Tools ###  
 **PageEdit Actions:**
-1. View Source: opens selected page or component in new window.
+1. View Source: opens a selected page or component in a new window.
 2. View Dialog Definition: Displays the dialog definition in the definition app.
 3. View Template Definition: Displays the template/component definition in the definition app.
 

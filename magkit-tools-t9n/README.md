@@ -71,5 +71,5 @@ You could add an app decoration file (translation.subApps.browser.workbench.cont
 ## Headless support
 
 The module provides a REST endpoint for the headless integration. 
-Your frontend could request the Magnolia backend for all translation for 
+Your frontend could request the Magnolia backend for all translations for 
 a language, e.g. all German translations `/.rest/i18n/v1/de`
