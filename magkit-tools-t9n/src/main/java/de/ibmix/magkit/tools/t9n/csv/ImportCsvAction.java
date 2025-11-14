@@ -38,7 +38,7 @@ import info.magnolia.ui.datasource.optionlist.Option;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
