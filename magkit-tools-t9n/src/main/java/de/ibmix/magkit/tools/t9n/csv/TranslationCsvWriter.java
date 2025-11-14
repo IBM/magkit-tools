@@ -40,9 +40,27 @@ import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PREFIX_
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
- * Create CSV file for all translations.
+ * Utility class for exporting translation data to CSV format.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Creates CSV files containing translation keys and their values for all configured locales,
+ * enabling editors to work with translations in external tools like spreadsheet applications.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Generates CSV files with UTF-8 encoding</li>
+ * <li>Creates header row with "Key" and locale display names</li>
+ * <li>Exports all translation entries in alphabetical order</li>
+ * <li>Handles missing translations gracefully with empty values</li>
+ * <li>Provides access to the generated file as a stream</li>
+ * </ul>
+ * <p>
+ * <p><strong>CSV Format:</strong></p>
+ * The first row contains column headers (Key, followed by locale names).
+ * Each subsequent row contains a translation key and its values for each locale.
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 @Slf4j
 public class TranslationCsvWriter {
@@ -55,6 +73,13 @@ public class TranslationCsvWriter {
     private final Map<String, Map<String, String>> _eventEntries;
     private final Collection<Locale> _locales;
 
+    /**
+     * Creates a new CSV writer for the given translation data.
+     *
+     * @param entries map of translation keys to locale-value mappings
+     * @param path the directory where the temporary CSV file will be created
+     * @param locales the collection of locales to include as columns
+     */
     public TranslationCsvWriter(Map<String, Map<String, String>> entries, File path, Collection<Locale> locales) {
         _path = path;
         _file = createFile();
@@ -63,7 +88,8 @@ public class TranslationCsvWriter {
     }
 
     /**
-     * Export logic.
+     * Writes the translation data to the CSV file with UTF-8 encoding.
+     * Creates a header row and one row per translation entry.
      */
     public void writeCsv() {
         List<String[]> entries = new ArrayList<>();
@@ -103,6 +129,11 @@ public class TranslationCsvWriter {
         return file;
     }
 
+    /**
+     * Provides an input stream to the generated CSV file for downloading.
+     *
+     * @return an input stream to the CSV file, or null if the file cannot be read
+     */
     public FileInputStream getStream() {
         try {
             return new FileInputStream(getFile());
@@ -112,6 +143,11 @@ public class TranslationCsvWriter {
         }
     }
 
+    /**
+     * Returns the generated CSV file.
+     *
+     * @return the CSV file
+     */
     protected File getFile() {
         return _file;
     }

@@ -33,7 +33,19 @@ import javax.inject.Inject;
 import javax.jcr.query.QueryResult;
 
 /**
- * Query result view implementation.
+ * Implementation of QueryResultView for displaying JCR query results.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Displays query results in a QueryResultTable component</li>
+ *   <li>Shows help documentation for JCR-SQL2 queries in a browser frame</li>
+ *   <li>Dynamically replaces result table when new queries are executed</li>
+ * </ul>
+ * <p>
+ * <p><strong>Layout:</strong></p>
+ * The result section contains a help browser frame and the query result table.
+ * On first query execution, the table is added; on subsequent executions, it replaces
+ * the previous table.
  *
  * @author frank.sommer
  * @see QueryResultView
@@ -41,6 +53,14 @@ import javax.jcr.query.QueryResult;
  */
 public class QueryResultViewImpl extends BaseResultViewImpl implements QueryResultView {
 
+    /**
+     * Constructs a new QueryResultViewImpl instance and initializes the help browser frame.
+     *
+     * @param subAppContext the sub-application context
+     * @param componentProvider the component provider
+     * @param formBuilder the form builder
+     * @param i18n the translator for i18n support
+     */
     @Inject
     public QueryResultViewImpl(final SubAppContext subAppContext, final ComponentProvider componentProvider, final FormBuilder formBuilder, final SimpleTranslator i18n) {
         super(subAppContext, componentProvider, formBuilder, i18n);
@@ -53,11 +73,24 @@ public class QueryResultViewImpl extends BaseResultViewImpl implements QueryResu
         resultSection.addComponent(browserFrame);
     }
 
+    /**
+     * Returns the i18n key for the query execution button.
+     *
+     * @return the i18n key "queryTools.button.label"
+     */
     @Override
     protected String getButtonKey() {
         return "queryTools.button.label";
     }
 
+    /**
+     * Builds and displays the query result table, replacing any existing table.
+     *
+     * @param queryResult the JCR query result to display
+     * @param showScore whether to display score information
+     * @param showCols whether to display all columns
+     * @param duration the query execution time in milliseconds
+     */
     public void buildResultTable(QueryResult queryResult, boolean showScore, boolean showCols, long duration) {
         QueryResultTable resultTable = new QueryResultTable();
         resultTable.buildResultTable(queryResult, showScore, showCols, duration);

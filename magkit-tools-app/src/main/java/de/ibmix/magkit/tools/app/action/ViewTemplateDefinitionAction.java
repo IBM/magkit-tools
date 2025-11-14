@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.action;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,6 +42,13 @@ public class ViewTemplateDefinitionAction extends AbstractAction<ViewTemplateDef
     private LocationController _locationController;
     private AbstractJcrNodeAdapter _item;
 
+    /**
+     * Constructs a new ViewTemplateDefinitionAction instance.
+     *
+     * @param definition the action definition
+     * @param locationController the location controller for navigation
+     * @param item the JCR node adapter for the target node
+     */
     @Inject
     public ViewTemplateDefinitionAction(final ViewTemplateDefinitionActionDefinition definition, final LocationController locationController, final AbstractJcrNodeAdapter item) {
         super(definition);
@@ -49,6 +56,9 @@ public class ViewTemplateDefinitionAction extends AbstractAction<ViewTemplateDef
         _item = item;
     }
 
+    /**
+     * Executes the action by retrieving the template ID and navigating to its definition.
+     */
     @Override
     public void execute() {
         if (_item != null && _item.getJcrItem() != null) {

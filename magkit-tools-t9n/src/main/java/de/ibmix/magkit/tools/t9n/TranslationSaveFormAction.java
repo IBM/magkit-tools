@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.t9n;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,14 +36,41 @@ import javax.jcr.Node;
 import javax.jcr.Property;
 
 /**
- * Custom save action used in app definition.
+ * Custom form save action that ensures translation nodes are named according to their key property.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * This action extends the standard commit behavior to rename newly created translation nodes based on
+ * their key property value, ensuring consistent and meaningful node names in the translation workspace.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Automatically renames new nodes based on the translation key</li>
+ * <li>Generates valid and unique JCR node names</li>
+ * <li>Maintains data integrity through proper commit handling</li>
+ * <li>Triggers datasource observation for UI updates</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * This action is typically configured in the translation app definition and is automatically
+ * invoked when saving translation entries through the Magnolia UI.
  *
  * @author frank.sommer
- * @since 1.4.1
+ * @since 2020-10-01
  */
 public class TranslationSaveFormAction extends CommitAction<Node> {
     private final NodeNameHelper _nodeNameHelper;
 
+    /**
+     * Creates a new translation save form action with all required dependencies.
+     *
+     * @param definition the action definition configuration
+     * @param closeHandler the handler for closing the form
+     * @param valueContext the context providing access to the edited node
+     * @param form the form view containing the edited data
+     * @param datasource the datasource managing the JCR nodes
+     * @param datasourceObservation the observation mechanism for triggering UI updates
+     * @param nodeNameHelper the helper for generating valid JCR node names
+     */
     @Inject
     public TranslationSaveFormAction(CommitActionDefinition definition, CloseHandler closeHandler, ValueContext<Node> valueContext, FormView<Node> form, Datasource<Node> datasource, DatasourceObservation.Manual datasourceObservation, NodeNameHelper nodeNameHelper) {
         super(definition, closeHandler, valueContext, form, datasource, datasourceObservation);
@@ -51,7 +78,9 @@ public class TranslationSaveFormAction extends CommitAction<Node> {
     }
 
     /**
-     * Save the new node under the value of the key property.
+     * Writes the form data to the node and renames new nodes based on their key property value.
+     * For new nodes, the node name is derived from the translation key to ensure meaningful and
+     * unique identifiers in the JCR repository.
      */
     @Override
     protected void write() {

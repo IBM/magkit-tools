@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.field;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,15 +31,32 @@ import info.magnolia.ui.form.field.factory.AbstractFieldFactory;
 import javax.inject.Inject;
 
 /**
- * AclFieldFactory.
+ * Factory for creating AclField instances in Magnolia forms.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Creates configured AclField instances</li>
+ *   <li>Manages field lifecycle and dependencies</li>
+ *   <li>Integrates with Magnolia's form framework</li>
+ * </ul>
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 public class AclFieldFactory extends AbstractFieldFactory<AclFieldDefinition, Object> {
 
     private Item _relatedFieldItem;
     private final SimpleTranslator _i18n;
 
+    /**
+     * Constructs a new AclFieldFactory instance.
+     *
+     * @param definition the field definition
+     * @param relatedFieldItem the JCR item to display ACL information for
+     * @param uiContext the UI context
+     * @param i18nAuthoringSupport the i18n authoring support
+     * @param i18n the translator for i18n support
+     */
     @Inject
     public AclFieldFactory(AclFieldDefinition definition, Item relatedFieldItem, UiContext uiContext, I18NAuthoringSupport i18nAuthoringSupport, SimpleTranslator i18n) {
         super(definition, relatedFieldItem, uiContext, i18nAuthoringSupport);
@@ -47,16 +64,32 @@ public class AclFieldFactory extends AbstractFieldFactory<AclFieldDefinition, Ob
         _i18n = i18n;
     }
 
+    /**
+     * Creates and returns a new AclField instance.
+     *
+     * @return the created ACL field component
+     */
     @Override
     protected Field<Object> createFieldComponent() {
         return new AclField(_relatedFieldItem, _i18n);
     }
 
+    /**
+     * Sets the property data source and default value.
+     * No specific action needed for ACL fields as they are read-only display fields.
+     *
+     * @param property the property (unused)
+     */
     @Override
     public void setPropertyDataSourceAndDefaultValue(Property property) {
         // Do nothing specific
     }
 
+    /**
+     * Returns the type of field values.
+     *
+     * @return String.class
+     */
     @Override
     protected Class<?> getFieldType() {
         return String.class;

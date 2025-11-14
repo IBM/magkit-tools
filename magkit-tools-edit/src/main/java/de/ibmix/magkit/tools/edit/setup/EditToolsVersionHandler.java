@@ -28,16 +28,38 @@ import info.magnolia.module.model.Version;
 import java.util.List;
 
 /**
- * Version Handler for the edit tools.
+ * Version handler for the Edit Tools module, managing installation and update tasks.
+ * This handler extends {@link BootstrapModuleVersionHandler} to handle module installation,
+ * updates, and configuration bootstrapping.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Conditionally installs status bar configuration during updates</li>
+ * <li>Conditionally installs move workspace confirmation configuration during updates</li>
+ * <li>Extends standard bootstrap functionality for module setup</li>
+ * </ul>
+ *
+ * <p><strong>Bootstrap Files:</strong></p>
+ * <ul>
+ * <li>config.modules.magkit-tools-edit.config.moveConfirmWorkspaces.xml</li>
+ * <li>config.modules.magkit-tools-edit.config.statusBarConfig.xml</li>
+ * </ul>
  *
  * @author Oliver Emke
- * @since 31.03.14
+ * @since 2014-03-31
  */
 public class EditToolsVersionHandler extends BootstrapModuleVersionHandler {
 
     private final Task _statusBarConfig = new BootstrapConditionally("Add move workspace config", "/mgnl-bootstrap/install/magkit-tools-edit/config.modules.magkit-tools-edit.config.moveConfirmWorkspaces.xml");
     private final Task _workspaceMoveConfig = new BootstrapConditionally("Add status bar config", "/mgnl-bootstrap/install/magkit-tools-edit/config.modules.magkit-tools-edit.config.statusBarConfig.xml");
 
+    /**
+     * Returns the default update tasks for a specific module version.
+     * Adds conditional bootstrap tasks for status bar and move workspace configurations.
+     *
+     * @param forVersion the version for which to get update tasks
+     * @return the list of update tasks
+     */
     @Override
     protected List<Task> getDefaultUpdateTasks(final Version forVersion) {
         List<Task> tasks = super.getDefaultUpdateTasks(forVersion);

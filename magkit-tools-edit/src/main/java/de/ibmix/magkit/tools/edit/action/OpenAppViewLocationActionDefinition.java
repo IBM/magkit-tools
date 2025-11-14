@@ -24,20 +24,39 @@ package de.ibmix.magkit.tools.edit.action;
 import info.magnolia.ui.contentapp.action.OpenLocationActionDefinition;
 
 /**
- * Definition for OpenAppViewLocationAction.
+ * Configuration definition for {@link OpenAppViewLocationAction}.
+ * This definition extends the standard OpenLocationActionDefinition with an additional view type property
+ * to specify which view should be displayed when navigating to a location (e.g., tree view, list view).
+ *
+ * <p><strong>Configuration Properties:</strong></p>
+ * <ul>
+ * <li>viewType - the type of view to display (defaults to tree view)</li>
+ * <li>All properties inherited from {@link OpenLocationActionDefinition}</li>
+ * </ul>
  *
  * @author jean-charles.robert
  * @see OpenLocationActionDefinition
- * @since 14.05.18
+ * @see OpenAppViewLocationAction
+ * @since 2018-05-14
  */
 public class OpenAppViewLocationActionDefinition extends OpenLocationActionDefinition {
 
     private String _viewType = OpenAppViewLocationAction.TREE_VIEW;
 
+    /**
+     * Returns the configured view type for the browser location.
+     *
+     * @return the view type (e.g., "treeview")
+     */
     public String getViewType() {
         return _viewType;
     }
 
+    /**
+     * Sets the view type for the browser location.
+     *
+     * @param viewType the view type to set (e.g., "treeview", "listview")
+     */
     public void setViewType(String viewType) {
         _viewType = viewType;
     }

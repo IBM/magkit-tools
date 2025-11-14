@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test the ui.
+ * Unit tests for QueryResultTable column name normalization.
  *
  * @author frank.sommer
- * @since 05.12.2017
+ * @since 2017-12-05
  */
 public class QueryResultTableTest {
     @Test

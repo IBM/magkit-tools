@@ -39,10 +39,10 @@ import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Test the LinkService.
+ * Unit tests for {@link LinkService}.
  *
  * @author frank.sommer
- * @since 09.07.2015
+ * @since 2015-07-09
  */
 public class LinkServiceTest {
 

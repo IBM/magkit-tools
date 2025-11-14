@@ -36,13 +36,36 @@ import java.util.Locale;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * Wraps the configured form to add additional fields.
+ * Dynamic form definition that generates translation fields based on configured locales.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Automatically creates form fields for each configured locale in the system, eliminating the need
+ * for static form field definitions and enabling flexible multi-language translation management.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Dynamically generates form fields for all configured locales</li>
+ * <li>Creates a key field for the translation identifier</li>
+ * <li>Generates locale-specific fields with user-friendly labels</li>
+ * <li>Supports both language-only and language-country locale combinations</li>
+ * <li>Displays locale names in the current user's language</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * This form definition is typically referenced in the translation app configuration and
+ * automatically provides the appropriate fields based on the system's i18n configuration.
  *
  * @author frank.sommer
- * @since 01.10.2020
+ * @since 2020-10-01
  */
 public class TranslationFormDefinition extends ConfiguredFormDefinition {
 
+    /**
+     * Generates the form property definitions including a key field and one text field per configured locale.
+     * Field labels are localized to the current user's language.
+     *
+     * @return the list of form field definitions
+     */
     @Override
     public List<EditorPropertyDefinition> getProperties() {
         List<EditorPropertyDefinition> properties = new ArrayList<>();

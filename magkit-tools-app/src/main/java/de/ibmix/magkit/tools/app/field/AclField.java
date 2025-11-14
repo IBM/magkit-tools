@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.field;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,9 +53,27 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
 /**
- * Field that shows acl of current user for different repositories.
+ * Custom Vaadin field that displays Access Control List (ACL) information for a user.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Displays ACL permissions for different JCR workspaces</li>
+ *   <li>Shows permissions inherited from direct role assignments</li>
+ *   <li>Shows permissions inherited from group memberships</li>
+ *   <li>Presents data in a grid layout with path, permission, and role columns</li>
+ *   <li>Translates permission codes to human-readable labels</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * This field is typically used in user management interfaces to display the effective
+ * permissions a user has across different repositories through their roles and group memberships.
+ * <p>
+ * <p><strong>Permission Display:</strong></p>
+ * Permissions are displayed as read-only, read-write, or deny access based on the
+ * ACL configuration in the user's roles.
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 public class AclField extends CustomField<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AclField.class);
@@ -73,12 +91,25 @@ public class AclField extends CustomField<Object> {
 
     private final SimpleTranslator _i18n;
 
+    /**
+     * Constructs a new AclField instance.
+     *
+     * @param relatedFieldItem the JCR node item representing the user
+     * @param i18n the translator for i18n support
+     */
     public AclField(Item relatedFieldItem, SimpleTranslator i18n) {
         _relatedFieldItem = relatedFieldItem;
         _layout = new GridLayout();
         _i18n = i18n;
     }
 
+    /**
+     * Initializes and builds the content of the ACL field.
+     * Retrieves the user's roles from direct assignments and group memberships,
+     * then displays the ACL information for each repository.
+     *
+     * @return the Vaadin component containing the ACL grid or null if item is invalid
+     */
     @Override
     protected Component initContent() {
         AbstractJcrNodeAdapter item;
@@ -203,6 +234,12 @@ public class AclField extends CustomField<Object> {
         return result;
     }
 
+    /**
+     * Retrieves all ACL information from a role node grouped by repository.
+     *
+     * @param node the role node
+     * @return map of repository names to lists of ACL entries
+     */
     private Map<String, List<Acl>> getRepositories(Node node) {
         Map<String, List<Acl>> repositoryMap = new HashMap<>();
         try {
@@ -281,11 +318,21 @@ public class AclField extends CustomField<Object> {
         }
     }
 
+    /**
+     * Data holder class for ACL information.
+     */
     private class Acl {
         private String _permission;
         private String _path;
         private String _role;
 
+        /**
+         * Constructs a new Acl instance.
+         *
+         * @param permission the permission type
+         * @param path the node path
+         * @param role the role name
+         */
         Acl(String permission, String path, String role) {
             _permission = permission;
             _path = path;

@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,7 +36,20 @@ import static com.vaadin.server.Sizeable.Unit.PERCENTAGE;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 /**
- * Query result tables.
+ * Vaadin table component for displaying JCR query results.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Displays query results in a sortable table format</li>
+ *   <li>Shows node paths and relevance scores</li>
+ *   <li>Displays property values from query result columns</li>
+ *   <li>Normalizes column names for better readability</li>
+ *   <li>Shows query execution time and row count in caption</li>
+ * </ul>
+ * <p>
+ * <p><strong>Column Normalization:</strong></p>
+ * Column names containing namespace prefixes are normalized to improve readability
+ * by removing redundant prefixes when the selector name differs from the property name.
  *
  * @author oliver.emke
  * @since 1.5.0
@@ -111,6 +124,12 @@ public class QueryResultTable extends Table {
         }
     }
 
+    /**
+     * Retrieves a prefix for selector names that don't contain namespace prefixes.
+     *
+     * @param selectorName the selector name
+     * @return empty string if selector contains a colon, otherwise selector name followed by " - "
+     */
     private String retrievePrefix(String selectorName) {
         return selectorName.contains(":") ? "" : (selectorName + " - ");
     }

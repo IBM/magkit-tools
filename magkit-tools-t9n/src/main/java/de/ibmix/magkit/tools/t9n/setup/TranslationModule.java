@@ -25,29 +25,66 @@ import info.magnolia.module.ModuleLifecycleContext;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Translation module.
+ * Module configuration and lifecycle management for the translation tools.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Provides configuration options and lifecycle hooks for the translation module,
+ * particularly the ability to configure a custom base path for organizing translations
+ * within the translation workspace.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Configurable base path for translation organization</li>
+ * <li>Module lifecycle management (start/stop hooks)</li>
+ * <li>Integration with Magnolia's module system</li>
+ * </ul>
+ * <p>
+ * <p><strong>Configuration:</strong></p>
+ * The base path can be configured in the module descriptor to organize translations
+ * hierarchically within the translation workspace.
  *
  * @author IBM iX
+ * @since 2023-01-01
  */
 @Slf4j
 public class TranslationModule implements ModuleLifecycle {
 
     private String _basePath;
 
+    /**
+     * Called when the module is started during Magnolia initialization.
+     *
+     * @param moduleLifecycleContext the lifecycle context
+     */
     @Override
     public void start(ModuleLifecycleContext moduleLifecycleContext) {
         LOGGER.info("Start translation module ...");
     }
 
+    /**
+     * Called when the module is stopped during Magnolia shutdown.
+     *
+     * @param moduleLifecycleContext the lifecycle context
+     */
     @Override
     public void stop(ModuleLifecycleContext moduleLifecycleContext) {
         LOGGER.info("Stop translation module ...");
     }
 
+    /**
+     * Returns the configured base path for translations in the workspace.
+     *
+     * @return the base path, or null if not configured
+     */
     public String getBasePath() {
         return _basePath;
     }
 
+    /**
+     * Sets the base path for organizing translations within the workspace.
+     *
+     * @param basePath the base path (e.g., "/myproject")
+     */
     public void setBasePath(String basePath) {
         _basePath = basePath;
     }

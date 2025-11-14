@@ -49,10 +49,32 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
- * I18N endpoint for translations from the translation app.
+ * REST endpoint for accessing internationalization translations from the Magnolia translation workspace.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Provides a RESTful API to retrieve all translation key-value pairs for a specific locale,
+ * enabling frontend applications to access localized content dynamically.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Exposes translations via REST API at /i18n/v1/{locale}</li>
+ * <li>Supports language-only (e.g., "de") and language-country (e.g., "de_DE") locale formats</li>
+ * <li>Returns translations as JSON key-value pairs</li>
+ * <li>Falls back to language-only translations when country-specific ones are not available</li>
+ * <li>Executes queries in system context for consistent access</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage Example:</strong></p>
+ * <pre>
+ * GET /rest/i18n/v1/de
+ * GET /rest/i18n/v1/en_US
+ * </pre>
+ * <p>
+ * <p><strong>Thread Safety:</strong></p>
+ * This endpoint is thread-safe as each request operates within its own context.
  *
  * @author frank.sommer
- * @since 13.07.2022
+ * @since 2022-07-13
  */
 @Path("/i18n/v1")
 @Tag(
@@ -61,11 +83,24 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
 @Slf4j
 public class I18nEndpoint extends AbstractEndpoint<ConfiguredEndpointDefinition> {
 
+    /**
+     * Creates a new I18N endpoint with the given configuration.
+     *
+     * @param endpointDefinition the endpoint configuration definition
+     */
     @Inject
     protected I18nEndpoint(ConfiguredEndpointDefinition endpointDefinition) {
         super(endpointDefinition);
     }
 
+    /**
+     * Retrieves all available translations for the specified locale.
+     * Returns a JSON object containing key-value pairs where keys are translation identifiers
+     * and values are the localized text. Supports fallback from country-specific to language-only translations.
+     *
+     * @param locale the locale string in ISO format (e.g., "de" or "de_DE")
+     * @return a Response containing the translation key-value pairs as JSON
+     */
     @Path("/{locale:[a-z]{2}(_[A-Z]{2})?}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)

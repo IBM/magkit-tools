@@ -51,10 +51,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the translation task.
+ * Tests for {@link AddTranslationsTask}.
  *
  * @author frank.sommer
- * @since 21.09.2023
+ * @since 2023-09-21
  */
 public class AddTranslationsTaskTest {
 

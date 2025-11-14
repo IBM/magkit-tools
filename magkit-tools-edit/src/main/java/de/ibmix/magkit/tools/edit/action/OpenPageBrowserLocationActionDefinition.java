@@ -23,8 +23,19 @@ package de.ibmix.magkit.tools.edit.action;
 import info.magnolia.ui.api.action.ActionType;
 
 /**
+ * Action definition for opening a page in the browser sub-app.
+ * This definition is automatically registered with the action type "openPageBrowserLocation" and
+ * uses {@link OpenPageBrowserLocationAction} as its implementation.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Navigates to the page browser view for the selected node</li>
+ * <li>Registered as action type "openPageBrowserLocation" for use in Magnolia UI configuration</li>
+ * </ul>
+ *
  * @author Philipp Güttler (IBM iX)
- * @since 19.02.2021
+ * @see OpenPageBrowserLocationAction
+ * @since 2021-02-19
  */
 @ActionType("openPageBrowserLocation")
 public class OpenPageBrowserLocationActionDefinition extends OpenAppViewLocationActionDefinition {

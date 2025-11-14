@@ -45,10 +45,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the form creation.
+ * Tests for {@link TranslationFormDefinition}.
  *
  * @author frank.sommer
- * @since 23.08.2022
+ * @since 2022-08-23
  */
 public class TranslationFormDefinitionTest {
     @BeforeEach

@@ -31,10 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test the translation node type.
+ * Tests for {@link TranslationNodeTypes}.
  *
  * @author frank.sommer
- * @since 19.09.2023
+ * @since 2023-09-19
  */
 public class TranslationNodeTypesTest {
     @Test

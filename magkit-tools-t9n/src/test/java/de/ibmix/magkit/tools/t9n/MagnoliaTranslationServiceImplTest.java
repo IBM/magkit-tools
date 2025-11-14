@@ -39,10 +39,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the translation service.
+ * Tests for {@link MagnoliaTranslationServiceImpl}.
  *
  * @author frank.sommer
- * @since 24.01.2020
+ * @since 2020-01-24
  */
 public class MagnoliaTranslationServiceImplTest {
 

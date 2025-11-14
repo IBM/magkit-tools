@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,9 +28,21 @@ import info.magnolia.ui.framework.app.BaseSubApp;
 import info.magnolia.ui.vaadin.form.FormViewReduced;
 
 /**
- * Base app.
+ * Abstract base class for form-based tool sub-applications.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Manages form view and result view lifecycle</li>
+ *   <li>Handles form validation before action execution</li>
+ *   <li>Provides template method pattern for action execution</li>
+ *   <li>Integrates form builder with sub-app context</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * Subclasses must implement the {@link #doAction()} method to define the specific
+ * action to be performed when the form is valid and submitted.
  *
- * @param <T> result view
+ * @param <T> the type of result view extending ResultView
  * @author frank.sommer
  * @since 1.5.0
  */
@@ -40,6 +52,14 @@ public abstract class ToolsBaseSubApp<T extends ResultView> extends BaseSubApp<R
     private final FormViewReduced _formView;
     private final FormDefinition _formDefinition;
 
+    /**
+     * Constructs a new ToolsBaseSubApp instance.
+     *
+     * @param subAppContext the sub-application context
+     * @param formView the reduced form view for input
+     * @param view the result view for displaying output
+     * @param builder the form builder for constructing forms
+     */
     public ToolsBaseSubApp(final SubAppContext subAppContext, final FormViewReduced formView, final T view, final FormBuilder builder) {
         super(subAppContext, view);
         _formView = formView;
@@ -48,6 +68,10 @@ public abstract class ToolsBaseSubApp<T extends ResultView> extends BaseSubApp<R
         _formDefinition = ((FormSubAppDescriptor) subAppContext.getSubAppDescriptor()).getForm();
     }
 
+    /**
+     * Handles action trigger events from the view.
+     * Validates the form before executing the action.
+     */
     public void onActionTriggered() {
         _formView.showValidation(true);
         if (_formView.isValid()) {
@@ -55,8 +79,15 @@ public abstract class ToolsBaseSubApp<T extends ResultView> extends BaseSubApp<R
         }
     }
 
+    /**
+     * Executes the specific action for this sub-app.
+     * Must be implemented by subclasses to define the actual operation.
+     */
     protected abstract void doAction();
 
+    /**
+     * Initializes the sub-app by building the form and connecting it to the view.
+     */
     @Override
     protected void onSubAppStart() {
         PropertysetItem item = new PropertysetItem();
@@ -66,6 +97,11 @@ public abstract class ToolsBaseSubApp<T extends ResultView> extends BaseSubApp<R
         _view.setListener(this);
     }
 
+    /**
+     * Returns the form definition for this sub-app.
+     *
+     * @return the form definition
+     */
     protected FormDefinition getFormDefinition() {
         return _formDefinition;
     }

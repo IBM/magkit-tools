@@ -41,11 +41,35 @@ import static de.ibmix.magkit.core.utils.NodeUtils.getNodeByReference;
 import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;
 
 /**
- * Generic class to check if page properties is available. We use a non-Java-Generic class to handle different elements like {@link PageElement PageElement}, {@link
- * info.magnolia.ui.vaadin.gwt.client.shared.AreaElement AreaElement}, or {@link ComponentElement ComponentElement}.
+ * Availability rule that determines if page properties can be edited for the current element in the page editor.
+ * This rule extends {@link IsElementEditableRule} and verifies that the page has a configured dialog
+ * and is marked as editable in its template definition.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Checks if the page template has a dialog configured</li>
+ * <li>Verifies the template's editable property (defaults to true if not set)</li>
+ * <li>Works with any element type (page, area, component) by finding the page ancestor</li>
+ * <li>Integrates with Magnolia's availability rule system</li>
+ * </ul>
+ *
+ * <p><strong>Usage:</strong></p>
+ * This rule is typically used in action definitions to control the availability of the "Edit Page Properties"
+ * action in the page editor context menu.
+ *
+ * <p><strong>Evaluation Criteria:</strong></p>
+ * Returns true if:
+ * <ul>
+ * <li>The current element has a page ancestor</li>
+ * <li>The page template has a dialog defined</li>
+ * <li>The page template's editable property is null or true</li>
+ * </ul>
  *
  * @author Philipp Güttler (IBM iX)
- * @since 30.06.2015
+ * @see PageElement
+ * @see info.magnolia.ui.vaadin.gwt.client.shared.AreaElement
+ * @see ComponentElement
+ * @since 2015-06-30
  */
 public class IsPagePropertiesEditableRule extends IsElementEditableRule {
 
@@ -60,6 +84,13 @@ public class IsPagePropertiesEditableRule extends IsElementEditableRule {
         _templateDefinitionRegistry = templateDefinitionRegistry;
     }
 
+    /**
+     * Evaluates if the page properties edit action is available for the given element.
+     * Checks that the page has a dialog configured and is marked as editable.
+     *
+     * @param element the page editor element to evaluate
+     * @return true if page properties can be edited, false otherwise
+     */
     @Override
     protected boolean isAvailableFor(final AbstractElement element) {
         Node node = getAncestorOrSelf(getNodeByReference(RepositoryConstants.WEBSITE, _pageEditorStatus.getNodePath()), IS_PAGE);

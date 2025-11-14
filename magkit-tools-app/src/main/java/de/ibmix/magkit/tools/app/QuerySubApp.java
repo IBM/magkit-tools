@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,7 +48,23 @@ import static org.apache.commons.lang.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
- * QuerySubApp prints the results of a JCR query.
+ * Sub-application for executing and displaying JCR query results in Magnolia CMS.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Executes JCR queries in various query languages (JCR-SQL2, XPath)</li>
+ *   <li>Displays query results in a tabular format</li>
+ *   <li>Shows query execution time and score information</li>
+ *   <li>Remembers the last executed query in the session</li>
+ *   <li>Allows display of paths, scores, and column values</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * Users select a workspace, enter a query statement, choose the query language, and
+ * configure display options before executing the query.
+ * <p>
+ * <p><strong>Session State:</strong></p>
+ * The last executed query is stored in the session and pre-filled in the form on the next visit.
  *
  * @author frank.sommer
  * @since 1.5.0
@@ -63,6 +79,16 @@ public class QuerySubApp extends ToolsBaseSubApp<QueryResultView> {
     private final Provider<Context> _contextProvider;
     private final FormViewReduced _formView;
 
+    /**
+     * Constructs a new QuerySubApp instance.
+     *
+     * @param subAppContext the sub-application context
+     * @param formView the reduced form view for query input
+     * @param view the query result view for displaying results
+     * @param builder the form builder
+     * @param simpleTranslator the translator for i18n messages
+     * @param contextProvider the context provider for accessing JCR sessions
+     */
     @Inject
     public QuerySubApp(final SubAppContext subAppContext, final FormViewReduced formView, final QueryResultView view, final FormBuilder builder, final SimpleTranslator simpleTranslator, final Provider<Context> contextProvider) {
         super(subAppContext, formView, view, builder);
@@ -72,6 +98,11 @@ public class QuerySubApp extends ToolsBaseSubApp<QueryResultView> {
         _contextProvider = contextProvider;
     }
 
+    /**
+     * Executes the JCR query with the parameters from the form.
+     * Retrieves query language, workspace, statement, and display options from the form
+     * and performs the query execution.
+     */
     @Override
     public void doAction() {
         final Item item = _formView.getItemDataSource();
@@ -88,6 +119,15 @@ public class QuerySubApp extends ToolsBaseSubApp<QueryResultView> {
         doQuery(workspace, statement, queryLanguage, showScore, showCols);
     }
 
+    /**
+     * Performs the actual JCR query execution and displays results.
+     *
+     * @param workspace the JCR workspace to query
+     * @param statement the query statement
+     * @param queryLanguage the query language (e.g., JCR-SQL2, XPath)
+     * @param showScore whether to display score information
+     * @param showCols whether to display all columns
+     */
     private void doQuery(final String workspace, final String statement, final String queryLanguage, final boolean showScore, final boolean showCols) {
         final long start = System.currentTimeMillis();
 
@@ -106,6 +146,10 @@ public class QuerySubApp extends ToolsBaseSubApp<QueryResultView> {
         }
     }
 
+    /**
+     * Initializes the sub-app and restores the last query from the session if available.
+     * Sets the default value of the statement field to the last executed query.
+     */
     @Override
     protected void onSubAppStart() {
         String queryToolsLastQuery = MgnlContext.getAttribute("QueryToolsLastQuery", SESSION_SCOPE);

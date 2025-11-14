@@ -44,18 +44,54 @@ import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
 import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
- * Get parent translation folder node and activate all sub nodes recursive.
+ * Action for publishing all translation nodes from a configured base path.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Activates all translation nodes within the configured base path to make them available
+ * on public instances. This action simplifies the workflow of publishing multiple translations
+ * at once without having to select and publish them individually.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Publishes all translation nodes from the configured base path</li>
+ * <li>Respects the module's base path configuration</li>
+ * <li>Uses Magnolia's standard activation mechanism</li>
+ * <li>Processes nodes asynchronously for better performance</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * This action is typically configured as a toolbar action in the translation app
+ * and can be triggered to publish all translations at once.
+ * <p>
+ * <p><strong>Preconditions:</strong></p>
+ * Requires proper publishing permissions and configured public instances.
  *
  * @author Janine.Naumann
+ * @since 2023-01-01
  */
 @Slf4j
 public class PublishAllAction extends JcrCommandAction<Node, JcrCommandActionDefinition> {
 
+    /**
+     * Creates a new publish all action with all required dependencies.
+     *
+     * @param definition the action definition configuration
+     * @param commandsManager the manager for executing JCR commands
+     * @param valueContext the context providing access to the current node
+     * @param context the Magnolia context
+     * @param asyncActionExecutor the executor for asynchronous action execution
+     * @param datasource the JCR datasource
+     */
     @Inject
     public PublishAllAction(JcrCommandActionDefinition definition, CommandsManager commandsManager, ValueContext<Node> valueContext, Context context, AsyncActionExecutor asyncActionExecutor, JcrDatasource datasource) {
         super(definition, commandsManager, valueContext, context, asyncActionExecutor, datasource);
     }
 
+    /**
+     * Resolves all translation nodes from the configured base path that should be published.
+     *
+     * @return a collection of all translation nodes to be activated
+     */
     @Override
     protected Collection<Node> resolveTargetItems() {
         Collection<Node> items = new ArrayList<>();

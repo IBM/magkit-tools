@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.action;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -39,12 +39,21 @@ public class ViewSourceAction extends AbstractAction<ViewSourceActionDefinition>
 
     private final AbstractJcrNodeAdapter _item;
 
+    /**
+     * Constructs a new ViewSourceAction instance.
+     *
+     * @param definition the action definition
+     * @param item the JCR node adapter for the target node
+     */
     @Inject
     public ViewSourceAction(ViewSourceActionDefinition definition, AbstractJcrNodeAdapter item) {
         super(definition);
         _item = item;
     }
 
+    /**
+     * Executes the action by creating an external link and opening it in a new browser window.
+     */
     @Override
     public void execute() {
         if (_item != null && _item.getJcrItem() != null) {

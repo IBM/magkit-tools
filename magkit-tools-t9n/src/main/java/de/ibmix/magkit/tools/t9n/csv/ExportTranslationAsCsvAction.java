@@ -54,9 +54,31 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
- * Create CSV file for all translations or selected elements.
+ * Action for exporting translations from the Magnolia translation workspace to CSV format.
+ * <p>
+ * <p><strong>Purpose:</strong></p>
+ * Enables bulk export of translation data to CSV files, allowing editors to work with
+ * translations in external tools like spreadsheet applications for review, editing, or translation.
+ * <p>
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Exports all translations or only selected nodes</li>
+ * <li>Generates CSV with UTF-8 encoding and locale-specific columns</li>
+ * <li>Automatically triggers file download in the browser</li>
+ * <li>Supports hierarchical translation structures</li>
+ * <li>Handles root node selection to export entire workspace</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * This action is typically configured in the translation app definition and can be triggered
+ * on selected translation nodes or on the entire workspace root.
+ * <p>
+ * <p><strong>CSV Format:</strong></p>
+ * The exported CSV contains a header row with "Key" and locale names, followed by rows with
+ * translation keys and their values for each locale.
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 @Slf4j
 public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActionDefinition> {
@@ -66,6 +88,14 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     private final I18nContentSupport _i18nContentSupport;
     private final FileSystemHelper _fileSystemHelper;
 
+    /**
+     * Creates a new CSV export action with all required dependencies.
+     *
+     * @param definition the action definition configuration
+     * @param valueContext the context providing access to selected nodes
+     * @param i18nContentSupport the i18n support providing configured locales
+     * @param fileSystemHelper the helper for accessing temporary file storage
+     */
     @Inject
     public ExportTranslationAsCsvAction(ConfiguredActionDefinition definition, ValueContext<Node> valueContext, I18nContentSupport i18nContentSupport, FileSystemHelper fileSystemHelper) {
         super(definition);
@@ -74,6 +104,9 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
         _fileSystemHelper = fileSystemHelper;
     }
 
+    /**
+     * Executes the export by retrieving translation data, generating a CSV file, and triggering a download.
+     */
     @Override
     public void execute() {
         Collection<Locale> locales = _i18nContentSupport.getLocales();

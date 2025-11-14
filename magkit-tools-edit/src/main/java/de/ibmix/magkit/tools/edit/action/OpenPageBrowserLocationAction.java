@@ -30,10 +30,22 @@ import org.apache.commons.lang.StringUtils;
 import javax.jcr.Node;
 
 /**
- * Action to open the jump to the browser sub app with the current location.
+ * Action that navigates to the browser sub-app for the page ancestor of the currently selected node.
+ * This action automatically determines the page node from the current selection and opens it in the configured
+ * app view (typically tree view).
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Automatically locates the page ancestor of the selected node</li>
+ * <li>Navigates to the browser sub-app with the page location</li>
+ * <li>Handles nodes at any level within the page hierarchy</li>
+ * </ul>
+ *
+ * <p><strong>Null Handling:</strong></p>
+ * If no page ancestor is found, returns an empty string for the node path.
  *
  * @author frank.sommer
- * @since 15.01.16
+ * @since 2016-01-15
  */
 public class OpenPageBrowserLocationAction extends OpenAppViewLocationAction {
 
@@ -45,6 +57,11 @@ public class OpenPageBrowserLocationAction extends OpenAppViewLocationAction {
         _valueContext = valueContext;
     }
 
+    /**
+     * Determines the node path by finding the page ancestor of the selected node.
+     *
+     * @return the path of the page node, or an empty string if no page ancestor exists
+     */
     @Override
     protected String getNodePath() {
         return _valueContext.getSingle()

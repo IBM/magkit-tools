@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,7 +55,25 @@ import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.math.NumberUtils.toInt;
 
 /**
- * VersionPruneSubApp prints the results of a version prune.
+ * Sub-application for pruning version history of JCR nodes in Magnolia CMS.
+ * <p>
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Removes old versions from node version history</li>
+ *   <li>Processes nodes recursively from a given path</li>
+ *   <li>Keeps a configurable number of most recent versions</li>
+ *   <li>Reports pruned versions and errors</li>
+ *   <li>Handles referential integrity constraints</li>
+ * </ul>
+ * <p>
+ * <p><strong>Usage:</strong></p>
+ * Users specify a workspace, a node path, and the number of versions to keep.
+ * The operation traverses all child nodes and removes excess versions while
+ * preserving the root version and the specified number of recent versions.
+ * <p>
+ * <p><strong>Error Handling:</strong></p>
+ * Handles various repository exceptions including unversionable nodes and
+ * referential integrity violations. Errors are logged and reported to the user.
  *
  * @author frank.sommer
  * @since 1.5.0
@@ -71,6 +89,16 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
     private List<String> _prunedHandles;
     private StringBuilder _resultMessages;
 
+    /**
+     * Constructs a new VersionPruneSubApp instance.
+     *
+     * @param subAppContext the sub-application context
+     * @param formView the reduced form view for input
+     * @param view the result view for displaying results
+     * @param builder the form builder
+     * @param simpleTranslator the translator for i18n messages
+     * @param contextProvider the context provider for accessing JCR sessions
+     */
     @Inject
     public VersionPruneSubApp(final SubAppContext subAppContext, final FormViewReduced formView, final VersionPruneResultView view, final FormBuilder builder, final SimpleTranslator simpleTranslator, final Provider<Context> contextProvider) {
         super(subAppContext, formView, view, builder);
@@ -80,6 +108,11 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         _contextProvider = contextProvider;
     }
 
+    /**
+     * Executes the version pruning operation with parameters from the form.
+     * Retrieves the workspace, path, and number of versions to keep, then
+     * processes the node tree and displays the results.
+     */
     @Override
     public void doAction() {
         _resultMessages = new StringBuilder();
@@ -133,6 +166,12 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         _view.buildResultView(_resultMessages.toString());
     }
 
+    /**
+     * Processes a single node and removes excess versions from its version history.
+     *
+     * @param node the node to process
+     * @param versions the number of versions to keep (0 means remove all except root)
+     */
     private void handleNode(Node node, int versions) {
         LOGGER.debug("Check node with uuid [{}].", getNodeIdentifierIfPossible(node));
 
@@ -179,11 +218,24 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         }
     }
 
+    /**
+     * Calculates the number of versions to remove from the version history.
+     *
+     * @param allVersions the version iterator containing all versions
+     * @param versions the number of versions to keep
+     * @return the number of versions to remove
+     */
     private long getIndexToRemove(VersionIterator allVersions, int versions) {
         // size - 2 to skip root version
         return (allVersions.getSize() - 2) - ((versions > 0 ? versions - 1 : 0));
     }
 
+    /**
+     * Retrieves the version history for a node.
+     *
+     * @param node the node to get version history for
+     * @return the version history or null if not available
+     */
     private VersionHistory getVersionHistory(Node node) {
         VersionHistory versionHistory = null;
         try {
@@ -197,6 +249,13 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return versionHistory;
     }
 
+    /**
+     * Retrieves all versions from the version history of a node.
+     *
+     * @param node the node to get versions for
+     * @param versionHistory the version history
+     * @return iterator over all versions or null on error
+     */
     private VersionIterator getAllVersions(Node node, VersionHistory versionHistory) {
         VersionIterator allVersions = null;
 
@@ -210,6 +269,12 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return allVersions;
     }
 
+    /**
+     * Retrieves the name of a version.
+     *
+     * @param version the version
+     * @return the version name or empty string on error
+     */
     private String getVersionName(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
@@ -222,6 +287,12 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return returnValue;
     }
 
+    /**
+     * Retrieves references to a version.
+     *
+     * @param version the version
+     * @return string representation of references or empty string
+     */
     private String getReferences(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
@@ -237,6 +308,13 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return returnValue;
     }
 
+    /**
+     * Retrieves a JCR node by path from the specified workspace.
+     *
+     * @param path the node path
+     * @param workspace the workspace name
+     * @return the node or null if not found
+     */
     private Node getNode(final String path, final String workspace) {
         Node node = null;
         try {
