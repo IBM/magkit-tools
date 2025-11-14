@@ -19,8 +19,9 @@
     </modules>
 
     <properties>
-        <version.magkit>1.0.0</version.magkit>
-        <version.magkit.test>1.0.5</version.magkit.test>
+        <version.magnolia>6.2.45</version.magnolia>
+        <version.magkit>1.0.1</version.magkit>
+        <version.magkit.test>1.0.10</version.magkit.test>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +53,14 @@
     </scm>
 
     <repositories>
+        <repository>
+            <id>magnolia.forge.releases</id>
+            <url>https://nexus.magnolia-cms.com/repository/magnolia.forge.releases/</url>
+        </repository>
+        <repository>
+            <id>magnolia.forge.snapshots</id>
+            <url>https://nexus.magnolia-cms.com/repository/magnolia.forge.snapshots/</url>
+        </repository>
         <repository>
             <id>magnolia.enterprise</id>
             <name>Magnolia Enterprise Group</name>
