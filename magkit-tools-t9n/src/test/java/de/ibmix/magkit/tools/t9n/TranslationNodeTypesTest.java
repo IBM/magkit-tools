@@ -22,14 +22,13 @@ package de.ibmix.magkit.tools.t9n;
 
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
 import info.magnolia.test.mock.jcr.MockNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
 import java.util.Locale;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the translation node type.
@@ -41,26 +40,27 @@ public class TranslationNodeTypesTest {
     @Test
     public void languagePropertyName() {
         final String[] propertyNames = Translation.LOCALE_TO_PROPERTY_NAMES.apply(Locale.GERMAN);
-        assertThat(propertyNames.length, is(1));
-        assertThat(propertyNames[0], equalTo("translation_de"));
+        assertEquals(1, propertyNames.length);
+        assertEquals("translation_de", propertyNames[0]);
     }
 
     @Test
     public void localePropertyNames() {
         final String[] propertyNames = Translation.LOCALE_TO_PROPERTY_NAMES.apply(Locale.CANADA_FRENCH);
-        assertThat(propertyNames.length, is(2));
-        assertThat(propertyNames[0], equalTo("translation_fr_CA"));
-        assertThat(propertyNames[1], equalTo("translation_fr"));
+        assertEquals(2, propertyNames.length);
+        assertEquals("translation_fr_CA", propertyNames[0]);
+        assertEquals("translation_fr", propertyNames[1]);
     }
 
     @Test
     public void valueFromNull() {
-        assertThat(Translation.retrieveValue(null, new String[]{"1"}), equalTo(""));
+        assertEquals("", Translation.retrieveValue(null, new String[]{"1"}));
     }
 
     @Test
     public void valueWithEmptyPropertyNames() {
         final Node node = new MockNode();
-        assertThat(Translation.retrieveValue(node, new String[0]), equalTo(""));
+        assertEquals("", Translation.retrieveValue(node, new String[0]));
+        assertTrue(Translation.retrieveValue(node, new String[0]).isEmpty());
     }
 }

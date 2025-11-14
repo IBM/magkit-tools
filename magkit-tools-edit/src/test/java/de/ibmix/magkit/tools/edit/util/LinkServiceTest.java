@@ -25,9 +25,9 @@ import de.ibmix.magkit.tools.edit.setup.PublicLinkConfig;
 import info.magnolia.module.site.ConfiguredSite;
 import info.magnolia.module.site.Site;
 import info.magnolia.module.site.SiteManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
 import java.util.HashMap;
@@ -38,8 +38,7 @@ import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubContextPath;
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +54,7 @@ public class LinkServiceTest {
     private Node _site1Node;
     private Node _site2Node;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         mockWebContext(stubContextPath("/author"));
         _linkService = new LinkService() {
@@ -89,23 +88,23 @@ public class LinkServiceTest {
         return site;
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         cleanContext();
     }
 
     @Test
     public void testNotExistingNodePath() {
-        assertThat(_linkService.getPublicLink(null), equalTo(""));
+        assertEquals("", _linkService.getPublicLink(null));
     }
 
     @Test
     public void testDefaultLinkRendering() {
-        assertThat(_linkService.getPublicLink(_site1Node), equalTo("https://www.domain.ch/site1/de.html"));
+        assertEquals("https://www.domain.ch/site1/de.html", _linkService.getPublicLink(_site1Node));
     }
 
     @Test
     public void testSiteLinkRendering() {
-        assertThat(_linkService.getPublicLink(_site2Node), equalTo("https://www.public.ch/site2/de.html"));
+        assertEquals("https://www.public.ch/site2/de.html", _linkService.getPublicLink(_site2Node));
     }
 }

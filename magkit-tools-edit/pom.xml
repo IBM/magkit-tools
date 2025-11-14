@@ -33,10 +33,10 @@
             <artifactId>magkit-setup</artifactId>
         </dependency>
 
-        <!-- TEST -->
+        <!-- TEST (JUnit Jupiter via parent) -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>de.ibmix.magkit</groupId>

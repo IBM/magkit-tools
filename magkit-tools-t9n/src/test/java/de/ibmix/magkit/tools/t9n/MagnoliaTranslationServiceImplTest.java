@@ -25,16 +25,15 @@ import info.magnolia.cms.i18n.MessagesManager;
 import info.magnolia.i18nsystem.DefaultMessageBundlesLoader;
 import info.magnolia.i18nsystem.FixedLocaleProvider;
 import info.magnolia.i18nsystem.util.MessageFormatterUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -49,7 +48,7 @@ public class MagnoliaTranslationServiceImplTest {
     private FixedLocaleProvider _localeProvider;
     private MagnoliaTranslationServiceImpl _translationService;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _localeProvider = new FixedLocaleProvider(Locale.GERMAN);
 
@@ -79,7 +78,7 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void invalidKey() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"invalid'key"}), equalTo("invalid'key"));
+        assertEquals("invalid'key", _translationService.translate(_localeProvider, "", new String[]{"invalid'key"}));
     }
 
     /**
@@ -87,7 +86,7 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void missingKey() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"missing.key"}), equalTo("missing.key"));
+        assertEquals("missing.key", _translationService.translate(_localeProvider, "", new String[]{"missing.key"}));
     }
 
     /**
@@ -95,7 +94,7 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void emptyKey() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"empty.key"}), equalTo("empty.key"));
+        assertEquals("empty.key", _translationService.translate(_localeProvider, "", new String[]{"empty.key"}));
     }
 
     /**
@@ -103,7 +102,7 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void blankKey() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"blank.key"}), equalTo(" "));
+        assertEquals(" ", _translationService.translate(_localeProvider, "", new String[]{"blank.key"}));
     }
 
     /**
@@ -111,7 +110,7 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void existingKey() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"existing.key"}), equalTo("valueFromApp"));
+        assertEquals("valueFromApp", _translationService.translate(_localeProvider, "", new String[]{"existing.key"}));
     }
 
     /**
@@ -119,18 +118,18 @@ public class MagnoliaTranslationServiceImplTest {
      */
     @Test
     public void replacementEscaping() {
-        assertThat(_translationService.translate(_localeProvider, "", new String[]{"quote.key"}), equalTo("key'without"));
+        assertEquals("key'without", _translationService.translate(_localeProvider, "", new String[]{"quote.key"}));
 
         String placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"placeholder.key"});
-        assertThat(placeholderValue, equalTo("key''with {0}"));
-        assertThat(MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"), equalTo("key'with replacement"));
+        assertEquals("key''with {0}", placeholderValue);
+        assertEquals("key'with replacement", MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"));
 
         placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"escaped.key"});
-        assertThat(placeholderValue, equalTo("key''with {0}"));
-        assertThat(MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"), equalTo("key'with replacement"));
+        assertEquals("key''with {0}", placeholderValue);
+        assertEquals("key'with replacement", MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ComponentsMockUtils.clearComponentProvider();
     }

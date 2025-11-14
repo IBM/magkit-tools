@@ -24,9 +24,9 @@ import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.security.User;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.field.EditorPropertyDefinition;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Locale;
@@ -35,9 +35,8 @@ import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponent
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -49,7 +48,7 @@ import static org.mockito.Mockito.when;
  * @since 23.08.2022
  */
 public class TranslationFormDefinitionTest {
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final User user = mock(User.class);
         when(user.getLanguage()).thenReturn("en");
@@ -67,13 +66,14 @@ public class TranslationFormDefinitionTest {
         final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
 
-        assertThat(properties.size(), is(3));
-        assertThat(properties.get(0).getLabel(), equalTo("Key"));
-        assertThat(properties.get(1).getLabel(), equalTo("English"));
-        assertThat(properties.get(2).getLabel(), equalTo("English (United Kingdom)"));
+        assertEquals(3, properties.size());
+        assertEquals("Key", properties.get(0).getLabel());
+        assertEquals("English", properties.get(1).getLabel());
+        assertEquals("English (United Kingdom)", properties.get(2).getLabel());
+        assertTrue(properties.stream().allMatch(p -> p.getLabel() != null));
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         cleanContext();
     }

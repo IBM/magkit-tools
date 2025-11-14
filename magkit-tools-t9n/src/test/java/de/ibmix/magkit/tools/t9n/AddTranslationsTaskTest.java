@@ -27,9 +27,9 @@ import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.resourceloader.Resource;
 import info.magnolia.resourceloader.ResourceOrigin;
 import org.apache.jackrabbit.api.query.JackrabbitQueryResult;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -63,7 +63,7 @@ public class AddTranslationsTaskTest {
     private AddTranslationsTask _addTranslationsTask;
     private InstallContext _installContext;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final NodeNameHelper nodeNameHelper = mockComponentInstance(NodeNameHelper.class);
         when(nodeNameHelper.getValidatedName(anyString())).then(invocation -> invocation.getArguments()[0]);
@@ -112,7 +112,7 @@ public class AddTranslationsTaskTest {
         verify(task, times(1)).addTask(any());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         cleanContext();
     }

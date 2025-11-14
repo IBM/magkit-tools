@@ -36,10 +36,10 @@
             <artifactId>lombok</artifactId>
         </dependency>
 
-        <!-- test scope deps -->
+        <!-- test scope deps migrated to JUnit Jupiter -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
         </dependency>
         <dependency>
             <groupId>de.ibmix.magkit</groupId>

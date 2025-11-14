@@ -22,6 +22,7 @@
         <version.magnolia>6.2.45</version.magnolia>
         <version.magkit>1.0.1</version.magkit>
         <version.magkit.test>1.0.10</version.magkit.test>
+        <junit.jupiter.version>5.14.0</junit.jupiter.version>
     </properties>
 
     <dependencyManagement>
@@ -42,8 +43,24 @@
                 <version>${version.magkit.test}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.4</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <scm>
         <url>https://github.com/IBM/magkit-tools.git</url>
