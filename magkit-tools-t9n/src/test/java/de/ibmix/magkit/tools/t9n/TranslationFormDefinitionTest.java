@@ -20,7 +20,6 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
-import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.security.User;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.field.EditorPropertyDefinition;
@@ -28,17 +27,21 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.jcr.RepositoryException;
 import java.util.List;
 import java.util.Locale;
 
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
+import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI18nContentSupport;
+import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubLocales;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
+import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
+import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
@@ -50,8 +53,7 @@ import static org.mockito.Mockito.when;
 public class TranslationFormDefinitionTest {
     @BeforeEach
     public void setUp() throws Exception {
-        final User user = mock(User.class);
-        when(user.getLanguage()).thenReturn("en");
+        final User user = mockUser("Paul", stubLanguage("en"));
         mockWebContext(stubUser(user));
 
         final SimpleTranslator simpleTranslator = mockComponentInstance(SimpleTranslator.class);
@@ -59,9 +61,8 @@ public class TranslationFormDefinitionTest {
     }
 
     @Test
-    public void testLocaleFields() {
-        final I18nContentSupport i18nContentSupport = mockComponentInstance(I18nContentSupport.class);
-        when(i18nContentSupport.getLocales()).thenReturn(List.of(Locale.ENGLISH, Locale.UK));
+    public void testLocaleFields() throws RepositoryException {
+        mockI18nContentSupport(stubLocales(Locale.ENGLISH, Locale.UK));
 
         final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();

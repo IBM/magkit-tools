@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -52,7 +53,7 @@ public class MagnoliaTranslationServiceImplTest {
     public void setUp() {
         _localeProvider = new FixedLocaleProvider(Locale.GERMAN);
 
-        MessagesManager messagesManager = ComponentsMockUtils.mockComponentInstance(MessagesManager.class);
+        MessagesManager messagesManager = mockComponentInstance(MessagesManager.class);
         when(messagesManager.getDefaultLocale()).thenReturn(Locale.ENGLISH);
 
         DefaultMessageBundlesLoader messageBundlesLoader = mock(DefaultMessageBundlesLoader.class);

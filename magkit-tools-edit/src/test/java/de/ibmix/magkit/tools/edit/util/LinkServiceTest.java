@@ -20,11 +20,9 @@ package de.ibmix.magkit.tools.edit.util;
  * #L%
  */
 
+import de.ibmix.magkit.test.cms.site.SiteMockUtils;
 import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import de.ibmix.magkit.tools.edit.setup.PublicLinkConfig;
-import info.magnolia.module.site.ConfiguredSite;
-import info.magnolia.module.site.Site;
-import info.magnolia.module.site.SiteManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,8 +37,6 @@ import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubC
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * Test the LinkService.
@@ -67,10 +63,9 @@ public class LinkServiceTest {
         _site1Node = mockPageNode("/site1/de");
         _site2Node = mockPageNode("/site2/de");
 
-        final SiteManager siteManager = mock(SiteManager.class);
-        when(siteManager.getAssignedSite(_site1Node)).thenReturn(createSite("site1"));
-        when(siteManager.getAssignedSite(_site2Node)).thenReturn(createSite("site2"));
-        _linkService.setSiteManager(siteManager);
+        SiteMockUtils.mockAssignedSite(_site1Node, "site1");
+        SiteMockUtils.mockAssignedSite(_site2Node, "site2");
+        _linkService.setSiteManager(SiteMockUtils.mockSiteManager());
 
         final EditToolsModule editToolsModule = new EditToolsModule();
         final PublicLinkConfig publicLinkConfig = new PublicLinkConfig();
@@ -80,12 +75,6 @@ public class LinkServiceTest {
         publicLinkConfig.setSiteHosts(siteHosts);
         editToolsModule.setPublicLinkConfig(publicLinkConfig);
         _linkService.setEditToolsModule(editToolsModule);
-    }
-
-    private Site createSite(final String siteName) {
-        ConfiguredSite site = new ConfiguredSite();
-        site.setName(siteName);
-        return site;
     }
 
     @AfterEach
