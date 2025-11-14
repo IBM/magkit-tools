@@ -1,30 +1,45 @@
-# Magnolia Kit Tools Translation App #
-App to manage translations for various languages from various properties files.
+# Magnolia Kit Tools Translation App (magkit-tools-t9n)
 
 [![build-module](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml/badge.svg)](https://github.com/IBM/magkit-tools/actions/workflows/build.yaml)
 [![Magnolia compatibility](https://img.shields.io/badge/magnolia-6.2-brightgreen.svg)](https://www.magnolia-cms.com)
 
-### Maven dependency
+## Overview
+The Translation App allows editors to maintain internationalized messages stored in Magnolia message property files directly in the CMS UI. New languages and message updates can be rolled out without a deployment. The module also supports bulk operations (CSV import/export) and a headless REST endpoint so frontends can fetch all translations for a given locale.
+
+### Main Features
+- Central UI app for managing i18n message keys and values across multiple languages
+- Automatic onboarding of new message keys via `AddTranslationsTask` during module updates
+- Role-based access (read-only vs. read/write) to the translation workspace
+- Configurable language columns through app decoration YAML
+- CSV export of selected translations and CSV import for bulk updates or cross-instance synchronization
+- Custom `TranslationService` implementation (transparent usage for Magnolia components)
+- Headless REST endpoint returning all translations for a locale (`/.rest/i18n/v1/{lang}`)
+
+## Usage
+### Maven Dependency
+Add the dependency to your Magnolia project (use the latest released version, see CHANGELOG):
 ```xml
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version> <!-- or a released version -->
 </dependency>
 ```
-See [change log](../CHANGELOG.md) for further versions.
+See the [CHANGELOG](../CHANGELOG.md) for available versions.
 
-## General Description ##
-This module gives you the possibility to maintain translations of global texts from 
-message properties by an editor. By that changes in these texts or introducing new languages 
-could be rolled out without a deployment. 
-All new messages are automatically added to the app during the module update of your module. You 
-only have to add the `de.ibmix.magkit.tools.t9n.AddTranslationsTask` for the corresponding properties files into your ModuleVersionHandler:
+### Register Translation Keys on Update
+Add the `AddTranslationsTask` for each messages bundle you want to expose. Typically done in your `ModuleVersionHandler` update delta:
 ```java
-new AddTranslationsTask("your-module.i18n.messages", Locale.ENGLISH);
+// ...existing code...
+DeltaBuilder.update("1.0", "Register translation keys")
+    .addTask(new AddTranslationsTask("your-module.i18n.messages", Locale.ENGLISH, Locale.GERMAN))
+    .addTask(new AddTranslationsTask("another-module.i18n.messages", Locale.ENGLISH))
+// ...existing code...
 ```
+If you omit locales the provided ones default to what you pass; add all locales you want initially created.
 
-The module brings its own TranslationService, which is set in the module descriptor:
+### Translation Service
+The module contributes its own `TranslationService` via module descriptor:
 ```xml
 <component>
     <type>info.magnolia.i18nsystem.TranslationService</type>
@@ -32,19 +47,16 @@ The module brings its own TranslationService, which is set in the module descrip
     <scope>singleton</scope>
 </component>
 ```
-By that it is fully transparent to get the translation for any property key.
+You can request translations in code exactly as with Magnolia's default service (no further config required).
 
-Furthermore, the app provides a CSV export action to export marked translations, 
-and a CSV import action to import edited translations into the same or to another Magnolia instance.
+### Access Control
+Two roles are provided:
+- `translation-user` (read/write)
+- `translation-base` (read-only)
+Assign them to editors as needed.
 
-## Configuration
-
-### Access control rights
-There are 2 roles translation-user and translation-base, which have Read/Write or Read-only rights to the translation workspace.
-
-### App columns
-The language columns in the app could be enhanced by decoration. 
-You could add an app decoration file (translation.subApps.browser.workbench.contentViews.yaml) in to your module to add any language column you like.
+### Optional App Column Decoration
+Add a decoration file `translation.subApps.browser.workbench.contentViews.yaml` in your module to define which language columns appear:
 ```yaml
 #  This is only one example:
 - name : list
@@ -68,8 +80,63 @@ You could add an app decoration file (translation.subApps.browser.workbench.cont
       $type: dateColumn
       width: 190
 ```
-## Headless support
 
-The module provides a REST endpoint for the headless integration. 
-Your frontend could request the Magnolia backend for all translations for 
-a language, e.g. all German translations `/.rest/i18n/v1/de`
+## Examples
+### 1. Fetching a Translation in Java
+```java
+import info.magnolia.i18nsystem.TranslationService;
+import info.magnolia.objectfactory.Components;
+
+public class GreetingPrinter {
+    private final TranslationService translationService = Components.getComponent(TranslationService.class);
+
+    public String greeting() {
+        return translationService.translate("greeting.hello", Locale.ENGLISH); // falls back if missing
+    }
+}
+```
+
+### 2. REST Headless Endpoint
+Fetch all German translations:
+```bash
+curl -s https://your-magnolia-instance/.rest/i18n/v1/de | jq '.translations[0:5]'
+```
+Example partial JSON response:
+```json
+{
+  "locale": "de",
+  "entries": [
+    {"key": "greeting.hello", "value": "Hallo"},
+    {"key": "button.save", "value": "Speichern"}
+  ]
+}
+```
+
+### 3. CSV Export / Import
+Export selected translations via the app action; you receive a CSV similar to:
+```csv
+key;translation_en;translation_de
+button.save;Save;Speichern
+button.cancel;Cancel;Abbrechen
+```
+Edit values and import back (or into a different environment) using the import action.
+
+### 4. Module Update Task Adding New Bundle
+```java
+new AddTranslationsTask("my.shop.i18n.messages", Locale.ENGLISH, Locale.FRENCH, Locale.GERMAN);
+```
+This creates missing nodes for the keys found in `my.shop.i18n.messages.properties` for each locale.
+
+## License
+This project is licensed under the Apache License 2.0. See the [LICENSE](../LICENSE) file for full details or visit: http://www.apache.org/licenses/LICENSE-2.0
+
+## Authors
+Maintainers (see [MAINTAINERS](../MAINTAINERS.md)):
+- Frank Sommer — frank.sommer1@ibm.com
+- Wolf Bubenik — wolf.bubenik@ibm.com
+
+## Contribution & Support
+Contributions are welcome. Please read [CONTRIBUTING](../CONTRIBUTING.md) and follow security guidelines in [SECURITY](../SECURITY.md).
+
+---
+For release history consult the [CHANGELOG](../CHANGELOG.md).

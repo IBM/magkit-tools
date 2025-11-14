@@ -1,18 +1,37 @@
-# Magnolia Kit Tools Edit #
-Provides some tools to support the editor.
+# Magkit Tools Edit
 
-### Maven dependency
+## Overview
+Magkit Tools Edit extends Magnolia CMS authoring and administration experience with productivity features for page and asset editors. It focuses on safer content manipulation, faster navigation, improved visibility of asset usage, and convenient cross-instance linking.
+
+### Main Features
+- Edit Page Properties Anywhere: Access page properties action directly in browser view, areas and components (availability rule improved).
+- Move Confirmation: Adds a confirmation dialog before moving pages (configurable per workspace) to prevent accidental drags.
+- Public View Action: Open the currently selected page on a public instance in a new window.
+- Author Instance Link: Render a direct link back to the author (editing) instance from public pages (configurable base path/host mapping; multisite aware).
+- Custom Public Link Rendering: Pluggable host/base path configuration for generating public page URLs across different sites.
+- Additional Browser Columns: Adds Last Modified and Creator columns for Pages and Assets apps.
+- Extended Status Bar: Shows asset usage count (how many times the selected asset is referenced) for configured workspaces.
+- Asset Usage Description: Enriched status information via `AssetUsageItemDescriber`.
+- Safer Drag & Drop: `ConfirmRowDragger` subclass for Vaadin Grid providing a confirmation step.
+- Single Page Export Filter: Export only nodes required for a single page via `SinglePageNodeFilter` and `SinglePageNodeFilteringPredicate`.
+- Page Properties Edit Availability Rule: `IsPagePropertiesEditableRule` ensures action availability across contexts.
+- Link Utilities: `LinkService` centralizes creation of editor/public links.
+
+## Usage
+Add the dependency to your Magnolia project. Prefer the latest released version for production; use the SNAPSHOT only if you need unreleased changes.
+
 ```xml
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-edit</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.3</version><!-- or 1.0.4-SNAPSHOT -->
 </dependency>
 ```
+No additional Java setup is required. Configure optional public link host/base path mappings and status bar workspace support in the module configuration if needed.
 
 ## Editor Actions ##
 ### Edit page properties ###
-The action has been made available in the browser view. This allows editing the page properties even without opening the page.  
+The action has been made available in the browser view. This allows editing the page properties even without opening the page.
 
 In addition, the availability of the action has been revised for the detail view and is thus available in every context—regardless of whether it is an area or a component.
 
@@ -50,7 +69,7 @@ A link directly to the maintenance page can be displayed on each page on the pub
     [/#if]
     ```
 > [!NOTE]
-> Link maintainable in config, initially leave empty.  
+> Link maintainable in config, initially leave empty.
 > possibly available as utl class directly from ftl?
 
 ### View on Public ###
@@ -70,3 +89,14 @@ Added Columns 'Last Modified' and 'Creator' to Browser SubApp of Pages and Asset
 ### Extension status bar ###
 1. The StatusBar of the Assets app has been extended by the number of times the selected asset has been used.
 2. In the module configuration you can set for which workspaces the respective feature should be supported.
+
+## License ##
+https://www.apache.org/licenses/LICENSE-2.0
+
+Use of the software is subject to the terms and conditions of the license. Contributions are accepted under the same license. See the root `LICENSE` file for full text.
+
+## Authors
+- Frank Sommer
+- Wolf Bubenik
+
+For maintenance and contact details see `MAINTAINERS.md` in the project root.
