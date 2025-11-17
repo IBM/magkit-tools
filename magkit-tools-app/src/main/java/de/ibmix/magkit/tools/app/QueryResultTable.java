@@ -101,14 +101,20 @@ public class QueryResultTable extends Table {
         return normalizedColName;
     }
 
-    private void addTableItem(final Row row, final String[] selectorNames, final String[] columnNames, final boolean showScore, final boolean showCols) throws RepositoryException {
+    void addTableItem(final Row row, final String[] selectorNames, final String[] columnNames, final boolean showScore, final boolean showCols) throws RepositoryException {
         Item newItem = getItem(addItem());
         if (showScore) {
             StringBuilder paths = new StringBuilder();
             StringBuilder scores = new StringBuilder();
             for (String selectorName : selectorNames) {
-                paths.append(retrievePrefix(selectorName)).append(row.getPath(selectorName));
-                scores.append(retrievePrefix(selectorName)).append(row.getScore(selectorName));
+                String path = row.getPath(selectorName);
+                if (path != null) {
+                    paths.append(retrievePrefix(selectorName)).append(row.getPath(selectorName));
+                }
+                double score = row.getScore(selectorName);
+                if (score > 0) {
+                    scores.append(retrievePrefix(selectorName)).append(row.getScore(selectorName));
+                }
             }
             newItem.getItemProperty("path").setValue(paths.toString());
             newItem.getItemProperty("score").setValue(scores.toString());
@@ -130,7 +136,7 @@ public class QueryResultTable extends Table {
      * @param selectorName the selector name
      * @return empty string if selector contains a colon, otherwise selector name followed by " - "
      */
-    private String retrievePrefix(String selectorName) {
+    String retrievePrefix(String selectorName) {
         return selectorName.contains(":") ? "" : (selectorName + " - ");
     }
 }
