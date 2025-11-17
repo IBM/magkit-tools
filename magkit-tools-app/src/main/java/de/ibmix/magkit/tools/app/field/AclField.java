@@ -158,7 +158,7 @@ public class AclField extends CustomField<Object> {
         return _layout;
     }
 
-    private void addHeaderRow() {
+    void addHeaderRow() {
         Label permission = new Label();
         permission.addStyleName(SECTION_CSS_STYLE);
         permission.setValue("PERMISSION");
@@ -174,7 +174,7 @@ public class AclField extends CustomField<Object> {
         _currentRow++;
     }
 
-    private List<Node> getRoles(Node node) {
+    List<Node> getRoles(Node node) {
         List<Node> roleNodes = new ArrayList<>();
         try {
             Node roles = node.getNode("roles");
@@ -194,7 +194,7 @@ public class AclField extends CustomField<Object> {
         return roleNodes;
     }
 
-    private List<Node> getRolesFromGroup(Node node) {
+    List<Node> getRolesFromGroup(Node node) {
         List<Node> roleNodes = new ArrayList<>();
         try {
             Node groups = node.getNode("groups");
@@ -215,7 +215,7 @@ public class AclField extends CustomField<Object> {
         return roleNodes;
     }
 
-    private static List<Property> getProperties(Node node) {
+    static List<Property> getProperties(Node node) {
         List<Property> result = new LinkedList<>();
         try {
             PropertyIterator properties = node.getProperties();
@@ -240,7 +240,7 @@ public class AclField extends CustomField<Object> {
      * @param node the role node
      * @return map of repository names to lists of ACL entries
      */
-    private Map<String, List<Acl>> getRepositories(Node node) {
+    Map<String, List<Acl>> getRepositories(Node node) {
         Map<String, List<Acl>> repositoryMap = new HashMap<>();
         try {
             NodeIterator repositoryNodes = node.getNodes("acl_*");
@@ -266,7 +266,7 @@ public class AclField extends CustomField<Object> {
         return repositoryMap;
     }
 
-    private String getPermissionString(Long permission) {
+    String getPermissionString(Long permission) {
         String permissionString = EMPTY;
         if (permission != null) {
             if (permission == Permission.ALL) {
@@ -285,7 +285,7 @@ public class AclField extends CustomField<Object> {
         return Object.class;
     }
 
-    private void addReferencesToGrid(String headline, List<Acl> aclList) {
+    void addReferencesToGrid(String headline, List<Acl> aclList) {
         Label headlineLabel = new Label();
         headlineLabel.setValue(headline);
         headlineLabel.addStyleName(SECTION_CSS_STYLE);
@@ -321,7 +321,7 @@ public class AclField extends CustomField<Object> {
     /**
      * Data holder class for ACL information.
      */
-    private class Acl {
+    class Acl {
         private String _permission;
         private String _path;
         private String _role;
