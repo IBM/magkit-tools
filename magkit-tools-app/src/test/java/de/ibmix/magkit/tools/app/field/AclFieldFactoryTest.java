@@ -46,14 +46,14 @@ class AclFieldFactoryTest {
 
     @BeforeEach
     void setUp() {
-        AclFieldDefinition _definition = new AclFieldDefinition();
+        AclFieldDefinition definition = new AclFieldDefinition();
         Item relatedFieldItem = mock(Item.class);
         UiContext uiContext = mock(UiContext.class);
         I18NAuthoringSupport i18nAuthoringSupport = mock(I18NAuthoringSupport.class);
         SimpleTranslator i18n = mock(SimpleTranslator.class);
 
         _factory = new AclFieldFactory(
-            _definition,
+            definition,
             relatedFieldItem,
             uiContext,
             i18nAuthoringSupport,
