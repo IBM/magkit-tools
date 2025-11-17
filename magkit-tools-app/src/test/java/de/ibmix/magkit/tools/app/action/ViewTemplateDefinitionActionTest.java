@@ -51,18 +51,18 @@ import static org.mockito.Mockito.when;
  */
 class ViewTemplateDefinitionActionTest {
 
-    private ViewTemplateDefinitionActionDefinition definition;
-    private LocationController locationController;
-    private AbstractJcrNodeAdapter item;
-    private ViewTemplateDefinitionAction action;
+    private ViewTemplateDefinitionActionDefinition _definition;
+    private LocationController _locationController;
+    private AbstractJcrNodeAdapter _item;
+    private ViewTemplateDefinitionAction _action;
 
     @BeforeEach
     void setUp() throws RepositoryException {
         mockAggregationState(stubCharacterEncoding("UTF-8"));
-        definition = mock(ViewTemplateDefinitionActionDefinition.class);
-        locationController = mock(LocationController.class);
-        item = mock(AbstractJcrNodeAdapter.class);
-        action = new ViewTemplateDefinitionAction(definition, locationController, item);
+        _definition = mock(ViewTemplateDefinitionActionDefinition.class);
+        _locationController = mock(LocationController.class);
+        _item = mock(AbstractJcrNodeAdapter.class);
+        _action = new ViewTemplateDefinitionAction(_definition, _locationController, _item);
     }
 
     @AfterEach
@@ -73,12 +73,12 @@ class ViewTemplateDefinitionActionTest {
     @Test
     void executeWithValidTemplateId() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail"));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());
@@ -89,12 +89,12 @@ class ViewTemplateDefinitionActionTest {
     @Test
     void executeWithTemplateIdContainingMultipleColons() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail"));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());
@@ -104,51 +104,51 @@ class ViewTemplateDefinitionActionTest {
 
     @Test
     void executeWithNullItem() {
-        action = new ViewTemplateDefinitionAction(definition, locationController, null);
+        _action = new ViewTemplateDefinitionAction(_definition, _locationController, null);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullJcrItem() {
-        when(item.getJcrItem()).thenReturn(null);
+        when(_item.getJcrItem()).thenReturn(null);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
     }
 
     @Test
     void executeWithEmptyTemplateId() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate(""));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullTemplateId() throws Exception {
         Node node = mockNode("website", "/test/path");
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(org.mockito.ArgumentMatchers.any(BrowserLocation.class));
     }
 
     @Test
     void executeWithTemplateIdWithoutColon() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("invalidTemplate/detail"));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());

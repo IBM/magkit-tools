@@ -52,26 +52,19 @@ import static org.mockito.Mockito.when;
  */
 class ViewSourceActionTest {
 
-    private ViewSourceActionDefinition definition;
-    private AbstractJcrNodeAdapter item;
-    private Page page;
-    private ViewSourceAction action;
+    private ViewSourceActionDefinition _definition;
+    private AbstractJcrNodeAdapter _item;
+    private Page _page;
+    private ViewSourceAction _action;
 
     @BeforeEach
     void setUp() {
         mockServerConfiguration(stubDefaultBaseUrl("https://test.ibmix.de"), stubDefaultExtension("html"));
-        definition = mock(ViewSourceActionDefinition.class);
-        item = mock(AbstractJcrNodeAdapter.class);
-        page = mock(Page.class);
-        UI ui = mock(UI.class);
-        VaadinSession vaadinSession = mock(VaadinSession.class);
+        _definition = mock(ViewSourceActionDefinition.class);
+        _item = mock(AbstractJcrNodeAdapter.class);
+        _page = mock(Page.class);
 
-        when(ui.getSession()).thenReturn(vaadinSession);
-        when(vaadinSession.hasLock()).thenReturn(true);
-        when(ui.getPage()).thenReturn(page);
-        CurrentInstance.set(UI.class, ui);
-
-        action = new ViewSourceAction(definition, item);
+        _action = new ViewSourceAction(_definition, _item);
     }
 
     @AfterEach
@@ -83,30 +76,39 @@ class ViewSourceActionTest {
     @Test
     void executeWithValidNode() throws Exception {
         Node node = mockPageNode("/test/page");
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
+        mockUi();
+        _action.execute();
 
-        action.execute();
-
-        verify(page).open(eq("https://test.ibmix.de/test/page.html"), eq("_blank"), eq(false));
+        verify(_page).open(eq("https://test.ibmix.de/test/page.html"), eq("_blank"), eq(false));
     }
 
     @Test
     void executeWithNullItem() {
-        action = new ViewSourceAction(definition, null);
+        _action = new ViewSourceAction(_definition, null);
 
-        action.execute();
+        _action.execute();
 
-        verify(page, never()).open(anyString(), anyString(), anyBoolean());
+        verify(_page, never()).open(anyString(), anyString(), anyBoolean());
     }
 
     @Test
     void executeWithNullJcrItem() {
-        when(item.getJcrItem()).thenReturn(null);
+        when(_item.getJcrItem()).thenReturn(null);
 
-        action.execute();
+        _action.execute();
 
-        verify(page, never()).open(anyString(), anyString(), anyBoolean());
+        verify(_page, never()).open(anyString(), anyString(), anyBoolean());
     }
 
+    private void mockUi() {
+        VaadinSession vaadinSession = mock(VaadinSession.class);
+        when(vaadinSession.hasLock()).thenReturn(true);
+
+        UI ui = mock(UI.class);
+        when(ui.getSession()).thenReturn(vaadinSession);
+        when(ui.getPage()).thenReturn(_page);
+        CurrentInstance.set(UI.class, ui);
+    }
 }
 

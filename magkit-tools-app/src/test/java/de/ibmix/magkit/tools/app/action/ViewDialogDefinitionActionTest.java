@@ -55,20 +55,20 @@ import static org.mockito.Mockito.when;
  */
 class ViewDialogDefinitionActionTest {
 
-    private ViewDialogDefinitionActionDefinition definition;
-    private AbstractJcrNodeAdapter item;
-    private LocationController locationController;
-    private TemplateDefinitionRegistry templateRegistry;
-    private ViewDialogDefinitionAction action;
+    private ViewDialogDefinitionActionDefinition _definition;
+    private AbstractJcrNodeAdapter _item;
+    private LocationController _locationController;
+    private TemplateDefinitionRegistry _templateRegistry;
+    private ViewDialogDefinitionAction _action;
 
     @BeforeEach
     void setUp() throws RepositoryException {
         mockAggregationState(stubCharacterEncoding("UTF-8"));
-        definition = mock(ViewDialogDefinitionActionDefinition.class);
-        item = mock(AbstractJcrNodeAdapter.class);
-        locationController = mock(LocationController.class);
-        templateRegistry = TemplateMockUtils.mockTemplateDefinitionRegistry();
-        action = new ViewDialogDefinitionAction(definition, item, locationController, templateRegistry);
+        _definition = mock(ViewDialogDefinitionActionDefinition.class);
+        _item = mock(AbstractJcrNodeAdapter.class);
+        _locationController = mock(LocationController.class);
+        _templateRegistry = TemplateMockUtils.mockTemplateDefinitionRegistry();
+        _action = new ViewDialogDefinitionAction(_definition, _item, _locationController, _templateRegistry);
     }
 
     @AfterEach
@@ -79,12 +79,12 @@ class ViewDialogDefinitionActionTest {
     @Test
     void executeWithValidDialogId() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail", stubDialog("dialogModule:dialogs/testDialog")));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());
@@ -95,12 +95,12 @@ class ViewDialogDefinitionActionTest {
     @Test
     void executeWithDialogIdContainingMultipleColons() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail", stubDialog("module:nested:path:dialog")));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());
@@ -110,73 +110,73 @@ class ViewDialogDefinitionActionTest {
 
     @Test
     void executeWithNullItem() {
-        action = new ViewDialogDefinitionAction(definition, null, locationController, templateRegistry);
+        _action = new ViewDialogDefinitionAction(_definition, null, _locationController, _templateRegistry);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullJcrItem() {
-        when(item.getJcrItem()).thenReturn(null);
+        when(_item.getJcrItem()).thenReturn(null);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullTemplateRegistry() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail"));
-        when(item.getJcrItem()).thenReturn(node);
-        action = new ViewDialogDefinitionAction(definition, item, locationController, null);
+        when(_item.getJcrItem()).thenReturn(node);
+        _action = new ViewDialogDefinitionAction(_definition, _item, _locationController, null);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullTemplateDefinitionProvider() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail"));
-        when(item.getJcrItem()).thenReturn(node);
-        when(templateRegistry.getProvider(anyString())).thenReturn(null);
+        when(_item.getJcrItem()).thenReturn(node);
+        when(_templateRegistry.getProvider(anyString())).thenReturn(null);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithEmptyDialogId() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail", stubDialog("")));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithNullDialogId() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail"));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
-        verify(locationController, never()).goTo(any(BrowserLocation.class));
+        verify(_locationController, never()).goTo(any(BrowserLocation.class));
     }
 
     @Test
     void executeWithDialogIdWithoutColon() throws Exception {
         Node node = mockPageNode("/test/path", stubTemplate("myModule:pages/detail", stubDialog("invalidDialog")));
-        when(item.getJcrItem()).thenReturn(node);
+        when(_item.getJcrItem()).thenReturn(node);
 
-        action.execute();
+        _action.execute();
 
         ArgumentCaptor<BrowserLocation> locationCaptor = ArgumentCaptor.forClass(BrowserLocation.class);
-        verify(locationController).goTo(locationCaptor.capture());
+        verify(_locationController).goTo(locationCaptor.capture());
 
         BrowserLocation capturedLocation = locationCaptor.getValue();
         assertEquals("definitions-app", capturedLocation.getAppName());
