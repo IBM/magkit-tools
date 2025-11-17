@@ -23,6 +23,7 @@
         <version.magkit>1.0.1</version.magkit>
         <version.magkit.test>1.0.10</version.magkit.test>
         <junit.jupiter.version>5.14.0</junit.jupiter.version>
+        <mockitoVersion>5.20.0</mockitoVersion>
     </properties>
 
     <dependencyManagement>
@@ -48,6 +49,12 @@
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit.jupiter.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <scope>test</scope>
+                <version>${mockitoVersion}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
