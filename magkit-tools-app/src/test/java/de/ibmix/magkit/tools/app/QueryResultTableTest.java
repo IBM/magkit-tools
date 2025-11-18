@@ -48,7 +48,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for QueryResultTable column name normalization.
  *
- * @author frank.sommer
+ * @author frank.sommer@ibmix.de
  * @since 2017-12-05
  */
 public class QueryResultTableTest {
@@ -105,7 +105,6 @@ public class QueryResultTableTest {
     void testBuildResultTableWithShowScoreAndCols() throws RepositoryException {
         QueryResult queryResult = mockRowQueryResult(
             mockRow(0.5, stubPath("mgnl:page", "/test/path"), stubValue("jcr:title", "Test Title"), stubValue("jcr:uuid", "test-uuid"))
-
         );
 
         String[] selectorNames = new String[]{"mgnl:page"};
@@ -128,7 +127,6 @@ public class QueryResultTableTest {
         QueryResult queryResult = mockRowQueryResult(
             mockRow(0.8, stubPath("mgnl:page", "/path1"), stubValue("jcr:title", "Test Title")),
             mockRow(0.6, stubPath("mgnl:page", "/path2"), stubValue("jcr:title", "Test Title 2"))
-
         );
 
         String[] selectorNames = new String[]{"mgnl:page"};
@@ -149,9 +147,8 @@ public class QueryResultTableTest {
         );
 
         String[] selectorNames = new String[]{"mgnl:page"};
-        String[] columnNames = new String[]{"title"};
-
         when(queryResult.getSelectorNames()).thenReturn(selectorNames);
+        String[] columnNames = new String[]{"title"};
         when(queryResult.getColumnNames()).thenReturn(columnNames);
 
         _resultTable.buildResultTable(queryResult, false, true, 100L);
@@ -169,9 +166,8 @@ public class QueryResultTableTest {
         );
 
         String[] selectorNames = new String[]{"mgnl:page"};
-        String[] columnNames = new String[]{"title"};
-
         when(queryResult.getSelectorNames()).thenReturn(selectorNames);
+        String[] columnNames = new String[]{"title"};
         when(queryResult.getColumnNames()).thenReturn(columnNames);
 
         _resultTable.buildResultTable(queryResult, true, false, 50L);
