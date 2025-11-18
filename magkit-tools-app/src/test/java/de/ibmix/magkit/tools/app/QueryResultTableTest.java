@@ -24,6 +24,8 @@ import com.vaadin.server.Sizeable;
 import com.vaadin.v7.data.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
@@ -69,44 +71,26 @@ public class QueryResultTableTest {
         assertTrue(table.isSortEnabled());
     }
 
-    @Test
-    void testNormalizeColumnNameWithoutNamespace() {
-        assertEquals("test", _resultTable.normalizeColumnName("test"));
+    @ParameterizedTest
+    @CsvSource({
+        "test, test",
+        "test.jcr:type, test.jcr:type",
+        "mgnl:page.test, test",
+        "mgnl:page.jcr:type, jcr:type",
+        "jcr:type, jcr:type"
+    })
+    void testNormalizeColumnName(String input, String expected) {
+        assertEquals(expected, _resultTable.normalizeColumnName(input));
     }
 
-    @Test
-    void testNormalizeColumnNameWithDotBeforeColon() {
-        assertEquals("test.jcr:type", _resultTable.normalizeColumnName("test.jcr:type"));
-    }
-
-    @Test
-    void testNormalizeColumnNameWithNamespaceBeforeDot() {
-        assertEquals("test", _resultTable.normalizeColumnName("mgnl:page.test"));
-    }
-
-    @Test
-    void testNormalizeColumnNameWithBothNamespaces() {
-        assertEquals("jcr:type", _resultTable.normalizeColumnName("mgnl:page.jcr:type"));
-    }
-
-    @Test
-    void testNormalizeColumnNameWithOnlyNamespace() {
-        assertEquals("jcr:type", _resultTable.normalizeColumnName("jcr:type"));
-    }
-
-    @Test
-    void testRetrievePrefixWithNamespace() {
-        assertEquals("", _resultTable.retrievePrefix("jcr:content"));
-    }
-
-    @Test
-    void testRetrievePrefixWithoutNamespace() {
-        assertEquals("page - ", _resultTable.retrievePrefix("page"));
-    }
-
-    @Test
-    void testRetrievePrefixWithEmptyString() {
-        assertEquals(" - ", _resultTable.retrievePrefix(""));
+    @ParameterizedTest
+    @CsvSource({
+        "jcr:content, ''",
+        "page, 'page - '",
+        "'', ' - '"
+    })
+    void testRetrievePrefix(String input, String expected) {
+        assertEquals(expected, _resultTable.retrievePrefix(input));
     }
 
     @Test
