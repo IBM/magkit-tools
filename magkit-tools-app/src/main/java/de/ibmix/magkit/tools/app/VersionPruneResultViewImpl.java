@@ -27,8 +27,11 @@ import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.objectfactory.ComponentProvider;
 import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.dialog.formdialog.FormBuilder;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.inject.Inject;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 /**
  * Implementation of VersionPruneResultView for displaying version pruning results.
@@ -89,7 +92,7 @@ public class VersionPruneResultViewImpl extends BaseResultViewImpl implements Ve
     public void buildResultView(String result) {
         // set first read only false, otherwise the new value can't set
         _textArea.setReadOnly(false);
-        _textArea.setValue(result);
+        _textArea.setValue(defaultString(result));
         _textArea.setReadOnly(true);
     }
 }
