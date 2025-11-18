@@ -86,8 +86,8 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
     private final SimpleTranslator _simpleTranslator;
     private final Provider<Context> _contextProvider;
     private final FormViewReduced _formView;
-    private List<String> _prunedHandles;
-    private StringBuilder _resultMessages;
+    private List<String> _prunedHandles = new ArrayList<>();
+    private StringBuilder _resultMessages = new StringBuilder();
 
     /**
      * Constructs a new VersionPruneSubApp instance.
@@ -115,8 +115,8 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      */
     @Override
     public void doAction() {
-        _resultMessages = new StringBuilder();
-        _prunedHandles = new ArrayList<>();
+        _resultMessages.setLength(0);
+        _prunedHandles.clear();
 
         final Item item = _formView.getItemDataSource();
         String path = item.getItemProperty("path").getValue().toString();
@@ -172,7 +172,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param node the node to process
      * @param versions the number of versions to keep (0 means remove all except root)
      */
-    private void handleNode(Node node, int versions) {
+    void handleNode(Node node, int versions) {
         LOGGER.debug("Check node with uuid [{}].", getNodeIdentifierIfPossible(node));
 
         VersionHistory versionHistory = getVersionHistory(node);
@@ -187,35 +187,41 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
                     allVersions.nextVersion();
                     // remove the version after rootVersion
                     while (indexToRemove > 0) {
-                        Version currentVersion = allVersions.nextVersion();
-                        String versionNameToRemove = getVersionName(currentVersion);
-                        String errorMessage = EMPTY;
-                        try {
-                            versionHistory.removeVersion(versionNameToRemove);
-                        } catch (UnsupportedRepositoryOperationException e) {
-                            errorMessage = MessageFormat.format("Unversionable node with uuid [{0}].", getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        } catch (ReferentialIntegrityException e) {
-                            errorMessage = MessageFormat.format("Node with path [{0}] and VersionNumber [{1}] is referenced by [{2}] - uuid: [{3}]",
-                                getPathIfPossible(node), getVersionName(currentVersion), getReferences(currentVersion), getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        } catch (Exception e) {
-                            errorMessage = MessageFormat.format("Unable to perform a versioning operation on node with uuid [{0}].", getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        }
-
-                        if (isEmpty(errorMessage)) {
-                            String info = getPathIfPossible(node) + ", Version: " + versionNameToRemove;
-                            LOGGER.info("Removed version [{}].", info);
-                            _prunedHandles.add(info);
-                        } else {
-                            _resultMessages.append(errorMessage).append("\n");
-                        }
+                        removeVersion(node, allVersions, versionHistory, indexToRemove);
                         indexToRemove--;
                     }
                 }
             }
         }
+    }
+
+    void removeVersion(Node node, VersionIterator allVersions, VersionHistory versionHistory, long indexToRemove) {
+        Version currentVersion = allVersions.nextVersion();
+        String versionNameToRemove = getVersionName(currentVersion);
+        String errorMessage = EMPTY;
+        try {
+            versionHistory.removeVersion(versionNameToRemove);
+        } catch (UnsupportedRepositoryOperationException e) {
+            errorMessage = MessageFormat.format("Unversionable node with uuid [{0}].", getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        } catch (ReferentialIntegrityException e) {
+            errorMessage = MessageFormat.format("Node with path [{0}] and VersionNumber [{1}] is referenced by [{2}] - uuid: [{3}]",
+                getPathIfPossible(node), getVersionName(currentVersion), getReferences(currentVersion), getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        } catch (Exception e) {
+            errorMessage = MessageFormat.format("Unable to perform a versioning operation on node with uuid [{0}].", getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        }
+
+        if (isEmpty(errorMessage)) {
+            String info = getPathIfPossible(node) + ", Version: " + versionNameToRemove;
+            LOGGER.info("Removed version [{}].", info);
+            _prunedHandles.add(info);
+        } else {
+            _resultMessages.append(errorMessage).append("\n");
+        }
+//        long result = indexToRemove--;
+//        return result;
     }
 
     /**
@@ -225,7 +231,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param versions the number of versions to keep
      * @return the number of versions to remove
      */
-    private long getIndexToRemove(VersionIterator allVersions, int versions) {
+    long getIndexToRemove(VersionIterator allVersions, int versions) {
         // size - 2 to skip root version
         return (allVersions.getSize() - 2) - ((versions > 0 ? versions - 1 : 0));
     }
@@ -236,7 +242,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param node the node to get version history for
      * @return the version history or null if not available
      */
-    private VersionHistory getVersionHistory(Node node) {
+    VersionHistory getVersionHistory(Node node) {
         VersionHistory versionHistory = null;
         try {
             VersionManager versionManager = Components.getComponent(VersionManager.class);
@@ -256,7 +262,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param versionHistory the version history
      * @return iterator over all versions or null on error
      */
-    private VersionIterator getAllVersions(Node node, VersionHistory versionHistory) {
+    VersionIterator getAllVersions(Node node, VersionHistory versionHistory) {
         VersionIterator allVersions = null;
 
         try {
@@ -275,7 +281,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param version the version
      * @return the version name or empty string on error
      */
-    private String getVersionName(Version version) {
+    String getVersionName(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
             try {
@@ -293,7 +299,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param version the version
      * @return string representation of references or empty string
      */
-    private String getReferences(Version version) {
+    String getReferences(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
             try {
@@ -315,7 +321,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
      * @param workspace the workspace name
      * @return the node or null if not found
      */
-    private Node getNode(final String path, final String workspace) {
+    Node getNode(final String path, final String workspace) {
         Node node = null;
         try {
             final Session session = _contextProvider.get().getJCRSession(workspace);
