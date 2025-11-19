@@ -119,7 +119,7 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
         }
     }
 
-    private Map<String, Map<String, String>> getEntries(Collection<Locale> locales) {
+    Map<String, Map<String, String>> getEntries(Collection<Locale> locales) {
         Map<String, Map<String, String>> entries = new TreeMap<>();
 
         List<Node> t9nNodes = retrieveTranslationNodes();
@@ -136,7 +136,7 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
         return entries;
     }
 
-    private List<Node> retrieveTranslationNodes() {
+    List<Node> retrieveTranslationNodes() {
         List<Node> t9nNodes = new ArrayList<>();
         if (_valueContext.getSingle().isEmpty() || containsOnlyRootNode()) {
             // query for all translation nodes
@@ -152,12 +152,12 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
         return t9nNodes;
     }
 
-    private boolean containsOnlyRootNode() {
+    boolean containsOnlyRootNode() {
         Optional<Node> firstItem = _valueContext.getSingle();
         return firstItem.isPresent() && isEmpty(getName(firstItem.get()));
     }
 
-    private void streamFile(final TranslationCsvWriter csvWriter) {
+    void streamFile(final TranslationCsvWriter csvWriter) {
         StreamResource.StreamSource source = csvWriter::getStream;
         String fileName = csvWriter.getFile().getName();
         StreamResource resource = new StreamResource(source, fileName);

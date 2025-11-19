@@ -127,7 +127,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         importCsv.ifPresent(csvFile -> doCsvImport(basePath, csvFile));
     }
 
-    private void doCsvImport(final String basePath, final File csvFile) {
+    void doCsvImport(final String basePath, final File csvFile) {
         try (InputStream inputStream = new FileInputStream(csvFile)) {
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8.name())), getPropertyValue("separator", ",").charAt(0));
             List<String[]> lines = csvReader.readAll();
@@ -142,12 +142,12 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private String getPropertyValue(final String propertyId, final String defaultValue) {
+    String getPropertyValue(final String propertyId, final String defaultValue) {
         Optional<Option> propertyValue = _form.getPropertyValue(propertyId);
         return propertyValue.isPresent() ? propertyValue.get().getValue() : defaultValue;
     }
 
-    private void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
+    void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
         try {
             Session jcrSession = MgnlContext.getJCRSession(WS_TRANSLATION);
             Node baseNode;
@@ -163,7 +163,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private void createNodesForLines(final Node baseNode, final List<String[]> lines, final Map<Integer, String> indexedPropertyNames) throws RepositoryException {
+    void createNodesForLines(final Node baseNode, final List<String[]> lines, final Map<Integer, String> indexedPropertyNames) throws RepositoryException {
         for (int i = 1; i < lines.size(); i++) {
             String[] values = lines.get(i);
             String key = values[0];
@@ -187,7 +187,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private Map<Integer, String> detectColumns(final String[] headings) {
+    Map<Integer, String> detectColumns(final String[] headings) {
         Map<Integer, String> cols = new TreeMap<>();
         int index = 0;
         for (String heading : headings) {
@@ -202,12 +202,13 @@ public class ImportCsvAction extends CommitAction<Node> {
                     }
                 }
             }
+            // TODO: Check if this counting strategy is correct. It counts colums for ignored (unknown) languages as well.
             index++;
         }
         return cols;
     }
 
-    private TranslationModule getTranslationModule() {
+    TranslationModule getTranslationModule() {
         if (_translationModule == null) {
             _translationModule = Components.getComponent(TranslationModule.class);
         }
