@@ -85,10 +85,11 @@ public class LinkService {
     @SuppressWarnings("unused")
     public String createPageEditorLink() {
         String editorLink = "";
-        if (isNotEmpty(getAuthorBasePath())) {
+        String basePath = getAuthorBasePath();
+        if (isNotEmpty(basePath)) {
             Node mainNode = MgnlContext.getAggregationState().getMainContentNode();
             if (mainNode != null) {
-                editorLink = getAuthorBasePath() + "/.magnolia/admincentral#app:pages:detail;" + getPathIfPossible(mainNode) + ":edit";
+                editorLink = basePath + "/.magnolia/admincentral#app:pages:detail;" + getPathIfPossible(mainNode) + ":edit";
             }
         }
         return editorLink;
@@ -126,7 +127,7 @@ public class LinkService {
         return url;
     }
 
-    private String getAuthorBasePath() {
+    String getAuthorBasePath() {
         if (_authorBasePath == null) {
             _authorBasePath = defaultString(_magnoliaConfigurationProperties.getProperty("magnolia.author.basePath"));
         }
