@@ -28,12 +28,25 @@ import info.magnolia.i18nsystem.util.MessageFormatterUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockQueryResult;
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockSystemContext;
+import static de.ibmix.magkit.test.cms.context.SystemContextStubbingOperation.stubJcrSession;
+import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
+import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubProperty;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -69,41 +82,10 @@ public class MagnoliaTranslationServiceImplTest {
                 messagesFromApp.put("quote.key", "key'without");
                 messagesFromApp.put("placeholder.key", "key'with {0}");
                 messagesFromApp.put("escaped.key", "key''with {0}");
+                messagesFromApp.put("placeholderEndQuote.key", "end' {0}");
                 return messagesFromApp.get(key);
             }
         };
-    }
-
-    /**
-     * Do no search query and handle like a message key.
-     */
-    @Test
-    public void invalidKey() {
-        assertEquals("invalid'key", _translationService.translate(_localeProvider, "", new String[]{"invalid'key"}));
-    }
-
-    /**
-     * On missing key, the key itself is returned.
-     */
-    @Test
-    public void missingKey() {
-        assertEquals("missing.key", _translationService.translate(_localeProvider, "", new String[]{"missing.key"}));
-    }
-
-    /**
-     * Handles empty key like missing key.
-     */
-    @Test
-    public void emptyKey() {
-        assertEquals("empty.key", _translationService.translate(_localeProvider, "", new String[]{"empty.key"}));
-    }
-
-    /**
-     * Blank value is a valid value.
-     */
-    @Test
-    public void blankKey() {
-        assertEquals(" ", _translationService.translate(_localeProvider, "", new String[]{"blank.key"}));
     }
 
     /**
@@ -115,19 +97,80 @@ public class MagnoliaTranslationServiceImplTest {
     }
 
     /**
-     * Values with single quote with placeholder and without.
+     * Parametrized test: messages with quotes and optional placeholders are escaped; formatting removes escape doubling.
+     */
+    @ParameterizedTest
+    @MethodSource("escapeVariants")
+    public void replacementEscapingParameterized(final String key, final String expectedEscaped, final String expectedFormatted) {
+        String translation = _translationService.translate(_localeProvider, "", new String[]{key});
+        assertEquals(expectedEscaped, translation);
+        if (expectedFormatted != null) {
+            assertEquals(expectedFormatted, MessageFormatterUtils.format(translation, Locale.GERMAN, "replacement"));
+        }
+    }
+
+    private static Stream<Arguments> escapeVariants() {
+        return Stream.of(
+            Arguments.of("quote.key", "key'without", null),
+            Arguments.of("placeholder.key", "key''with {0}", "key'with replacement"),
+            Arguments.of("escaped.key", "key''with {0}", "key'with replacement"),
+            Arguments.of("placeholderEndQuote.key", "end'' {0}", "end' replacement")
+        );
+    }
+
+    /**
+     * Choose second key when first produces empty value and second has a valid value.
      */
     @Test
-    public void replacementEscaping() {
-        assertEquals("key'without", _translationService.translate(_localeProvider, "", new String[]{"quote.key"}));
+    public void chooseSecondKeyAfterEmptyFirst() {
+        assertEquals("valueFromApp", _translationService.translate(_localeProvider, "", new String[]{"empty.key", "existing.key"}));
+    }
 
-        String placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"placeholder.key"});
-        assertEquals("key''with {0}", placeholderValue);
-        assertEquals("key'with replacement", MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"));
+    /**
+     * Skip quoted key and use next valid key.
+     */
+    @Test
+    public void skipQuotedKeyAndUseNext() {
+        assertEquals("valueFromApp", _translationService.translate(_localeProvider, "", new String[]{"invalid'key", "existing.key"}));
+    }
 
-        placeholderValue = _translationService.translate(_localeProvider, "", new String[]{"escaped.key"});
-        assertEquals("key''with {0}", placeholderValue);
-        assertEquals("key'with replacement", MessageFormatterUtils.format(placeholderValue, Locale.GERMAN, "replacement"));
+    /**
+     * Fallback returns first key if all keys fail to produce a non-empty value.
+     */
+    @Test
+    public void fallbackToFirstKeyWhenAllFail() {
+        assertEquals("empty.key", _translationService.translate(_localeProvider, "", new String[]{"empty.key", "missing.key"}));
+    }
+
+    @Test
+    void doMessageQuery() throws RepositoryException {
+        mockSystemContext(stubJcrSession(TranslationNodeTypes.WS_TRANSLATION));
+        String statement = MagnoliaTranslationServiceImpl.BASE_QUERY + "'anyKey'";
+        mockQueryResult(TranslationNodeTypes.WS_TRANSLATION, Query.JCR_SQL2, statement);
+        _translationService = new MagnoliaTranslationServiceImpl(null,null);
+        String message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
+        assertEquals(EMPTY, message);
+
+        Node messageNode = mockNode(TranslationNodeTypes.WS_TRANSLATION, "/message" );
+        mockQueryResult(TranslationNodeTypes.WS_TRANSLATION, Query.JCR_SQL2, statement, messageNode);
+        message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
+        assertEquals(EMPTY, message);
+
+        stubProperty("anyProperty", "foundMessage").of(messageNode);
+        message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
+        assertEquals("foundMessage", message);
+
+        stubProperty("anyProperty", EMPTY).of(messageNode);
+        message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
+        assertEquals(EMPTY, message);
+
+        stubProperty("otherProperty", "other message").of(messageNode);
+        message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty", "otherProperty"});
+        assertEquals("other message", message);
+
+        stubProperty("anyProperty", "any message").of(messageNode);
+        message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty", "otherProperty"});
+        assertEquals("any message", message);
     }
 
     @AfterEach

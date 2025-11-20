@@ -185,7 +185,7 @@ public class AddTranslationEntryTask extends AbstractTask {
         }
     }
 
-    private boolean keyExists(String key) {
+    boolean keyExists(String key) {
         boolean keyExists = false;
         String statement = BASE_QUERY + '\'' + key + '\'';
         try {
@@ -197,7 +197,7 @@ public class AddTranslationEntryTask extends AbstractTask {
         return keyExists;
     }
 
-    private Task createTranslationEntryOperation(String keyNodeName, String key, String value) {
+    Task createTranslationEntryOperation(String keyNodeName, String key, String value) {
         NodeOperation addKeyNode = addNode(keyNodeName, Translation.NAME).then(
             addProperty(PN_KEY, (Object) key),
             addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),

@@ -163,7 +163,7 @@ class TranslationCsvWriterTest {
      * Verifies getStream returns null when file does not exist.
      */
     @Test
-    void getStreamReturnsNullWhenFileDoesNotExist() throws Exception {
+    void getStreamReturnsNullWhenFileDoesNotExist() {
         Map<String, Map<String, String>> entries = new TreeMap<>();
         List<Locale> locales = List.of(Locale.ENGLISH);
         _csvWriter = new TranslationCsvWriter(entries, _tempDir, locales);

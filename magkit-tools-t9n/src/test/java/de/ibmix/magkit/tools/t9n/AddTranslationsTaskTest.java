@@ -41,8 +41,13 @@ import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubJcrSession;
 import static de.ibmix.magkit.test.cms.module.ModuleMockUtils.mockInstallContext;
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
+import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubProperty;
+import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubType;
 import static de.ibmix.magkit.test.jcr.query.QueryMockUtils.mockQueryManager;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
+import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.NAME;
+import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PN_KEY;
+import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -84,23 +89,61 @@ public class AddTranslationsTaskTest {
         mockQueryManager(WS_TRANSLATION);
     }
 
+    /**
+     * Verifies adding two tasks when key does not yet exist and both locales must be written.
+     */
     @Test
     public void addTranslationEntryAndTranslation() {
         final ArrayDelegateTask task = mock(ArrayDelegateTask.class);
         _addTranslationsTask.addTranslationNodeTasks(task, _installContext);
-
         verify(task, times(2)).addTask(any());
     }
 
+    /**
+     * Verifies adding only the second locale when key already exists (first locale skipped).
+     */
     @Test
     public void addOnlyTranslation() throws Exception {
         final Node node = mockNode("ui.key");
         QueryMockUtils.mockQueryResult(WS_TRANSLATION, Query.JCR_SQL2, "select * from [mgnl:translation] where key = 'ui.key'", node);
-
         final ArrayDelegateTask task = mock(ArrayDelegateTask.class);
         _addTranslationsTask.addTranslationNodeTasks(task, _installContext);
-
         verify(task, times(1)).addTask(any());
+    }
+
+    /**
+     * Verifies skipping update when existing node already has the second locale property set.
+     * English creation is skipped because key exists; German update skipped because property is present.
+     * Thus no task is added.
+     */
+    @Test
+    public void skipAddingTaskWhenLocalePropertyAlreadyExists() throws Exception {
+        mockNode(WS_TRANSLATION, "/ui.key",
+            stubProperty(PN_KEY, "ui.key"),
+            stubProperty(PREFIX_NAME + "de", "Wert"),
+            stubType(NAME)
+        );
+        QueryMockUtils.mockQueryResult(WS_TRANSLATION, Query.JCR_SQL2, "select * from [mgnl:translation] where key = 'ui.key'", mockNode("ui.key"));
+        final ArrayDelegateTask delegate = mock(ArrayDelegateTask.class);
+        _addTranslationsTask.addTranslationNodeTasks(delegate, _installContext);
+        verify(delegate, times(0)).addTask(any());
+    }
+
+    /**
+     * Verifies adding an update task when existing node has empty locale property value.
+     * English creation is skipped because key exists; German update added because value is empty.
+     */
+    @Test
+    public void addTaskWhenLocalePropertyEmpty() throws Exception {
+        mockNode(WS_TRANSLATION, "/ui.key",
+            stubProperty(PN_KEY, "ui.key"),
+            stubProperty(PREFIX_NAME + "de", ""),
+            stubType(NAME)
+        );
+        QueryMockUtils.mockQueryResult(WS_TRANSLATION, Query.JCR_SQL2, "select * from [mgnl:translation] where key = 'ui.key'", mockNode("ui.key"));
+        final ArrayDelegateTask delegate = mock(ArrayDelegateTask.class);
+        _addTranslationsTask.addTranslationNodeTasks(delegate, _installContext);
+        verify(delegate, times(1)).addTask(any());
     }
 
     @AfterEach

@@ -107,6 +107,7 @@ class ViewSourceActionTest {
 
         UI ui = mock(UI.class);
         when(ui.getSession()).thenReturn(vaadinSession);
+        _page = mock(Page.class);
         when(ui.getPage()).thenReturn(_page);
         CurrentInstance.set(UI.class, ui);
     }

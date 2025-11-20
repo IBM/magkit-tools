@@ -90,6 +90,10 @@ class ExportTranslationAsCsvActionTest {
         _fileSystemHelper = mockComponentInstance(FileSystemHelper.class);
         when(_fileSystemHelper.getTempDirectory()).thenReturn(_tempDir);
         mockWebContext(stubJcrSession(WS_TRANSLATION));
+        mockCurrentPage();
+    }
+
+    private void mockCurrentPage() {
         Page currentPage = mock(Page.class);
         UI currentUi = mock(UI.class);
         when(currentUi.getPage()).thenReturn(currentPage);
@@ -99,6 +103,7 @@ class ExportTranslationAsCsvActionTest {
     @AfterEach
     void tearDown() {
         ContextMockUtils.cleanContext();
+        CurrentInstance.clearAll();
     }
 
     /**
@@ -112,6 +117,7 @@ class ExportTranslationAsCsvActionTest {
         when(_valueContext.get()).thenReturn(List.of(node1, node2).stream());
         when(_valueContext.getSingle()).thenReturn(Optional.of(node1));
 
+        mockCurrentPage();
         Set<String> beforeNames = existingCsvNames();
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
         action.execute();

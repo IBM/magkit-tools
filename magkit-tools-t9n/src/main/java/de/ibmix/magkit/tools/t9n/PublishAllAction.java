@@ -111,7 +111,7 @@ public class PublishAllAction extends JcrCommandAction<Node, JcrCommandActionDef
         return items;
     }
 
-    private String getBasePath() {
+    String getBasePath() {
         final TranslationModule module = Components.getComponent(TranslationModule.class);
         String path = "/";
         if (startsWith(module.getBasePath(), "/")) {

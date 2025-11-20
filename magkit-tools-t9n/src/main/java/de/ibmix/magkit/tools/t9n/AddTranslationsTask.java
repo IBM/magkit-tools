@@ -24,6 +24,7 @@ import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
 import info.magnolia.jcr.nodebuilder.AbstractNodeOperation;
 import info.magnolia.jcr.nodebuilder.ErrorHandler;
 import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
+import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.Task;
@@ -123,19 +124,23 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
     protected void addTranslationNodeTasks(ArrayDelegateTask task, InstallContext installContext) {
         super.addTranslationNodeTasks(task, installContext);
         for (Locale locale : _locales) {
-            addTasksForResource(getResource(locale.toString()), new ResourceBundleConsumer(locale, installContext, task));
+            addTasksForResource(getResource(locale.toString()), new ResourceBundleConsumer(locale, installContext, task, getBasePath(), getNodeNameHelper()));
         }
     }
 
-    private class ResourceBundleConsumer implements Consumer<ResourceBundle> {
+    static class ResourceBundleConsumer implements Consumer<ResourceBundle> {
         private final Locale _locale;
         private final InstallContext _installContext;
         private final ArrayDelegateTask _task;
+        private final String _basePath;
+        private final NodeNameHelper _nodeNameHelper;
 
-        ResourceBundleConsumer(Locale locale, InstallContext installContext, ArrayDelegateTask task) {
+        ResourceBundleConsumer(Locale locale, InstallContext installContext, ArrayDelegateTask task, String basePath, NodeNameHelper nodeNameHelper) {
             _locale = locale;
             _installContext = installContext;
             _task = task;
+            _basePath = basePath;
+            _nodeNameHelper = nodeNameHelper;
         }
 
         @Override
@@ -151,9 +156,9 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
             }
         }
 
-        private void addTaskForKey(ResourceBundle bundle, String key, Session session) {
-            String keyNodeName = AddTranslationsTask.this.getNodeNameHelper().getValidatedName(key);
-            String nodePath = AddTranslationsTask.this.getBasePath() + keyNodeName;
+        void addTaskForKey(ResourceBundle bundle, String key, Session session) {
+            String keyNodeName = _nodeNameHelper.getValidatedName(key);
+            String nodePath = _basePath + keyNodeName;
 
             try {
                 final String propertyName = Translation.PREFIX_NAME + _locale;
@@ -175,7 +180,7 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
             }
         }
 
-        private Task createAddTranslationOperation(String nodePath, String key, String propertyName, String translation) {
+        Task createAddTranslationOperation(String nodePath, String key, String propertyName, String translation) {
             String name = removeStart(nodePath, ROOT_PATH);
             return new NodeBuilderTask("Add translation for probably existing node", "", logging, WS_TRANSLATION,
                 new AbstractNodeOperation() {

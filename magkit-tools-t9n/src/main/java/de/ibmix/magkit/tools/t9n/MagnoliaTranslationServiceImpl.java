@@ -102,7 +102,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         return MESSAGE_CONDITION.test(message) ? message : super.translate(localeProvider, basename, keys);
     }
 
-    private String escapeSingleQuotesIfPlaceholderMessage(final String message) {
+    String escapeSingleQuotesIfPlaceholderMessage(final String message) {
         String escapedMessage = message;
         if (contains(escapedMessage, "'") && !contains(escapedMessage, "''") && escapedMessage.matches(".*\\{[0-9]}.*")) {
             escapedMessage = escapedMessage.replace("'", "''");
@@ -110,7 +110,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         return escapedMessage;
     }
 
-    private String getAppMessage(LocaleProvider localeProvider, String[] keys) {
+    String getAppMessage(LocaleProvider localeProvider, String[] keys) {
         final Locale locale = localeProvider.getLocale();
 
         final String[] i18nPropertyNames = TranslationNodeTypes.Translation.LOCALE_TO_PROPERTY_NAMES.apply(locale);

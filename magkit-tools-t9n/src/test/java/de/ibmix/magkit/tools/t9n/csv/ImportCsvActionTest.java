@@ -134,7 +134,7 @@ class ImportCsvActionTest {
      */
     @Test
     void importCreatesNodesAtRootWhenBasePathEmpty() throws Exception {
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t1.csv");
         Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nhello,Hello,Hallo\n");
         when(_formView.getPropertyValue("importCsv")).thenReturn(Optional.of(csv));
         when(_formView.getPropertyValue("encoding")).thenReturn(Optional.empty());
@@ -160,7 +160,7 @@ class ImportCsvActionTest {
     @Test
     void importCreatesNodesUnderBasePath() throws Exception {
         Node base = mockNode(WS_TRANSLATION, "/base");
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t2.csv");
         Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nwelcome,Welcome,Willkommen\n");
         when(_formView.getPropertyValue("importCsv")).thenReturn(Optional.of(csv));
         when(_formView.getPropertyValue("encoding")).thenReturn(Optional.empty());
@@ -184,7 +184,7 @@ class ImportCsvActionTest {
     @Test
     void importUpdatesExistingNode() throws Exception {
         Node node = mockNode(WS_TRANSLATION, "/base/existing", stubProperty(PN_KEY, "existing"), stubProperty(PREFIX_NAME + "en", "Old"), stubProperty(PREFIX_NAME + "de", "Alt"));
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t3.csv");
         Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nexisting,New,Neu\n");
         when(_formView.getPropertyValue("importCsv")).thenReturn(Optional.of(csv));
         when(_formView.getPropertyValue("encoding")).thenReturn(Optional.empty());
@@ -204,7 +204,7 @@ class ImportCsvActionTest {
      */
     @Test
     void importUsesCustomEncoding() throws Exception {
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t4.csv");
         Files.writeString(csv.toPath(), "Key,English,German\ntest,Test,Test\n", java.nio.charset.StandardCharsets.ISO_8859_1);
         Option encodingOption = mock(Option.class);
         when(encodingOption.getValue()).thenReturn("ISO-8859-1");
@@ -226,7 +226,7 @@ class ImportCsvActionTest {
      */
     @Test
     void importUsesCustomSeparator() throws Exception {
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t5.csv");
         Files.writeString(csv.toPath(), "Key;Englisch;Deutsch\nkey1;Val1;Wert1\n");
         Option separatorOption = mock(Option.class);
         when(separatorOption.getValue()).thenReturn(";");
@@ -251,7 +251,7 @@ class ImportCsvActionTest {
      */
     @Test
     void importCreatesMultipleNodes() throws Exception {
-        File csv = new File(_tempDir, "t.csv");
+        File csv = new File(_tempDir, "t6.csv");
         Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nkey1,Value1,Wert1\nkey2,Value2,Wert2\nkey3,Value3,Wert3\n");
         when(_formView.getPropertyValue("importCsv")).thenReturn(Optional.of(csv));
         when(_formView.getPropertyValue("encoding")).thenReturn(Optional.empty());
