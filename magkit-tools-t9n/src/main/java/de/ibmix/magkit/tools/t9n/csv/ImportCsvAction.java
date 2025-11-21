@@ -202,7 +202,7 @@ public class ImportCsvAction extends CommitAction<Node> {
                     }
                 }
             }
-            // TODO: Check if this counting strategy is correct. It counts colums for ignored (unknown) languages as well.
+            // TODO: Check if this counting strategy is correct. It counts columns for ignored (unknown) languages as well.
             index++;
         }
         return cols;
