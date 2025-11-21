@@ -61,7 +61,7 @@ public class TranslationModuleTest {
     }
 
     @Test
-    public void setBasePathWithLivecycle() {
+    public void setBasePathWithLifecycle() {
         assertNull(_translationModule.getBasePath());
         _translationModule.setBasePath("/example/path");
         assertEquals("/example/path", _translationModule.getBasePath());
