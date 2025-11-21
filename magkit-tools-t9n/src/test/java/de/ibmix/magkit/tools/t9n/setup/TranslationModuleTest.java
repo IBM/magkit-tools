@@ -48,7 +48,7 @@ public class TranslationModuleTest {
     }
 
     @Test
-    public void testDefaultBehaviourWithLivecycle() {
+    public void testDefaultBehaviourWithLifecycle() {
         assertNull(_translationModule.getBasePath());
 
         _translationModule.start(_moduleLifecycleContext);

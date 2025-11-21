@@ -51,17 +51,12 @@ import static org.mockito.Mockito.when;
  */
 class ViewSourceActionTest {
 
-    private ViewSourceActionDefinition _definition;
-    private AbstractJcrNodeAdapter _item;
-    private ViewSourceAction _action;
-
     @BeforeEach
     void setUp() {
-        mockServerConfiguration(stubDefaultBaseUrl("https://test.ibmix.de"), stubDefaultExtension("html"));
-        _definition = mock(ViewSourceActionDefinition.class);
-        _item = mock(AbstractJcrNodeAdapter.class);
-
-        _action = new ViewSourceAction(_definition, _item);
+        mockServerConfiguration(
+            stubDefaultBaseUrl("https://test.ibmix.de"),
+            stubDefaultExtension("html")
+        );
     }
 
     @AfterEach
@@ -73,27 +68,26 @@ class ViewSourceActionTest {
     @Test
     void executeWithValidNode() throws Exception {
         Node node = mockPageNode("/test/page");
-        when(_item.getJcrItem()).thenReturn(node);
+        ViewSourceAction action = createViewSourceAction(mockAbstractJcrNodeAdapter(node));
         Page page = mockCurrentPage();
-        _action.execute();
+        action.execute();
 
         verify(page).open(eq("https://test.ibmix.de/test/page.html"), eq("_blank"), eq(false));
     }
 
     @Test
     void executeWithNullItem() {
-        _action = new ViewSourceAction(_definition, null);
         Page page = mockCurrentPage();
-        _action.execute();
-
+        ViewSourceAction action = createViewSourceAction(null);
+        action.execute();
         verify(page, never()).open(anyString(), anyString(), anyBoolean());
     }
 
     @Test
     void executeWithNullJcrItem() {
-        when(_item.getJcrItem()).thenReturn(null);
         Page page = mockCurrentPage();
-        _action.execute();
+        ViewSourceAction action = createViewSourceAction(mockAbstractJcrNodeAdapter(null));
+        action.execute();
 
         verify(page, never()).open(anyString(), anyString(), anyBoolean());
     }
@@ -105,5 +99,14 @@ class ViewSourceActionTest {
         CurrentInstance.set(UI.class, ui);
         return page;
     }
-}
 
+    AbstractJcrNodeAdapter mockAbstractJcrNodeAdapter(final Node node) {
+        AbstractJcrNodeAdapter nodeAdapter = mock(AbstractJcrNodeAdapter.class);
+        when(nodeAdapter.getJcrItem()).thenReturn(node);
+        return nodeAdapter;
+    }
+
+    ViewSourceAction createViewSourceAction(AbstractJcrNodeAdapter item) {
+        return new ViewSourceAction(mock(ViewSourceActionDefinition.class), item);
+    }
+}
