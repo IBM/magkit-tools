@@ -201,7 +201,7 @@ class TranslationCsvWriterTest {
             assertEquals(2, lines.size());
             String[] header = lines.get(0);
             assertEquals(4, header.length);
-            assertEquals("Französisch", header[3]);
+            assertEquals(Locale.FRENCH.getDisplayName(), header[3]);
             String[] data = lines.get(1);
             assertEquals("Bonjour", data[3]);
         }

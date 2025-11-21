@@ -255,7 +255,7 @@ class ImportCsvActionTest {
     void detectColumnsMatchesLocaleDisplayNameDefault() throws RepositoryException {
         FormView<Node> view = mockFormViewWithCsvFile(null, null, null);
         ImportCsvAction action = createImportCsvAction(view);
-        String[] headings = {"Key", "anglais", "Unknown", "Deutsch"};
+        String[] headings = {"Key", "anglais", "Unknown", Locale.GERMAN.getDisplayName()};
         java.util.Map<Integer, String> result = action.detectColumns(headings);
 
         assertEquals(3, result.size());
