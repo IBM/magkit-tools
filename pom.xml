@@ -24,6 +24,7 @@
         <version.magkit.test>1.0.10</version.magkit.test>
         <junit.jupiter.version>5.14.0</junit.jupiter.version>
         <mockitoVersion>5.20.0</mockitoVersion>
+        <commons.collections4.version>4.5.0</commons.collections4.version>
     </properties>
 
     <dependencyManagement>
@@ -55,6 +56,11 @@
                 <artifactId>mockito-core</artifactId>
                 <scope>test</scope>
                 <version>${mockitoVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
