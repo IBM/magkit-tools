@@ -116,7 +116,7 @@ class ImportCsvActionTest {
     @Test
     void importCreatesNodesAtRootWhenBasePathEmpty() throws Exception {
         File csv = new File(_tempDir, "t1.csv");
-        Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nhello,Hello,Hallo\n");
+        Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\nhello,Hello,Hallo\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, null);
 
         ImportCsvAction action = createImportCsvAction(view);
@@ -139,7 +139,7 @@ class ImportCsvActionTest {
     void importCreatesNodesUnderBasePath() throws Exception {
         Node base = mockNode(WS_TRANSLATION, "/base");
         File csv = new File(_tempDir, "t2.csv");
-        Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nwelcome,Welcome,Willkommen\n");
+        Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\nwelcome,Welcome,Willkommen\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, null);
         mockTranslationModule("/base");
 
@@ -161,7 +161,7 @@ class ImportCsvActionTest {
     void importUpdatesExistingNode() throws Exception {
         Node node = mockNode(WS_TRANSLATION, "/base/existing", stubProperty(PN_KEY, "existing"), stubProperty(PREFIX_NAME + "en", "Old"), stubProperty(PREFIX_NAME + "de", "Alt"));
         File csv = new File(_tempDir, "t3.csv");
-        Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nexisting,New,Neu\n");
+        Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\nexisting,New,Neu\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, null);
         mockTranslationModule("/base");
 
@@ -179,7 +179,7 @@ class ImportCsvActionTest {
     @Test
     void importUsesCustomEncoding() throws Exception {
         File csv = new File(_tempDir, "t4.csv");
-        Files.writeString(csv.toPath(), "Key,English,German\ntest,Test,Test\n", StandardCharsets.ISO_8859_1);
+        Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\ntest,Test,Test\n", StandardCharsets.ISO_8859_1);
         FormView<Node> view = mockFormViewWithCsvFile(csv, mockOption("ISO-8859-1"), null);
 
         ImportCsvAction action = createImportCsvAction(view);
@@ -196,7 +196,7 @@ class ImportCsvActionTest {
     @Test
     void importUsesCustomSeparator() throws Exception {
         File csv = new File(_tempDir, "t5.csv");
-        Files.writeString(csv.toPath(), "Key;Englisch;Deutsch\nkey1;Val1;Wert1\n");
+        Files.writeString(csv.toPath(), "Key;" + Locale.ENGLISH.getDisplayName() + ";" + Locale.GERMAN.getDisplayName() + "\nkey1;Val1;Wert1\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, mockOption(";"));
 
         ImportCsvAction action = createImportCsvAction(view);
@@ -216,7 +216,7 @@ class ImportCsvActionTest {
 //    @Test
     void importCreatesMultipleNodes() throws Exception {
         File csv = new File(_tempDir, "t6.csv");
-        Files.writeString(csv.toPath(), "Key,Englisch,Deutsch\nkey1,Value1,Wert1\nkey2,Value2,Wert2\nkey3,Value3,Wert3\n");
+        Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\nkey1,Value1,Wert1\nkey2,Value2,Wert2\nkey3,Value3,Wert3\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, null);
 
 
@@ -239,7 +239,7 @@ class ImportCsvActionTest {
     void detectColumnsMatchesLocaleDisplayNameInCurrentLocale() throws RepositoryException {
         FormView<Node> view = mockFormViewWithCsvFile(null, null, null);
         ImportCsvAction action = createImportCsvAction(view);
-        String[] headings = {"Key", "Englisch", "Deutsch"};
+        String[] headings = {"Key", Locale.ENGLISH.getDisplayName(), Locale.GERMAN.getDisplayName()};
         java.util.Map<Integer, String> result = action.detectColumns(headings);
 
         assertEquals(3, result.size());
@@ -261,7 +261,7 @@ class ImportCsvActionTest {
         assertEquals(3, result.size());
         assertEquals(PN_KEY, result.get(0));
         assertEquals(PREFIX_NAME + "en", result.get(1));
-        //TODO: Chaek if we should insert a null entry for the unknown column heading.
+        //TODO: Check if we should insert a null entry for the unknown column heading.
         assertEquals(PREFIX_NAME + "de", result.get(3));
     }
 
