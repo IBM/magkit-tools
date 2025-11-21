@@ -66,8 +66,6 @@ public class ConfirmRowDraggerTest {
     private ConfirmRowDragger<Item> _dragger;
     private Datasource<Item> _datasource;
     private Grid<Item> _grid;
-    private DropConstraint<Item> _dropConstraint;
-    private SimpleTranslator _translator;
     private Provider<EditToolsModule> _moduleProvider;
 
     /**
@@ -77,14 +75,14 @@ public class ConfirmRowDraggerTest {
     public void setUp() {
         _datasource = mock(Datasource.class);
         _grid = new Grid<>();
-        _dropConstraint = mock(DropConstraint.class);
-        when(_dropConstraint.isAllowedAt(anyCollection(), any(), any())).thenReturn(true);
-        _translator = mock(SimpleTranslator.class);
-        when(_translator.translate("magkit.moveItem.confirmationQuestionOneItem")).thenReturn("one");
-        when(_translator.translate("magkit.moveItem.confirmationQuestionManyItems", 3)).thenReturn("many(3)");
+        DropConstraint<Item> dropConstraint = mock(DropConstraint.class);
+        when(dropConstraint.isAllowedAt(anyCollection(), any(), any())).thenReturn(true);
+        SimpleTranslator translator = mock(SimpleTranslator.class);
+        when(translator.translate("magkit.moveItem.confirmationQuestionOneItem")).thenReturn("one");
+        when(translator.translate("magkit.moveItem.confirmationQuestionManyItems", 3)).thenReturn("many(3)");
         _moduleProvider = mock(Provider.class);
         when(_moduleProvider.get()).thenReturn(new EditToolsModule());
-        _dragger = new ConfirmRowDragger<>(_datasource, _grid, DropMode.BETWEEN, _dropConstraint, _translator, _moduleProvider);
+        _dragger = new ConfirmRowDragger<>(_datasource, _grid, DropMode.BETWEEN, dropConstraint, translator, _moduleProvider);
     }
 
     /**

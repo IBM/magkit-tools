@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -114,7 +115,7 @@ class ExportTranslationAsCsvActionTest {
         Node node1 = mockNode(WS_TRANSLATION, "/greeting", stubProperty(PN_KEY, "greeting"), stubProperty(PREFIX_NAME + "en", "Hello"), stubProperty(PREFIX_NAME + "de", "Hallo"));
         Node node2 = mockNode(WS_TRANSLATION, "/farewell", stubProperty(PN_KEY, "farewell"), stubProperty(PREFIX_NAME + "en", "Bye"), stubProperty(PREFIX_NAME + "de", "Tschuess"));
 
-        when(_valueContext.get()).thenReturn(List.of(node1, node2).stream());
+        when(_valueContext.get()).thenReturn(Stream.of(node1, node2));
         when(_valueContext.getSingle()).thenReturn(Optional.of(node1));
 
         mockCurrentPage();
@@ -144,7 +145,7 @@ class ExportTranslationAsCsvActionTest {
     void containsOnlyRootNodeTrueForRootSelection() throws Exception {
         Node root = MgnlContext.getJCRSession(WS_TRANSLATION).getRootNode();
         when(_valueContext.getSingle()).thenReturn(Optional.of(root));
-        when(_valueContext.get()).thenReturn(List.of(root).stream());
+        when(_valueContext.get()).thenReturn(Stream.of(root));
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
         Method m = ExportTranslationAsCsvAction.class.getDeclaredMethod("containsOnlyRootNode");
         m.setAccessible(true);
@@ -158,7 +159,7 @@ class ExportTranslationAsCsvActionTest {
     void containsOnlyRootNodeFalseForNonRootSelection() throws Exception {
         Node node = mockNode(WS_TRANSLATION, "/sample", stubProperty(PN_KEY, "sample"));
         when(_valueContext.getSingle()).thenReturn(Optional.of(node));
-        when(_valueContext.get()).thenReturn(List.of(node).stream());
+        when(_valueContext.get()).thenReturn(Stream.of(node));
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
         assertFalse(action.containsOnlyRootNode());
     }
@@ -205,7 +206,7 @@ class ExportTranslationAsCsvActionTest {
         Node node2 = mockNode(WS_TRANSLATION, "/selected2", stubProperty(PN_KEY, "selected2"));
 
         when(_valueContext.getSingle()).thenReturn(Optional.of(node1));
-        when(_valueContext.get()).thenReturn(List.of(node1, node2).stream());
+        when(_valueContext.get()).thenReturn(Stream.of(node1, node2));
 
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
         List<Node> result = action.retrieveTranslationNodes();
@@ -247,7 +248,7 @@ class ExportTranslationAsCsvActionTest {
         Node nodeWithoutKey = mockNode(WS_TRANSLATION, "/withoutKey", stubProperty(PREFIX_NAME + "en", "Orphan"));
 
         when(_valueContext.getSingle()).thenReturn(Optional.of(nodeWithKey));
-        when(_valueContext.get()).thenReturn(List.of(nodeWithKey, nodeWithoutKey).stream());
+        when(_valueContext.get()).thenReturn(Stream.of(nodeWithKey, nodeWithoutKey));
 
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
         java.util.Map<String, java.util.Map<String, String>> entries = action.getEntries(List.of(Locale.ENGLISH));

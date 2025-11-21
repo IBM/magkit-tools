@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link IsPagePropertiesEditableRule} covering all logical branches of isAvailableFor.
- *
+ * <p/>
  * Scenarios:
  * <ul>
  * <li>No ancestor page found - returns false</li>

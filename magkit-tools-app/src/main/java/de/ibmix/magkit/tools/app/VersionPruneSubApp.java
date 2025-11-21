@@ -49,7 +49,6 @@ import java.util.List;
 
 import static info.magnolia.jcr.util.NodeUtil.getNodeIdentifierIfPossible;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static java.lang.String.valueOf;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.math.NumberUtils.toInt;
@@ -86,8 +85,8 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
     private final SimpleTranslator _simpleTranslator;
     private final Provider<Context> _contextProvider;
     private final FormViewReduced _formView;
-    private List<String> _prunedHandles = new ArrayList<>();
-    private StringBuilder _resultMessages = new StringBuilder();
+    private final List<String> _prunedHandles = new ArrayList<>();
+    private final StringBuilder _resultMessages = new StringBuilder();
 
     /**
      * Constructs a new VersionPruneSubApp instance.
@@ -146,7 +145,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
             if (versions > 0) {
                 _resultMessages.append(SPACER);
                 _resultMessages.append(_simpleTranslator.translate("versionPrune.nothingPruned.prefix")).append(" ");
-                _resultMessages.append(valueOf(versions));
+                _resultMessages.append(versions);
                 _resultMessages.append(" ").append(_simpleTranslator.translate("versionPrune.nothingPruned.postfix"));
                 _resultMessages.append(SPACER);
             } else {
@@ -155,7 +154,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
                 _resultMessages.append(SPACER);
             }
         } else {
-            final String successfulPrunedMessage = SPACER + valueOf(_prunedHandles.size()) + " " + _simpleTranslator.translate("versionPrune.pruned") + "\n" + SPACER;
+            final String successfulPrunedMessage = SPACER + _prunedHandles.size() + " " + _simpleTranslator.translate("versionPrune.pruned") + "\n" + SPACER;
             _resultMessages.append(successfulPrunedMessage);
             for (String handle : _prunedHandles) {
                 _resultMessages.append(handle).append("\n");
@@ -187,7 +186,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
                     allVersions.nextVersion();
                     // remove the version after rootVersion
                     while (indexToRemove > 0) {
-                        removeVersion(node, allVersions, versionHistory, indexToRemove);
+                        removeVersion(node, allVersions, versionHistory);
                         indexToRemove--;
                     }
                 }
@@ -195,7 +194,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         }
     }
 
-    void removeVersion(Node node, VersionIterator allVersions, VersionHistory versionHistory, long indexToRemove) {
+    void removeVersion(Node node, VersionIterator allVersions, VersionHistory versionHistory) {
         Version currentVersion = allVersions.nextVersion();
         String versionNameToRemove = getVersionName(currentVersion);
         String errorMessage = EMPTY;
@@ -220,8 +219,6 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         } else {
             _resultMessages.append(errorMessage).append("\n");
         }
-//        long result = indexToRemove--;
-//        return result;
     }
 
     /**

@@ -79,12 +79,8 @@ class VersionPruneSubAppTest {
     private static final String NODE_PATH = "/test/node";
     private static final String VERSION_NAME = "1.0";
 
-    private SubAppContext _subAppContext;
-    private FormViewReduced _formView;
     private VersionPruneResultView _view;
-    private FormBuilder _builder;
     private SimpleTranslator _simpleTranslator;
-    private Provider<Context> _contextProvider;
     private Context _context;
     private VersionPruneSubApp _versionPruneSubApp;
     private Item _item;
@@ -93,24 +89,24 @@ class VersionPruneSubAppTest {
     void setUp() throws Exception {
         mockWebContext();
 
-        _subAppContext = mock(SubAppContext.class);
-        _formView = mock(FormViewReduced.class);
+        SubAppContext subAppContext = mock(SubAppContext.class);
+        FormViewReduced formView = mock(FormViewReduced.class);
         _view = mock(VersionPruneResultView.class);
-        _builder = mock(FormBuilder.class);
+        FormBuilder builder = mock(FormBuilder.class);
         _simpleTranslator = mock(SimpleTranslator.class);
-        _contextProvider = mock(Provider.class);
+        Provider<Context> contextProvider = mock(Provider.class);
         _context = mock(Context.class);
         _item = mock(Item.class);
 
         FormSubAppDescriptor descriptor = mock(FormSubAppDescriptor.class);
         FormDefinition formDefinition = mock(FormDefinition.class);
 
-        when(_subAppContext.getSubAppDescriptor()).thenReturn(descriptor);
+        when(subAppContext.getSubAppDescriptor()).thenReturn(descriptor);
         when(descriptor.getForm()).thenReturn(formDefinition);
-        when(_contextProvider.get()).thenReturn(_context);
-        when(_formView.getItemDataSource()).thenReturn(_item);
+        when(contextProvider.get()).thenReturn(_context);
+        when(formView.getItemDataSource()).thenReturn(_item);
 
-        _versionPruneSubApp = new VersionPruneSubApp(_subAppContext, _formView, _view, _builder, _simpleTranslator, _contextProvider);
+        _versionPruneSubApp = new VersionPruneSubApp(subAppContext, formView, _view, builder, _simpleTranslator, contextProvider);
     }
 
     @AfterEach
@@ -214,7 +210,7 @@ class VersionPruneSubAppTest {
         VersionHistory versionHistory = mockVersionHistoryWithNames(node, VERSION_NAME);
         doThrow(new UnsupportedRepositoryOperationException("Unversionable")).when(versionHistory).removeVersion(VERSION_NAME);
 
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 1);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
 
         verify(versionHistory).removeVersion(VERSION_NAME);
     }
@@ -229,7 +225,7 @@ class VersionPruneSubAppTest {
         when(propertyIterator.toString()).thenReturn("references");
         doThrow(new ReferentialIntegrityException("Referenced")).when(versionHistory).removeVersion(VERSION_NAME);
 
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 1);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
 
         verify(versionHistory).removeVersion(VERSION_NAME);
     }
@@ -240,7 +236,7 @@ class VersionPruneSubAppTest {
         VersionHistory versionHistory = mockVersionHistoryWithNames(node, VERSION_NAME);
         doThrow(new RepositoryException("Generic error")).when(versionHistory).removeVersion(VERSION_NAME);
 
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 1);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
 
         verify(versionHistory).removeVersion(VERSION_NAME);
     }
@@ -250,7 +246,7 @@ class VersionPruneSubAppTest {
         Node node = NodeMockUtils.mockNode(WORKSPACE, NODE_PATH);
         VersionHistory versionHistory = mockVersionHistoryWithNames(node, VERSION_NAME);
 
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 1);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
 
         verify(versionHistory).removeVersion(VERSION_NAME);
     }
@@ -504,8 +500,8 @@ class VersionPruneSubAppTest {
         Node node = NodeMockUtils.mockNode(WORKSPACE, NODE_PATH);
         VersionHistory versionHistory = mockVersionHistoryWithNames(node, "1.0", "1.1");
 
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 2);
-        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory, 1);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
+        _versionPruneSubApp.removeVersion(node, versionHistory.getAllVersions(), versionHistory);
 
         verify(versionHistory, times(2)).removeVersion(anyString());
     }

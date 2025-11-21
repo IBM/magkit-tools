@@ -108,9 +108,7 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
                         .withLevel(Notification.Type.WARNING_MESSAGE)
                         .withOkButtonCaption(_simpleTranslator.translate("magkit.moveItem.confirmText"))
                         .withDeclineButtonCaption(_simpleTranslator.translate("magkit.moveItem.cancelText"))
-                        .withConfirmationHandler(() -> {
-                            doMoveItems(datasource, grid, items);
-                        })
+                        .withConfirmationHandler(() -> doMoveItems(datasource, grid, items))
                         .buildAndOpen();
                 } else {
                     // move without confirmation

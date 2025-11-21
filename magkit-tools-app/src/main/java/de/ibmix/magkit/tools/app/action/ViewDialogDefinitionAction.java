@@ -47,9 +47,9 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 public class ViewDialogDefinitionAction extends AbstractAction<ViewDialogDefinitionActionDefinition> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewDialogDefinitionAction.class);
 
-    private AbstractJcrNodeAdapter _item;
-    private LocationController _locationController;
-    private TemplateDefinitionRegistry _templateRegistry;
+    private final AbstractJcrNodeAdapter _item;
+    private final LocationController _locationController;
+    private final TemplateDefinitionRegistry _templateRegistry;
 
     @Inject
     public ViewDialogDefinitionAction(ViewDialogDefinitionActionDefinition definition, AbstractJcrNodeAdapter item, LocationController locationController, final TemplateDefinitionRegistry templateRegistry) {

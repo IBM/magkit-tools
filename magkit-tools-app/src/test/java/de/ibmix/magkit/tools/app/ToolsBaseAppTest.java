@@ -54,8 +54,6 @@ class ToolsBaseAppTest {
     private static final String JCR_QUERIES_SUBAPP = "jcrQueries";
 
     private AppContext _appContext;
-    private AppView _appView;
-    private AppDescriptor _appDescriptor;
     private ToolsBaseApp _toolsBaseApp;
 
     @BeforeEach
@@ -63,13 +61,13 @@ class ToolsBaseAppTest {
         mockComponentInstance(SimpleTranslator.class);
 
         _appContext = mock(AppContext.class);
-        _appView = mock(AppView.class);
-        _appDescriptor = mock(AppDescriptor.class);
+        AppView appView = mock(AppView.class);
+        AppDescriptor appDescriptor = mock(AppDescriptor.class);
 
-        when(_appContext.getAppDescriptor()).thenReturn(_appDescriptor);
-        when(_appDescriptor.getName()).thenReturn(APP_NAME);
+        when(_appContext.getAppDescriptor()).thenReturn(appDescriptor);
+        when(appDescriptor.getName()).thenReturn(APP_NAME);
 
-        _toolsBaseApp = new ToolsBaseApp(_appContext, _appView);
+        _toolsBaseApp = new ToolsBaseApp(_appContext, appView);
     }
 
     @AfterEach
