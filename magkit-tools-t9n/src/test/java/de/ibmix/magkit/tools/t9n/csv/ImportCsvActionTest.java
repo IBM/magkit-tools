@@ -342,8 +342,8 @@ class ImportCsvActionTest {
     ImportCsvAction createImportCsvAction(final FormView<Node> formView) throws RepositoryException {
         CommitActionDefinition definition = mock(CommitActionDefinition.class);
         CloseHandler closeHandler = mock(CloseHandler.class);
-        ValueContext valueContext = mock(ValueContext.class);
-        Datasource datasource = mock(Datasource.class);
+        ValueContext<Node> valueContext = mock(ValueContext.class);
+        Datasource<Node> datasource = mock(Datasource.class);
         DatasourceObservation.Manual datasourceObservation = mock(DatasourceObservation.Manual.class);
 
         I18nContentSupport i18nContentSupport = mockI18nContentSupport(stubLocales(Locale.ENGLISH, Locale.GERMAN));
