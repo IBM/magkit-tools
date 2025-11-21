@@ -147,11 +147,11 @@ public class MagnoliaTranslationServiceImplTest {
         mockSystemContext(stubJcrSession(TranslationNodeTypes.WS_TRANSLATION));
         String statement = MagnoliaTranslationServiceImpl.BASE_QUERY + "'anyKey'";
         mockQueryResult(TranslationNodeTypes.WS_TRANSLATION, Query.JCR_SQL2, statement);
-        _translationService = new MagnoliaTranslationServiceImpl(null,null);
+        _translationService = new MagnoliaTranslationServiceImpl(null, null);
         String message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
         assertEquals(EMPTY, message);
 
-        Node messageNode = mockNode(TranslationNodeTypes.WS_TRANSLATION, "/message" );
+        Node messageNode = mockNode(TranslationNodeTypes.WS_TRANSLATION, "/message");
         mockQueryResult(TranslationNodeTypes.WS_TRANSLATION, Query.JCR_SQL2, statement, messageNode);
         message = _translationService.doMessageQuery("anyKey", new String[]{"anyProperty"});
         assertEquals(EMPTY, message);

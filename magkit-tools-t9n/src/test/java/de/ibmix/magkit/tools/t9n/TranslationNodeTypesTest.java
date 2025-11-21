@@ -22,7 +22,6 @@ package de.ibmix.magkit.tools.t9n;
 
 import de.ibmix.magkit.test.jcr.SessionMockUtils;
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
-import info.magnolia.test.mock.jcr.MockNode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 

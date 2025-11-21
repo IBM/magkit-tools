@@ -21,6 +21,7 @@ package de.ibmix.magkit.tools.t9n;
  */
 
 
+import de.ibmix.magkit.test.cms.context.ComponentsMockUtils;
 import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
 import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
@@ -29,6 +30,7 @@ import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.Task;
 import info.magnolia.resourceloader.Resource;
 import info.magnolia.resourceloader.ResourceOrigin;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
@@ -41,6 +43,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockQueryResult;
@@ -71,6 +74,11 @@ import javax.jcr.query.QueryResult;
  * @since 2025-11-20
  */
 public class AddTranslationEntryTaskTest {
+
+    @AfterEach
+    public void tearDown() {
+        ComponentsMockUtils.clearComponentProvider();
+    }
 
     /**
      * Verifies basePath normalization in the constructor for root path.
@@ -109,7 +117,7 @@ public class AddTranslationEntryTaskTest {
     @Test
     public void shouldCreateTranslationEntryOperationForRootPath() {
         NodeNameHelper nodeNameHelper = mockComponentInstance(NodeNameHelper.class);
-        when(nodeNameHelper.getValidatedName("key.one")) .thenReturn("key.one");
+        when(nodeNameHelper.getValidatedName("key.one")).thenReturn("key.one");
         AddTranslationEntryTask task = new AddTranslationEntryTask("name", "desc", "com.example.messages", Locale.ENGLISH, "");
         Task subTask = task.createTranslationEntryOperation("key.one", "key.one", "Value One");
         assertNotNull(subTask);
@@ -123,7 +131,7 @@ public class AddTranslationEntryTaskTest {
     @Test
     public void shouldCreateTranslationEntryOperationForCustomPath() {
         NodeNameHelper nodeNameHelper = mockComponentInstance(NodeNameHelper.class);
-        when(nodeNameHelper.getValidatedName("key.two")) .thenReturn("key.two");
+        when(nodeNameHelper.getValidatedName("key.two")).thenReturn("key.two");
         AddTranslationEntryTask task = new AddTranslationEntryTask("name", "desc", "com.example.messages", Locale.ENGLISH, "foo");
         Task subTask = task.createTranslationEntryOperation("key.two", "key.two", "Value Two");
         assertNotNull(subTask);
@@ -249,12 +257,11 @@ public class AddTranslationEntryTaskTest {
      * Testable subclass exposing hooks for test control.
      */
     static class TestableAddTranslationEntryTask extends AddTranslationEntryTask {
-
-        final Set<String> _existingKeys;
-        final List<Task> _createdTasks = new ArrayList<>();
-        String _resourceContent = "key.one=Value One\nkey.two=Value Two";
-        boolean _throwNotFound;
-        java.util.function.Supplier<Task> _customTaskFactory = () -> null;
+        private final Set<String> _existingKeys;
+        private final List<Task> _createdTasks = new ArrayList<>();
+        private String _resourceContent = "key.one=Value One\nkey.two=Value Two";
+        private boolean _throwNotFound;
+        private Supplier<Task> _customTaskFactory = () -> null;
 
         TestableAddTranslationEntryTask(String taskName, String taskDescription, String baseName, Locale locale, String basePath, Set<String> existingKeys) {
             super(taskName, taskDescription, baseName, locale, basePath);

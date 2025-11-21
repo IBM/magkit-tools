@@ -21,7 +21,6 @@ package de.ibmix.magkit.tools.app.action;
  */
 
 import com.vaadin.server.Page;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.UI;
 import com.vaadin.util.CurrentInstance;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
@@ -54,7 +53,6 @@ class ViewSourceActionTest {
 
     private ViewSourceActionDefinition _definition;
     private AbstractJcrNodeAdapter _item;
-    private Page _page;
     private ViewSourceAction _action;
 
     @BeforeEach
@@ -62,7 +60,6 @@ class ViewSourceActionTest {
         mockServerConfiguration(stubDefaultBaseUrl("https://test.ibmix.de"), stubDefaultExtension("html"));
         _definition = mock(ViewSourceActionDefinition.class);
         _item = mock(AbstractJcrNodeAdapter.class);
-        _page = mock(Page.class);
 
         _action = new ViewSourceAction(_definition, _item);
     }
@@ -77,39 +74,36 @@ class ViewSourceActionTest {
     void executeWithValidNode() throws Exception {
         Node node = mockPageNode("/test/page");
         when(_item.getJcrItem()).thenReturn(node);
-        mockUi();
+        Page page = mockCurrentPage();
         _action.execute();
 
-        verify(_page).open(eq("https://test.ibmix.de/test/page.html"), eq("_blank"), eq(false));
+        verify(page).open(eq("https://test.ibmix.de/test/page.html"), eq("_blank"), eq(false));
     }
 
     @Test
     void executeWithNullItem() {
         _action = new ViewSourceAction(_definition, null);
-
+        Page page = mockCurrentPage();
         _action.execute();
 
-        verify(_page, never()).open(anyString(), anyString(), anyBoolean());
+        verify(page, never()).open(anyString(), anyString(), anyBoolean());
     }
 
     @Test
     void executeWithNullJcrItem() {
         when(_item.getJcrItem()).thenReturn(null);
-
+        Page page = mockCurrentPage();
         _action.execute();
 
-        verify(_page, never()).open(anyString(), anyString(), anyBoolean());
+        verify(page, never()).open(anyString(), anyString(), anyBoolean());
     }
 
-    private void mockUi() {
-        VaadinSession vaadinSession = mock(VaadinSession.class);
-        when(vaadinSession.hasLock()).thenReturn(true);
-
+    private Page mockCurrentPage() {
         UI ui = mock(UI.class);
-        when(ui.getSession()).thenReturn(vaadinSession);
-        _page = mock(Page.class);
-        when(ui.getPage()).thenReturn(_page);
+        Page page = mock(Page.class);
+        when(ui.getPage()).thenReturn(page);
         CurrentInstance.set(UI.class, ui);
+        return page;
     }
 }
 
