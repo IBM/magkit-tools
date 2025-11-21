@@ -84,7 +84,7 @@ public class AssetUsageItemDescriberTest {
      * Verifies applySingle returns path only when no config set.
      */
     @Test
-    public void testApplySingleWithoutssetUsageWorkspaces() throws RepositoryException {
+    public void testApplySingleWithoutUsageWorkspaces() throws RepositoryException {
         Node node = MagnoliaNodeMockUtils.mockContentNode("assets", "/assets/image.jpg");
         String identifier = node.getIdentifier();
         String path = node.getPath();
