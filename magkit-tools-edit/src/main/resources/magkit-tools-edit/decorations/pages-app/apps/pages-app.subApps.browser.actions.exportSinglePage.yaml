@@ -6,8 +6,5 @@ catalog: ibmIx
 availability:
   rules:
     notDeleted:
-    $type: jcrIsDeletedRule
-    negate: true
-permissions:
-  roles:
-    superuser: superuser
+      $type: jcrIsDeletedRule
+      negate: true
