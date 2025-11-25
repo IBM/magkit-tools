@@ -85,7 +85,7 @@ public class AclField extends CustomField<Object> {
     private static final String ROW_CSS_STYLE = CSS_PREFIX + "row";
 
     private final Item _relatedFieldItem;
-    private GridLayout _layout;
+    private final GridLayout _layout;
 
     private int _currentRow;
 
@@ -189,7 +189,7 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user role '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user role '{}'.", getPathIfPossible(node), e);
         }
         return roleNodes;
     }
@@ -210,7 +210,7 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user group '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user group '{}'.", getPathIfPossible(node), e);
         }
         return roleNodes;
     }
@@ -229,7 +229,7 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.error("Could not get properties for node " + node, e);
+            LOGGER.error("Could not get properties for node {}", getPathIfPossible(node), e);
         }
         return result;
     }
@@ -261,7 +261,7 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user '{}'.", getPathIfPossible(node), e);
         }
         return repositoryMap;
     }
@@ -321,7 +321,7 @@ public class AclField extends CustomField<Object> {
     /**
      * Data holder class for ACL information.
      */
-    class Acl {
+    static class Acl {
         private String _permission;
         private String _path;
         private String _role;

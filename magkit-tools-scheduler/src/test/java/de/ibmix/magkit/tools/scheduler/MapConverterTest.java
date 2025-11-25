@@ -29,6 +29,7 @@ import java.util.TreeMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -49,7 +50,7 @@ class MapConverterTest {
     void convertToModelReturnsNullResultOnNullInput() {
         Result<Map<String, String>> result = _converter.convertToModel(null, _ctx);
         assertFalse(result.isError());
-        assertEquals(null, result.getOrThrow(r -> new IllegalStateException("Unexpected error")));
+        assertNull(result.getOrThrow(r -> new IllegalStateException("Unexpected error")));
     }
 
     /**

@@ -222,11 +222,11 @@ class QuerySubAppTest {
 
         QuerySubApp querySubApp = new QuerySubApp(_subAppContext, _formView, _view, _builder, _simpleTranslator, _contextProvider);
         querySubApp.onSubAppStart();
-        assertEquals(null, statementFieldDefinition.getDefaultValue());
+        assertNull(statementFieldDefinition.getDefaultValue());
     }
 
     @Test
-    void onSubAppStartWithEmptyLastQueryInSession() throws Exception {
+    void onSubAppStartWithEmptyLastQueryInSession() {
         MgnlContext.setAttribute("QueryToolsLastQuery", "", SESSION_SCOPE);
 
         FormDefinition formDefinition = mock(FormDefinition.class);

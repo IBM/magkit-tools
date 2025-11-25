@@ -73,9 +73,9 @@ public class TranslationFormDefinitionTest {
         assertEquals(4, properties.size());
         assertTrue(properties.stream().allMatch(p -> p.getLabel() != null));
         assertEquals(TranslationNodeTypes.Translation.PN_KEY, properties.get(0).getName());
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH.toString(), properties.get(1).getName());
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.GERMANY.toString(), properties.get(2).getName());
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.FRANCE.toString(), properties.get(3).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH, properties.get(1).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.GERMANY, properties.get(2).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.FRANCE, properties.get(3).getName());
         assertEquals("English", properties.get(1).getLabel());
         assertEquals("German (Germany)", properties.get(2).getLabel());
         assertEquals("French (France)", properties.get(3).getLabel());

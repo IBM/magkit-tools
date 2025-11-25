@@ -45,7 +45,7 @@ import javax.inject.Inject;
  */
 public class AclFieldFactory extends AbstractFieldFactory<AclFieldDefinition, Object> {
 
-    private Item _relatedFieldItem;
+    private final Item _relatedFieldItem;
     private final SimpleTranslator _i18n;
 
     /**

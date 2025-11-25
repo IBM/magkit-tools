@@ -39,8 +39,8 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
  * @since 23.05.2014
  */
 public class ViewTemplateDefinitionAction extends AbstractAction<ViewTemplateDefinitionActionDefinition> {
-    private LocationController _locationController;
-    private AbstractJcrNodeAdapter _item;
+    private final LocationController _locationController;
+    private final AbstractJcrNodeAdapter _item;
 
     /**
      * Constructs a new ViewTemplateDefinitionAction instance.

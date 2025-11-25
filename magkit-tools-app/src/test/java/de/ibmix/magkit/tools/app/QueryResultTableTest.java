@@ -94,11 +94,11 @@ public class QueryResultTableTest {
     }
 
     @Test
-    void testBuildResultTableWithNullQueryResult() throws RepositoryException {
+    void testBuildResultTableWithNullQueryResult() {
         _resultTable.buildResultTable(null, true, true, 100L);
 
         assertEquals(0, _resultTable.size());
-        assertEquals(null, _resultTable.getCaption());
+        assertNull(_resultTable.getCaption());
     }
 
     @Test
@@ -155,7 +155,7 @@ public class QueryResultTableTest {
 
         assertEquals(1, _resultTable.size());
         Object itemId = _resultTable.getItemIds().iterator().next();
-        assertEquals(null, _resultTable.getContainerProperty(itemId, "path"));
+        assertNull(_resultTable.getContainerProperty(itemId, "path"));
         assertNotNull(_resultTable.getContainerProperty(itemId, "title"));
     }
 
@@ -176,7 +176,7 @@ public class QueryResultTableTest {
         Object itemId = _resultTable.getItemIds().iterator().next();
         assertNotNull(_resultTable.getContainerProperty(itemId, "path"));
         assertNotNull(_resultTable.getContainerProperty(itemId, "score"));
-        assertEquals(null, _resultTable.getContainerProperty(itemId, "title"));
+        assertNull(_resultTable.getContainerProperty(itemId, "title"));
     }
 
     @Test
@@ -215,10 +215,8 @@ public class QueryResultTableTest {
 
     @Test
     void testAddTableItemWithNullValue() throws RepositoryException {
-        String title = null;
-        String description = null;
         QueryResult queryResult = mockRowQueryResult(
-            mockRow(1.0, stubPath("page", "/test"), stubValue("title", title), stubValue("description", description))
+            mockRow(1.0, stubPath("page", "/test"))
         );
 
         String[] selectorNames = new String[]{"page"};

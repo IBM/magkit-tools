@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Unit tests for {@link IsPagePropertiesEditableRuleDefinition}.
- *
+ * <p/>
  * Verifies annotation and implementation class binding.
  *
  * @author wolf.bubenik

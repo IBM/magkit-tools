@@ -48,7 +48,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
  */
 public class VersionPruneResultViewImpl extends BaseResultViewImpl implements VersionPruneResultView {
 
-    private TextArea _textArea;
+    private final TextArea _textArea;
 
     /**
      * Constructs a new VersionPruneResultViewImpl instance and initializes the result text area.

@@ -115,7 +115,7 @@ class AclFieldTest {
         Component content = field.initContent();
 
         assertNotNull(content);
-        assertTrue(content instanceof GridLayout);
+        assertInstanceOf(GridLayout.class, content);
     }
 
     @Test
@@ -288,8 +288,7 @@ class AclFieldTest {
 
     @Test
     void testAclInnerClass() {
-        AclField field = new AclField(_nodeAdapter, _i18n);
-        AclField.Acl acl = field.new Acl("Read/Write", "/content", "editors");
+        AclField.Acl acl = new AclField.Acl("Read/Write", "/content", "editors");
 
         assertEquals("Read/Write", acl.getPermission());
         assertEquals("/content", acl.getPath());
@@ -343,7 +342,7 @@ class AclFieldTest {
         assertEquals(0.6f, ((GridLayout) content).getColumnExpandRatio(0));
         assertEquals(0.2f, ((GridLayout) content).getColumnExpandRatio(1));
         assertEquals(0.25f, ((GridLayout) content).getColumnExpandRatio(2));
-        assertEquals("dependencies-layout", ((GridLayout) content).getStyleName());
+        assertEquals("dependencies-layout", content.getStyleName());
         assertTrue(((GridLayout) content).isSpacing());
     }
 
