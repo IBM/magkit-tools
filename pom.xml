@@ -25,10 +25,18 @@
         <junit.jupiter.version>5.14.0</junit.jupiter.version>
         <mockitoVersion>5.20.0</mockitoVersion>
         <commons.collections4.version>4.5.0</commons.collections4.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Third party dependencies: -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
+            </dependency>
+            <!-- Magkit dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-core</artifactId>
@@ -39,6 +47,7 @@
                 <artifactId>magkit-setup</artifactId>
                 <version>${version.magkit}</version>
             </dependency>
+            <!-- Test dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-test-cms</artifactId>
@@ -57,11 +66,6 @@
                 <scope>test</scope>
                 <version>${mockitoVersion}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-collections4</artifactId>
-                <version>${commons.collections4.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -70,7 +74,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.5.4</version>
+                <version>${maven-surefire-plugin.version}</version>
             </plugin>
         </plugins>
     </build>
@@ -86,10 +90,6 @@
         <repository>
             <id>magnolia.forge.releases</id>
             <url>https://nexus.magnolia-cms.com/repository/magnolia.forge.releases/</url>
-        </repository>
-        <repository>
-            <id>magnolia.forge.snapshots</id>
-            <url>https://nexus.magnolia-cms.com/repository/magnolia.forge.snapshots/</url>
         </repository>
         <repository>
             <id>magnolia.enterprise</id>
