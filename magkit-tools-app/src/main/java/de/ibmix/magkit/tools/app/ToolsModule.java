@@ -27,13 +27,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Module lifecycle implementation for the magkit-tools-app module.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Manages module startup and shutdown lifecycle</li>
  *   <li>Logs module lifecycle events</li>
  * </ul>
- * <p>
  * This module provides various administrative tools and utilities for Magnolia CMS,
  * including JCR query execution and version pruning capabilities.
  *

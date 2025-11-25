@@ -50,11 +50,9 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
  * REST endpoint for accessing internationalization translations from the Magnolia translation workspace.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Provides a RESTful API to retrieve all translation key-value pairs for a specific locale,
  * enabling frontend applications to access localized content dynamically.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Exposes translations via REST API at /i18n/v1/{locale}</li>
@@ -63,13 +61,11 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
  * <li>Falls back to language-only translations when country-specific ones are not available</li>
  * <li>Executes queries in system context for consistent access</li>
  * </ul>
- * <p>
  * <p><strong>Usage Example:</strong></p>
  * <pre>
  * GET /rest/i18n/v1/de
  * GET /rest/i18n/v1/en_US
  * </pre>
- * <p>
  * <p><strong>Thread Safety:</strong></p>
  * This endpoint is thread-safe as each request operates within its own context.
  *

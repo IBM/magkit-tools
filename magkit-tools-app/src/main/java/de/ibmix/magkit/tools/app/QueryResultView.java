@@ -24,7 +24,6 @@ import javax.jcr.query.QueryResult;
 
 /**
  * View interface for displaying JCR query results.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays query results in a tabular format</li>

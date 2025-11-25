@@ -37,11 +37,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Dynamic form definition that generates translation fields based on configured locales.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Automatically creates form fields for each configured locale in the system, eliminating the need
  * for static form field definitions and enabling flexible multi-language translation management.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Dynamically generates form fields for all configured locales</li>
@@ -50,7 +48,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  * <li>Supports both language-only and language-country locale combinations</li>
  * <li>Displays locale names in the current user's language</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This form definition is typically referenced in the translation app configuration and
  * automatically provides the appropriate fields based on the system's i18n configuration.

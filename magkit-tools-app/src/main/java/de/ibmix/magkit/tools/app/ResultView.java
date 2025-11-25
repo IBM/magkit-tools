@@ -25,7 +25,6 @@ import info.magnolia.ui.vaadin.form.FormViewReduced;
 
 /**
  * Base view interface for tool sub-applications combining form input and result display.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Manages form view for user input</li>

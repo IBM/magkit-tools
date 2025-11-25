@@ -64,11 +64,9 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Action for importing translations from CSV files into the Magnolia translation workspace.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Enables bulk import of translation data from CSV files, allowing editors to work with
  * translations in spreadsheet applications and import them back into Magnolia.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Imports translations from CSV files with configurable encoding and separator</li>
@@ -78,11 +76,9 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * <li>Validates node names and ensures proper JCR naming</li>
  * <li>Updates last modified timestamps on all affected nodes</li>
  * </ul>
- * <p>
  * <p><strong>CSV Format:</strong></p>
  * The CSV file must have a header row with "Key" as the first column, followed by locale names.
  * Subsequent rows contain the translation key and values for each locale.
- * <p>
  * <p><strong>Error Handling:</strong></p>
  * Logs errors but does not throw exceptions, allowing partial imports to succeed.
  *

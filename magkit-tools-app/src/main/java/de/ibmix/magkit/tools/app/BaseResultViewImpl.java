@@ -38,7 +38,6 @@ import javax.inject.Inject;
 
 /**
  * Abstract base implementation for result views in tool sub-applications.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Provides common layout structure with input section and result section</li>
@@ -46,7 +45,6 @@ import javax.inject.Inject;
  *   <li>Creates action buttons with i18n support</li>
  *   <li>Implements listener pattern for action events</li>
  * </ul>
- * <p>
  * <p><strong>Layout Structure:</strong></p>
  * The view is divided into two main sections:
  * <ul>

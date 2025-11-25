@@ -30,14 +30,12 @@ import javax.inject.Inject;
 
 /**
  * Base application class for the administrative tools app in Magnolia CMS.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Opens and manages the version prune sub-app</li>
  *   <li>Opens and manages the JCR queries sub-app</li>
  *   <li>Coordinates multiple sub-apps within the tools application</li>
  * </ul>
- * <p>
  * <p><strong>Known Issues:</strong></p>
  * Due to a known bug, the sub-app that is in focus on app launch must be the last one opened.
  * Therefore, the app defaults to having the Query sub-app opened last on launch.

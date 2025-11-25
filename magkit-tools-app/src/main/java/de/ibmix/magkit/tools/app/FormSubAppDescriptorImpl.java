@@ -27,7 +27,6 @@ import info.magnolia.ui.form.definition.FormDefinition;
 
 /**
  * Implementation of FormSubAppDescriptor for form-based sub-applications.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Stores and provides access to form definitions</li>

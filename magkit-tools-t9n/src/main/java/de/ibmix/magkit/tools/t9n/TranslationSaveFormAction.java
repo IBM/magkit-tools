@@ -37,11 +37,9 @@ import javax.jcr.Property;
 
 /**
  * Custom form save action that ensures translation nodes are named according to their key property.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * This action extends the standard commit behavior to rename newly created translation nodes based on
  * their key property value, ensuring consistent and meaningful node names in the translation workspace.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Automatically renames new nodes based on the translation key</li>
@@ -49,7 +47,6 @@ import javax.jcr.Property;
  * <li>Maintains data integrity through proper commit handling</li>
  * <li>Triggers datasource observation for UI updates</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This action is typically configured in the translation app definition and is automatically
  * invoked when saving translation entries through the Magnolia UI.

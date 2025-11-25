@@ -55,7 +55,6 @@ import static org.apache.commons.lang.math.NumberUtils.toInt;
 
 /**
  * Sub-application for pruning version history of JCR nodes in Magnolia CMS.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Removes old versions from node version history</li>
@@ -64,12 +63,10 @@ import static org.apache.commons.lang.math.NumberUtils.toInt;
  *   <li>Reports pruned versions and errors</li>
  *   <li>Handles referential integrity constraints</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * Users specify a workspace, a node path, and the number of versions to keep.
  * The operation traverses all child nodes and removes excess versions while
  * preserving the root version and the specified number of recent versions.
- * <p>
  * <p><strong>Error Handling:</strong></p>
  * Handles various repository exceptions including unversionable nodes and
  * referential integrity violations. Errors are logged and reported to the user.

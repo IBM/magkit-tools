@@ -27,13 +27,11 @@ import info.magnolia.ui.form.definition.FormDefinition;
 
 /**
  * Sub-application descriptor interface for form-based sub-applications.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Extends standard SubAppDescriptor with form definition support</li>
  *   <li>Provides access to the form definition for the sub-application</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This interface is used by sub-applications that require form input,
  * such as QuerySubApp and VersionPruneSubApp.

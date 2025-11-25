@@ -52,11 +52,9 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
  * Enhanced translation import task that handles multiple locales and updates existing translations.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Extends {@link AddTranslationEntryTask} to support importing translations for multiple locales
  * at once and intelligently updating existing translation nodes with missing locale values.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Imports translations for multiple locales in a single task</li>
@@ -65,7 +63,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  * <li>Skips properties that already have values to preserve manual edits</li>
  * <li>Supports custom base paths for organizing translations</li>
  * </ul>
- * <p>
  * <p><strong>Usage Example:</strong></p>
  * <pre>
  * Task task = new AddTranslationsTask(
@@ -73,7 +70,6 @@ import static org.apache.commons.lang3.StringUtils.trimToEmpty;
  *     Locale.ENGLISH, Locale.GERMAN, Locale.FRENCH
  * );
  * </pre>
- * <p>
  * <p><strong>Migration Use Case:</strong></p>
  * This task is particularly useful for migrating from legacy property file-based translations
  * to the JCR-based translation workspace.

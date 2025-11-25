@@ -24,7 +24,6 @@ import info.magnolia.ui.api.action.ConfiguredActionDefinition;
 
 /**
  * Configuration definition for {@link ViewSourceAction}.
- * <p>
  * Sets the implementation class to ViewSourceAction.
  *
  * @author philipp.guettler

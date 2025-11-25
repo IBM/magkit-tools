@@ -54,7 +54,6 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
 
 /**
  * Custom Vaadin field that displays Access Control List (ACL) information for a user.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays ACL permissions for different JCR workspaces</li>
@@ -63,11 +62,9 @@ import static org.apache.commons.lang.StringUtils.substringAfter;
  *   <li>Presents data in a grid layout with path, permission, and role columns</li>
  *   <li>Translates permission codes to human-readable labels</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This field is typically used in user management interfaces to display the effective
  * permissions a user has across different repositories through their roles and group memberships.
- * <p>
  * <p><strong>Permission Display:</strong></p>
  * Permissions are displayed as read-only, read-write, or deny access based on the
  * ACL configuration in the user's roles.

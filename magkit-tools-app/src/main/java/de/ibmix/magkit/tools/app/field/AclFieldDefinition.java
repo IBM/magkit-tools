@@ -24,13 +24,11 @@ import info.magnolia.ui.form.field.definition.ConfiguredFieldDefinition;
 
 /**
  * Field definition for the {@link AclField} custom field.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Defines configuration for ACL display fields</li>
  *   <li>Extends standard field definition with ACL-specific settings</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * Used in form definitions where ACL information needs to be displayed
  * for users or groups in the Magnolia admin interface.

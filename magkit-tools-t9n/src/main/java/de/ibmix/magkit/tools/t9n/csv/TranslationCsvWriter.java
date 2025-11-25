@@ -41,11 +41,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * Utility class for exporting translation data to CSV format.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Creates CSV files containing translation keys and their values for all configured locales,
  * enabling editors to work with translations in external tools like spreadsheet applications.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Generates CSV files with UTF-8 encoding</li>
@@ -54,7 +52,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * <li>Handles missing translations gracefully with empty values</li>
  * <li>Provides access to the generated file as a stream</li>
  * </ul>
- * <p>
  * <p><strong>CSV Format:</strong></p>
  * The first row contains column headers (Key, followed by locale names).
  * Each subsequent row contains a translation key and its values for each locale.

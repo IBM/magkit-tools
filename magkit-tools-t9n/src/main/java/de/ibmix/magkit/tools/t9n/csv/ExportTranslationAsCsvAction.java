@@ -55,11 +55,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Action for exporting translations from the Magnolia translation workspace to CSV format.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Enables bulk export of translation data to CSV files, allowing editors to work with
  * translations in external tools like spreadsheet applications for review, editing, or translation.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Exports all translations or only selected nodes</li>
@@ -68,11 +66,9 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  * <li>Supports hierarchical translation structures</li>
  * <li>Handles root node selection to export entire workspace</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This action is typically configured in the translation app definition and can be triggered
  * on selected translation nodes or on the entire workspace root.
- * <p>
  * <p><strong>CSV Format:</strong></p>
  * The exported CSV contains a header row with "Key" and locale names, followed by rows with
  * translation keys and their values for each locale.

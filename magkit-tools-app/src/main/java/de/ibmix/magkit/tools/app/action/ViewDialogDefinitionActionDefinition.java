@@ -28,7 +28,6 @@ import static java.util.Collections.singletonList;
 
 /**
  * Configuration definition for {@link ViewDialogDefinitionAction}.
- * <p>
  * Sets the implementation class and configures availability rules to ensure
  * the action is only available for nodes with templates that have dialog definitions.
  *

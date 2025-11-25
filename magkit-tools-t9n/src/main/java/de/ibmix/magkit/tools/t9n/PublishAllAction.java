@@ -45,12 +45,10 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Action for publishing all translation nodes from a configured base path.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Activates all translation nodes within the configured base path to make them available
  * on public instances. This action simplifies the workflow of publishing multiple translations
  * at once without having to select and publish them individually.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Publishes all translation nodes from the configured base path</li>
@@ -58,11 +56,9 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
  * <li>Uses Magnolia's standard activation mechanism</li>
  * <li>Processes nodes asynchronously for better performance</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * This action is typically configured as a toolbar action in the translation app
  * and can be triggered to publish all translations at once.
- * <p>
  * <p><strong>Preconditions:</strong></p>
  * Requires proper publishing permissions and configured public instances.
  *

@@ -62,11 +62,9 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 
 /**
  * Magnolia install task that imports translation keys from property files into the translation workspace.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * This task reads translation entries from resource bundles (properties files) and creates corresponding
  * nodes in the Magnolia translation workspace if they don't already exist.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Imports translation keys from properties files for specified locales</li>
@@ -75,7 +73,6 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
  * <li>Automatically generates valid node names from translation keys</li>
  * <li>Sets last modified timestamps on created nodes</li>
  * </ul>
- * <p>
  * <p><strong>Usage Example:</strong></p>
  * <pre>
  * Task task = new AddTranslationEntryTask(
@@ -85,7 +82,6 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
  *     Locale.GERMAN
  * );
  * </pre>
- * <p>
  * <p><strong>Thread Safety:</strong></p>
  * This class is not thread-safe and should only be used within Magnolia's module installation context.
  *

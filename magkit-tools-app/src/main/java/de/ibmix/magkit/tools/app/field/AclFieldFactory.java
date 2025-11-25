@@ -32,7 +32,6 @@ import javax.inject.Inject;
 
 /**
  * Factory for creating AclField instances in Magnolia forms.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Creates configured AclField instances</li>

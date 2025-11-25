@@ -34,11 +34,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Constants and utility methods for working with translation node types in the JCR repository.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Provides centralized constants for the translation workspace, node type names, property names,
  * and utility functions for handling translation nodes and locale-specific properties.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Defines the translation workspace name</li>

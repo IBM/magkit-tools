@@ -24,7 +24,6 @@ import info.magnolia.ui.api.availability.ConfiguredAvailabilityRuleDefinition;
 
 /**
  * Configuration definition for {@link ViewTemplateDefinitionActionAvailabilityRule}.
- * <p>
  * Sets the implementation class to ViewTemplateDefinitionActionAvailabilityRule.
  *
  * @author Philipp Güttler (IBM iX)

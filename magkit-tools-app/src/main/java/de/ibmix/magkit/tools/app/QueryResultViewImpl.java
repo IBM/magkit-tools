@@ -34,14 +34,12 @@ import javax.jcr.query.QueryResult;
 
 /**
  * Implementation of QueryResultView for displaying JCR query results.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays query results in a QueryResultTable component</li>
  *   <li>Shows help documentation for JCR-SQL2 queries in a browser frame</li>
  *   <li>Dynamically replaces result table when new queries are executed</li>
  * </ul>
- * <p>
  * <p><strong>Layout:</strong></p>
  * The result section contains a help browser frame and the query result table.
  * On first query execution, the table is added; on subsequent executions, it replaces

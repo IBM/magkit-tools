@@ -43,12 +43,10 @@ import static org.apache.commons.lang3.StringUtils.contains;
 
 /**
  * Enhanced translation service that retrieves translations from the Magnolia translation workspace.
- * <p>
  * <p><strong>Purpose:</strong></p>
  * Extends Magnolia's default translation service to fetch translations from the JCR-based translation
  * workspace instead of or in addition to properties files, enabling runtime translation management
  * through the Magnolia UI.
- * <p>
  * <p><strong>Key Features:</strong></p>
  * <ul>
  * <li>Retrieves translations from the translation workspace via JCR queries</li>
@@ -58,10 +56,8 @@ import static org.apache.commons.lang3.StringUtils.contains;
  * <li>Operates in system context for consistent access regardless of user permissions</li>
  * <li>Validates keys to prevent SQL injection in JCR queries</li>
  * </ul>
- * <p>
  * <p><strong>Null Handling:</strong></p>
  * Returns the translation key itself if no translation is found, ensuring non-null return values.
- * <p>
  * <p><strong>Thread Safety:</strong></p>
  * This service is thread-safe as a singleton and uses Magnolia's context mechanism for request isolation.
  *

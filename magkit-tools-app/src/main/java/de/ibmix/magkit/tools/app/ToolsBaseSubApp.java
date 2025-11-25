@@ -29,7 +29,6 @@ import info.magnolia.ui.vaadin.form.FormViewReduced;
 
 /**
  * Abstract base class for form-based tool sub-applications.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Manages form view and result view lifecycle</li>
@@ -37,7 +36,6 @@ import info.magnolia.ui.vaadin.form.FormViewReduced;
  *   <li>Provides template method pattern for action execution</li>
  *   <li>Integrates form builder with sub-app context</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * Subclasses must implement the {@link #doAction()} method to define the specific
  * action to be performed when the form is valid and submitted.

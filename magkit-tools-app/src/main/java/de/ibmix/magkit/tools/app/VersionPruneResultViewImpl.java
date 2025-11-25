@@ -34,7 +34,6 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 
 /**
  * Implementation of VersionPruneResultView for displaying version pruning results.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays pruning results in a read-only text area</li>

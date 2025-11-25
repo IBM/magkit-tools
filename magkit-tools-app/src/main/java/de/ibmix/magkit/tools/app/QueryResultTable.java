@@ -37,7 +37,6 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 /**
  * Vaadin table component for displaying JCR query results.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays query results in a sortable table format</li>
@@ -46,7 +45,6 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
  *   <li>Normalizes column names for better readability</li>
  *   <li>Shows query execution time and row count in caption</li>
  * </ul>
- * <p>
  * <p><strong>Column Normalization:</strong></p>
  * Column names containing namespace prefixes are normalized to improve readability
  * by removing redundant prefixes when the selector name differs from the property name.

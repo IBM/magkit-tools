@@ -49,7 +49,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Sub-application for executing and displaying JCR query results in Magnolia CMS.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Executes JCR queries in various query languages (JCR-SQL2, XPath)</li>
@@ -58,11 +57,9 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
  *   <li>Remembers the last executed query in the session</li>
  *   <li>Allows display of paths, scores, and column values</li>
  * </ul>
- * <p>
  * <p><strong>Usage:</strong></p>
  * Users select a workspace, enter a query statement, choose the query language, and
  * configure display options before executing the query.
- * <p>
  * <p><strong>Session State:</strong></p>
  * The last executed query is stored in the session and pre-filled in the form on the next visit.
  *

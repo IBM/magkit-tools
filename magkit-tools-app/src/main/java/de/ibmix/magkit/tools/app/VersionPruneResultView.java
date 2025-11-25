@@ -22,7 +22,6 @@ package de.ibmix.magkit.tools.app;
 
 /**
  * View interface for displaying version pruning results.
- * <p>
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  *   <li>Displays version pruning operation results</li>

@@ -24,7 +24,6 @@ import info.magnolia.ui.api.availability.ConfiguredAvailabilityRuleDefinition;
 
 /**
  * Configuration definition for {@link ViewDialogDefinitionActionAvailabilityRule}.
- * <p>
  * Sets the implementation class to ViewDialogDefinitionActionAvailabilityRule.
  *
  * @author Philipp Güttler (IBM iX)
