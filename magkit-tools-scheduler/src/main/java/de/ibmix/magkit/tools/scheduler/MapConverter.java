@@ -67,6 +67,7 @@ public class MapConverter implements Converter<String, Map<String, String>> {
     /**
      * Converts a JSON string to a Map&lt;String, String&gt;.
      * The input string should contain JSON key-value pairs without outer curly braces.
+     * Any parsing exception (syntax or structural) results in an error Result.
      *
      * @param value the JSON string to convert (may be null)
      * @param context the value context for the conversion
@@ -83,6 +84,9 @@ public class MapConverter implements Converter<String, Map<String, String>> {
                 result = Result.ok(stringMap);
             } catch (JsonSyntaxException e) {
                 LOGGER.error("Error parsing json {}.", value, e);
+                result = Result.error("Invalid JSON syntax.");
+            } catch (Throwable t) {
+                LOGGER.error("Unexpected error parsing json {}.", value, t);
                 result = Result.error("Invalid JSON syntax.");
             }
         }
