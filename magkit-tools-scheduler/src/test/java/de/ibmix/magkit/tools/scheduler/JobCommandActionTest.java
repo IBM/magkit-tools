@@ -60,13 +60,14 @@ class JobCommandActionTest {
     private ValueContext<Node> _valueContext;
     private Context _context;
     private AsyncActionExecutor _asyncExecutor;
+    private DatasourceObservation.Manual _datasourceObservation;
 
     /**
      * Initializes common test fixtures and default action definition.
      */
     @BeforeEach
     void setUp() {
-        ComponentsMockUtils.mockComponentInstance(DatasourceObservation.Manual.class);
+        _datasourceObservation = ComponentsMockUtils.mockComponentInstance(DatasourceObservation.Manual.class);
         _commandsManager = mock(CommandsManager.class);
         _node2BeanProcessor = mock(Node2BeanProcessor.class);
         _definition = new CommandActionDefinition();
@@ -98,6 +99,7 @@ class JobCommandActionTest {
 
         assertTrue(action.executeForTest(node));
         verify(_commandsManager).executeCommand(eq("jobCatalog"), eq("jobCommand"), any(Map.class));
+        verify(_datasourceObservation).trigger();
     }
 
     /**
