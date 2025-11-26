@@ -67,6 +67,7 @@ class JobCommandActionTest {
      */
     @BeforeEach
     void setUp() {
+        ComponentsMockUtils.clearComponentProvider();
         _datasourceObservation = ComponentsMockUtils.mockComponentInstance(DatasourceObservation.Manual.class);
         _commandsManager = mock(CommandsManager.class);
         _node2BeanProcessor = mock(Node2BeanProcessor.class);
