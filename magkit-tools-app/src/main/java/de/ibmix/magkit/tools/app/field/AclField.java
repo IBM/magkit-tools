@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.field;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,9 +53,24 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.apache.commons.lang.StringUtils.substringAfter;
 
 /**
- * Field that shows acl of current user for different repositories.
+ * Custom Vaadin field that displays Access Control List (ACL) information for a user.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Displays ACL permissions for different JCR workspaces</li>
+ *   <li>Shows permissions inherited from direct role assignments</li>
+ *   <li>Shows permissions inherited from group memberships</li>
+ *   <li>Presents data in a grid layout with path, permission, and role columns</li>
+ *   <li>Translates permission codes to human-readable labels</li>
+ * </ul>
+ * <p><strong>Usage:</strong></p>
+ * This field is typically used in user management interfaces to display the effective
+ * permissions a user has across different repositories through their roles and group memberships.
+ * <p><strong>Permission Display:</strong></p>
+ * Permissions are displayed as read-only, read-write, or deny access based on the
+ * ACL configuration in the user's roles.
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 public class AclField extends CustomField<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(AclField.class);
@@ -67,18 +82,31 @@ public class AclField extends CustomField<Object> {
     private static final String ROW_CSS_STYLE = CSS_PREFIX + "row";
 
     private final Item _relatedFieldItem;
-    private GridLayout _layout;
+    private final GridLayout _layout;
 
     private int _currentRow;
 
     private final SimpleTranslator _i18n;
 
+    /**
+     * Constructs a new AclField instance.
+     *
+     * @param relatedFieldItem the JCR node item representing the user
+     * @param i18n the translator for i18n support
+     */
     public AclField(Item relatedFieldItem, SimpleTranslator i18n) {
         _relatedFieldItem = relatedFieldItem;
         _layout = new GridLayout();
         _i18n = i18n;
     }
 
+    /**
+     * Initializes and builds the content of the ACL field.
+     * Retrieves the user's roles from direct assignments and group memberships,
+     * then displays the ACL information for each repository.
+     *
+     * @return the Vaadin component containing the ACL grid or null if item is invalid
+     */
     @Override
     protected Component initContent() {
         AbstractJcrNodeAdapter item;
@@ -127,7 +155,7 @@ public class AclField extends CustomField<Object> {
         return _layout;
     }
 
-    private void addHeaderRow() {
+    void addHeaderRow() {
         Label permission = new Label();
         permission.addStyleName(SECTION_CSS_STYLE);
         permission.setValue("PERMISSION");
@@ -143,7 +171,7 @@ public class AclField extends CustomField<Object> {
         _currentRow++;
     }
 
-    private List<Node> getRoles(Node node) {
+    List<Node> getRoles(Node node) {
         List<Node> roleNodes = new ArrayList<>();
         try {
             Node roles = node.getNode("roles");
@@ -158,12 +186,12 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user role '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user role '{}'.", getPathIfPossible(node), e);
         }
         return roleNodes;
     }
 
-    private List<Node> getRolesFromGroup(Node node) {
+    List<Node> getRolesFromGroup(Node node) {
         List<Node> roleNodes = new ArrayList<>();
         try {
             Node groups = node.getNode("groups");
@@ -179,12 +207,12 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user group '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user group '{}'.", getPathIfPossible(node), e);
         }
         return roleNodes;
     }
 
-    private static List<Property> getProperties(Node node) {
+    static List<Property> getProperties(Node node) {
         List<Property> result = new LinkedList<>();
         try {
             PropertyIterator properties = node.getProperties();
@@ -198,12 +226,18 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.error("Could not get properties for node " + node, e);
+            LOGGER.error("Could not get properties for node {}", getPathIfPossible(node), e);
         }
         return result;
     }
 
-    private Map<String, List<Acl>> getRepositories(Node node) {
+    /**
+     * Retrieves all ACL information from a role node grouped by repository.
+     *
+     * @param node the role node
+     * @return map of repository names to lists of ACL entries
+     */
+    Map<String, List<Acl>> getRepositories(Node node) {
         Map<String, List<Acl>> repositoryMap = new HashMap<>();
         try {
             NodeIterator repositoryNodes = node.getNodes("acl_*");
@@ -224,12 +258,12 @@ public class AclField extends CustomField<Object> {
                 }
             }
         } catch (RepositoryException e) {
-            LOGGER.warn("Can't get acls for user '" + getPathIfPossible(node) + "'.", e);
+            LOGGER.warn("Can't get acls for user '{}'.", getPathIfPossible(node), e);
         }
         return repositoryMap;
     }
 
-    private String getPermissionString(Long permission) {
+    String getPermissionString(Long permission) {
         String permissionString = EMPTY;
         if (permission != null) {
             if (permission == Permission.ALL) {
@@ -248,7 +282,7 @@ public class AclField extends CustomField<Object> {
         return Object.class;
     }
 
-    private void addReferencesToGrid(String headline, List<Acl> aclList) {
+    void addReferencesToGrid(String headline, List<Acl> aclList) {
         Label headlineLabel = new Label();
         headlineLabel.setValue(headline);
         headlineLabel.addStyleName(SECTION_CSS_STYLE);
@@ -281,11 +315,21 @@ public class AclField extends CustomField<Object> {
         }
     }
 
-    private class Acl {
+    /**
+     * Data holder class for ACL information.
+     */
+    static class Acl {
         private String _permission;
         private String _path;
         private String _role;
 
+        /**
+         * Constructs a new Acl instance.
+         *
+         * @param permission the permission type
+         * @param path the node path
+         * @param role the role name
+         */
         Acl(String permission, String path, String role) {
             _permission = permission;
             _path = path;

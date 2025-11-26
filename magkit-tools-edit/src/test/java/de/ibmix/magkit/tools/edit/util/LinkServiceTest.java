@@ -22,90 +22,158 @@ package de.ibmix.magkit.tools.edit.util;
 
 import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import de.ibmix.magkit.tools.edit.setup.PublicLinkConfig;
-import info.magnolia.module.site.ConfiguredSite;
-import info.magnolia.module.site.Site;
-import info.magnolia.module.site.SiteManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import info.magnolia.cms.core.AggregationState;
+import info.magnolia.init.MagnoliaConfigurationProperties;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static de.ibmix.magkit.test.cms.context.AggregationStateStubbingOperation.stubCharacterEncoding;
+import static de.ibmix.magkit.test.cms.context.AggregationStateStubbingOperation.stubMainContentNode;
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockAggregationState;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
+import static de.ibmix.magkit.test.cms.context.ServerConfigurationMockUtils.mockServerConfiguration;
+import static de.ibmix.magkit.test.cms.context.ServerConfigurationStubbingOperation.stubDefaultBaseUrl;
+import static de.ibmix.magkit.test.cms.context.ServerConfigurationStubbingOperation.stubDefaultExtension;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubContextPath;
+import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockContentNode;
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
-import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertThat;
+import static de.ibmix.magkit.test.cms.site.SiteMockUtils.mockAssignedSite;
+import static de.ibmix.magkit.test.cms.site.SiteMockUtils.mockSiteManager;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the LinkService.
+ * Unit tests for {@link LinkService}.
  *
  * @author frank.sommer
- * @since 09.07.2015
+ * @since 2015-07-09
  */
 public class LinkServiceTest {
 
     private LinkService _linkService;
     private Node _site1Node;
     private Node _site2Node;
+    private EditToolsModule _editToolsModule;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
+        mockServerConfiguration(stubDefaultExtension("html"), stubDefaultBaseUrl("https://test.ibmix.de"));
         mockWebContext(stubContextPath("/author"));
-        _linkService = new LinkService() {
-            @Override
-            protected String createExternalLink(final Node node) {
-                return "https://www.domain.ch/author" + getPathIfPossible(node) + ".html";
-            }
-        };
+        mockAggregationState(stubCharacterEncoding("UTF-8"));
+        _linkService = new LinkService();
 
         _site1Node = mockPageNode("/site1/de");
         _site2Node = mockPageNode("/site2/de");
 
-        final SiteManager siteManager = mock(SiteManager.class);
-        when(siteManager.getAssignedSite(_site1Node)).thenReturn(createSite("site1"));
-        when(siteManager.getAssignedSite(_site2Node)).thenReturn(createSite("site2"));
-        _linkService.setSiteManager(siteManager);
+        mockAssignedSite(_site1Node, "site1");
+        mockAssignedSite(_site2Node, "site2");
+        _linkService.setSiteManager(mockSiteManager());
 
-        final EditToolsModule editToolsModule = new EditToolsModule();
+        _editToolsModule = new EditToolsModule();
         final PublicLinkConfig publicLinkConfig = new PublicLinkConfig();
         publicLinkConfig.setExtendedLinkGeneration(true);
         Map<String, String> siteHosts = new HashMap<>();
         siteHosts.put("site2", "https://www.public.ch");
         publicLinkConfig.setSiteHosts(siteHosts);
-        editToolsModule.setPublicLinkConfig(publicLinkConfig);
-        _linkService.setEditToolsModule(editToolsModule);
+        _editToolsModule.setPublicLinkConfig(publicLinkConfig);
+        _linkService.setEditToolsModule(_editToolsModule);
     }
 
-    private Site createSite(final String siteName) {
-        ConfiguredSite site = new ConfiguredSite();
-        site.setName(siteName);
-        return site;
-    }
-
-    @After
+    @AfterEach
     public void tearDown() {
         cleanContext();
     }
 
     @Test
     public void testNotExistingNodePath() {
-        assertThat(_linkService.getPublicLink(null), equalTo(""));
+        assertEquals("", _linkService.getPublicLink(null));
     }
 
     @Test
     public void testDefaultLinkRendering() {
-        assertThat(_linkService.getPublicLink(_site1Node), equalTo("https://www.domain.ch/site1/de.html"));
+        assertEquals("https://test.ibmix.de/site1/de.html", _linkService.getPublicLink(_site1Node));
     }
 
     @Test
     public void testSiteLinkRendering() {
-        assertThat(_linkService.getPublicLink(_site2Node), equalTo("https://www.public.ch/site2/de.html"));
+        assertEquals("https://www.public.ch/site2/de.html", _linkService.getPublicLink(_site2Node));
+    }
+
+    @Test
+    public void testPublicLinkRenderingForContentNodeUsesPageAncestor() throws Exception {
+        Node contentNode = mockContentNode("/site1/de/main/content");
+        mockAssignedSite(contentNode, "site1");
+        assertEquals("https://test.ibmix.de/site1/de.html", _linkService.getPublicLink(contentNode));
+    }
+
+    @Test
+    public void testSiteLinkRenderingWithoutExtendedGeneration() {
+        PublicLinkConfig newConfig = new PublicLinkConfig();
+        newConfig.setExtendedLinkGeneration(false);
+        Map<String, String> siteHosts = new HashMap<>();
+        siteHosts.put("site2", "https://www.public.ch");
+        newConfig.setSiteHosts(siteHosts);
+        _editToolsModule.setPublicLinkConfig(newConfig);
+        assertEquals("https://test.ibmix.de/site2/de.html", _linkService.getPublicLink(_site2Node));
+    }
+
+    @Test
+    public void testDefaultLinkRenderingWithoutContextPath() throws Exception {
+        mockWebContext(stubContextPath(""));
+        LinkService linkServiceNoCtx = new LinkService();
+        mockAssignedSite(_site1Node, "site1");
+        linkServiceNoCtx.setSiteManager(mockSiteManager());
+        linkServiceNoCtx.setEditToolsModule(_editToolsModule);
+        assertEquals("https://test.ibmix.de/site1/de.html", linkServiceNoCtx.getPublicLink(_site1Node));
+    }
+
+    @Test
+    void getAuthorBasePath() {
+        MagnoliaConfigurationProperties properties = mock(MagnoliaConfigurationProperties.class);
+        when(properties.getProperty("magnolia.author.basePath")).thenReturn("/author");
+        _linkService.setMagnoliaConfigurationProperties(properties);
+        assertEquals("/author", _linkService.getAuthorBasePath());
+
+        // call again to test caching
+        when(properties.getProperty("magnolia.author.basePath")).thenReturn("/other");
+        assertEquals("/author", _linkService.getAuthorBasePath());
+    }
+
+    @Test
+    void createPageEditorLink() throws RepositoryException {
+        MagnoliaConfigurationProperties properties = mock(MagnoliaConfigurationProperties.class);
+        when(properties.getProperty("magnolia.author.basePath")).thenReturn("/author");
+        _linkService.setMagnoliaConfigurationProperties(properties);
+        assertEquals("", _linkService.createPageEditorLink());
+
+        when(properties.getProperty("magnolia.author.basePath")).thenReturn("/author");
+        AggregationState state = mockAggregationState();
+        assertEquals("", _linkService.createPageEditorLink());
+
+        stubMainContentNode("/site1/de").of(state);
+        assertEquals("/author/.magnolia/admincentral#app:pages:detail;/site1/de:edit", _linkService.createPageEditorLink());
+    }
+
+    @Test
+    void createPageEditorLinkWithoutBasePath() {
+        MagnoliaConfigurationProperties properties = mock(MagnoliaConfigurationProperties.class);
+        _linkService.setMagnoliaConfigurationProperties(properties);
+        assertEquals("", _linkService.createPageEditorLink());
+    }
+
+    @Test
+    void createExternalLink() throws RepositoryException {
+        assertNull(_linkService.createExternalLink(null));
+        Node page = mockPageNode("/site1/de");
+        assertEquals("https://test.ibmix.de/site1/de.html", _linkService.createExternalLink(page));
     }
 }

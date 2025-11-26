@@ -36,10 +36,23 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * Action definition to execute the command from the selected job.
+ * Action to execute the command associated with a selected Magnolia scheduler job.
+ * This action extends the standard CommandAction to specifically handle job definitions stored in JCR nodes.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Extracts job configuration from JCR nodes using Node2BeanProcessor</li>
+ * <li>Executes commands with catalog and command name from job definition</li>
+ * <li>Merges job-specific parameters with action parameters</li>
+ * <li>Falls back to definition defaults if job configuration is incomplete</li>
+ * </ul>
+ *
+ * <p><strong>Usage:</strong></p>
+ * This action is typically configured in a content app definition for the scheduler module,
+ * allowing users to manually trigger job commands from the Magnolia AdminCentral UI.
  *
  * @author frank.sommer
- * @since 25.08.2023
+ * @since 2023-08-25
  */
 @Slf4j
 public class JobCommandAction extends CommandAction<Node, CommandActionDefinition> {
@@ -47,6 +60,16 @@ public class JobCommandAction extends CommandAction<Node, CommandActionDefinitio
     private final CommandsManager _commandsManager;
     private final Node2BeanProcessor _nodeToBeanProcessor;
 
+    /**
+     * Creates a new JobCommandAction instance with required dependencies.
+     *
+     * @param definition the command action definition containing configuration
+     * @param commandsManager the manager for executing Magnolia commands
+     * @param valueContext the context providing access to selected JCR nodes
+     * @param context the Magnolia context for command execution
+     * @param asyncActionExecutor the executor for asynchronous action execution
+     * @param nodeToBeanProcessor the processor for converting JCR nodes to Java beans
+     */
     @Inject
     public JobCommandAction(CommandActionDefinition definition, CommandsManager commandsManager, ValueContext<Node> valueContext, Context context, AsyncActionExecutor asyncActionExecutor, Node2BeanProcessor nodeToBeanProcessor) {
         super(definition, commandsManager, valueContext, context, asyncActionExecutor);
@@ -54,6 +77,15 @@ public class JobCommandAction extends CommandAction<Node, CommandActionDefinitio
         _nodeToBeanProcessor = nodeToBeanProcessor;
     }
 
+    /**
+     * Executes the command configured in the given job definition node.
+     * Converts the JCR node to a JobDefinition bean, extracts command details,
+     * merges parameters, and executes the command via CommandsManager.
+     *
+     * @param node the JCR node representing the job definition
+     * @return true if the command was executed successfully, false otherwise
+     * @throws Exception if an error occurs during job definition conversion or command execution
+     */
     @Override
     protected boolean executeCommand(Node node) throws Exception {
         final JobDefinition jobDefinition = (JobDefinition) _nodeToBeanProcessor.toBean(node, JobDefinition.class);

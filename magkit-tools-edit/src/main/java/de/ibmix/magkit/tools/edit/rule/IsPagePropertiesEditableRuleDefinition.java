@@ -24,8 +24,28 @@ import info.magnolia.ui.api.availability.AvailabilityRuleType;
 import info.magnolia.ui.api.availability.ConfiguredAvailabilityRuleDefinition;
 
 /**
+ * Configuration definition for the {@link IsPagePropertiesEditableRule} availability rule.
+ * This definition is automatically registered with the availability rule type "isPagePropertiesEditable"
+ * for use in Magnolia UI action configurations.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Registered as availability rule type "isPagePropertiesEditable"</li>
+ * <li>Used to control visibility of page property editing actions</li>
+ * <li>No additional configuration properties beyond the base rule definition</li>
+ * </ul>
+ *
+ * <p><strong>Usage Example:</strong></p>
+ * <pre>
+ * availability:
+ *   rules:
+ *     - name: isPagePropertiesEditable
+ *       implementationClass: de.ibmix.magkit.tools.edit.rule.IsPagePropertiesEditableRule
+ * </pre>
+ *
  * @author Philipp Güttler (IBM iX)
- * @since 19.02.2021
+ * @see IsPagePropertiesEditableRule
+ * @since 2021-02-19
  */
 @AvailabilityRuleType("isPagePropertiesEditable")
 public class IsPagePropertiesEditableRuleDefinition extends ConfiguredAvailabilityRuleDefinition {

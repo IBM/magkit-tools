@@ -20,47 +20,96 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
+import de.ibmix.magkit.test.jcr.SessionMockUtils;
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
-import info.magnolia.test.mock.jcr.MockNode;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import java.util.Locale;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
+import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubProperty;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Test the translation node type.
+ * Tests for {@link TranslationNodeTypes}.
  *
  * @author frank.sommer
- * @since 19.09.2023
+ * @since 2023-09-19
  */
 public class TranslationNodeTypesTest {
     @Test
     public void languagePropertyName() {
         final String[] propertyNames = Translation.LOCALE_TO_PROPERTY_NAMES.apply(Locale.GERMAN);
-        assertThat(propertyNames.length, is(1));
-        assertThat(propertyNames[0], equalTo("translation_de"));
+        assertEquals(1, propertyNames.length);
+        assertEquals("translation_de", propertyNames[0]);
     }
 
     @Test
     public void localePropertyNames() {
         final String[] propertyNames = Translation.LOCALE_TO_PROPERTY_NAMES.apply(Locale.CANADA_FRENCH);
-        assertThat(propertyNames.length, is(2));
-        assertThat(propertyNames[0], equalTo("translation_fr_CA"));
-        assertThat(propertyNames[1], equalTo("translation_fr"));
+        assertEquals(2, propertyNames.length);
+        assertEquals("translation_fr_CA", propertyNames[0]);
+        assertEquals("translation_fr", propertyNames[1]);
     }
 
     @Test
     public void valueFromNull() {
-        assertThat(Translation.retrieveValue(null, new String[]{"1"}), equalTo(""));
+        assertEquals("", Translation.retrieveValue(null, new String[]{"1"}));
     }
 
     @Test
-    public void valueWithEmptyPropertyNames() {
-        final Node node = new MockNode();
-        assertThat(Translation.retrieveValue(node, new String[0]), equalTo(""));
+    public void valueWithEmptyPropertyNames() throws RepositoryException {
+        final Node node = mockNode("translation", "/test/node");
+        assertEquals("", Translation.retrieveValue(node, new String[0]));
+        assertTrue(Translation.retrieveValue(node, new String[0]).isEmpty());
+    }
+
+    /**
+     * Verifies retrieveValue returns the value of the first property when present and non-empty.
+     */
+    @Test
+    public void retrieveValueReturnsFirstValue() throws javax.jcr.RepositoryException {
+        final Node node = mockNode("translation", "/test/node", stubProperty("translation_de_DE", "Hallo"), stubProperty("translation_de", "HalloFallback"));
+        final String[] propertyNames = new String[]{"translation_de_DE", "translation_de"};
+        assertEquals("Hallo", TranslationNodeTypes.Translation.retrieveValue(node, propertyNames));
+    }
+
+    /**
+     * Verifies retrieveValue falls back to second property when first is missing.
+     */
+    @Test
+    public void retrieveValueFallsBackWhenFirstMissing() throws javax.jcr.RepositoryException {
+        final Node node = mockNode("translation", "/test/node", stubProperty("translation_de", "HalloFallback"));
+        final String[] propertyNames = new String[]{"translation_de_DE", "translation_de"};
+        assertEquals("HalloFallback", TranslationNodeTypes.Translation.retrieveValue(node, propertyNames));
+    }
+
+    /**
+     * Verifies retrieveValue falls back to second property when first is empty string.
+     */
+    @Test
+    public void retrieveValueFallsBackWhenFirstEmpty() throws javax.jcr.RepositoryException {
+        final Node node = mockNode("translation", "/test/node", stubProperty("translation_de_DE", ""), stubProperty("translation_de", "HalloFallback"));
+        final String[] propertyNames = new String[]{"translation_de_DE", "translation_de"};
+        assertEquals("HalloFallback", TranslationNodeTypes.Translation.retrieveValue(node, propertyNames));
+    }
+
+    /**
+     * Verifies retrieveValue returns empty when both properties are missing or empty.
+     */
+    @Test
+    public void retrieveValueReturnsEmptyWhenBothMissing() throws javax.jcr.RepositoryException {
+        final Node node = mockNode("translation", "/test/node");
+        final String[] propertyNames = new String[]{"translation_de_DE", "translation_de"};
+        assertEquals("", TranslationNodeTypes.Translation.retrieveValue(node, propertyNames));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        SessionMockUtils.cleanSession();
     }
 }

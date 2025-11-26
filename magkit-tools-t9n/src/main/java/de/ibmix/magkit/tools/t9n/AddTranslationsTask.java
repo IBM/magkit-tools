@@ -24,6 +24,7 @@ import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
 import info.magnolia.jcr.nodebuilder.AbstractNodeOperation;
 import info.magnolia.jcr.nodebuilder.ErrorHandler;
 import info.magnolia.jcr.nodebuilder.task.NodeBuilderTask;
+import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.Task;
@@ -50,14 +51,41 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
- * Task for adding missing translations from legacy properties to app.
+ * Enhanced translation import task that handles multiple locales and updates existing translations.
+ * <p><strong>Purpose:</strong></p>
+ * Extends {@link AddTranslationEntryTask} to support importing translations for multiple locales
+ * at once and intelligently updating existing translation nodes with missing locale values.
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Imports translations for multiple locales in a single task</li>
+ * <li>Creates new translation nodes where needed</li>
+ * <li>Updates existing nodes by adding missing locale properties</li>
+ * <li>Skips properties that already have values to preserve manual edits</li>
+ * <li>Supports custom base paths for organizing translations</li>
+ * </ul>
+ * <p><strong>Usage Example:</strong></p>
+ * <pre>
+ * Task task = new AddTranslationsTask(
+ *     "com.example.messages",
+ *     Locale.ENGLISH, Locale.GERMAN, Locale.FRENCH
+ * );
+ * </pre>
+ * <p><strong>Migration Use Case:</strong></p>
+ * This task is particularly useful for migrating from legacy property file-based translations
+ * to the JCR-based translation workspace.
  *
  * @author frank.sommer
- * @since 27.11.2017
+ * @since 2017-11-27
  */
 public class AddTranslationsTask extends AddTranslationEntryTask {
     private final Locale[] _locales;
 
+    /**
+     * Creates a new task to import translations for multiple locales.
+     *
+     * @param baseName the fully qualified base name of the resource bundle (e.g., "com.example.messages")
+     * @param locales the locales for which to import translations (at least one required)
+     */
     public AddTranslationsTask(String baseName, Locale... locales) {
         this("Add translations for " + baseName,
             "Add translations for " + baseName + " in locales " + join(locales, ", "),
@@ -67,28 +95,48 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
         );
     }
 
+    /**
+     * Creates a new task to import translations for multiple locales with custom name and base path.
+     *
+     * @param name the display name of the task
+     * @param description the detailed description of what the task does
+     * @param baseName the fully qualified base name of the resource bundle
+     * @param basePath the base path in the translation workspace where nodes will be created
+     * @param locales the locales for which to import translations (at least one required)
+     */
     public AddTranslationsTask(String name, String description, String baseName, String basePath, Locale... locales) {
         super(name, description, baseName, locales[0], basePath);
         _locales = Arrays.copyOfRange(locales, 1, locales.length);
     }
 
+    /**
+     * Processes all locales and creates tasks for creating or updating translation nodes.
+     * For each locale, checks existing nodes and only adds missing properties.
+     *
+     * @param task the delegate task to which individual translation import tasks are added
+     * @param installContext the installation context for warnings and errors
+     */
     @Override
     protected void addTranslationNodeTasks(ArrayDelegateTask task, InstallContext installContext) {
         super.addTranslationNodeTasks(task, installContext);
         for (Locale locale : _locales) {
-            addTasksForResource(getResource(locale.toString()), new ResourceBundleConsumer(locale, installContext, task));
+            addTasksForResource(getResource(locale.toString()), new ResourceBundleConsumer(locale, installContext, task, getBasePath(), getNodeNameHelper()));
         }
     }
 
-    private class ResourceBundleConsumer implements Consumer<ResourceBundle> {
+    static class ResourceBundleConsumer implements Consumer<ResourceBundle> {
         private final Locale _locale;
         private final InstallContext _installContext;
         private final ArrayDelegateTask _task;
+        private final String _basePath;
+        private final NodeNameHelper _nodeNameHelper;
 
-        ResourceBundleConsumer(Locale locale, InstallContext installContext, ArrayDelegateTask task) {
+        ResourceBundleConsumer(Locale locale, InstallContext installContext, ArrayDelegateTask task, String basePath, NodeNameHelper nodeNameHelper) {
             _locale = locale;
             _installContext = installContext;
             _task = task;
+            _basePath = basePath;
+            _nodeNameHelper = nodeNameHelper;
         }
 
         @Override
@@ -104,9 +152,9 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
             }
         }
 
-        private void addTaskForKey(ResourceBundle bundle, String key, Session session) {
-            String keyNodeName = AddTranslationsTask.this.getNodeNameHelper().getValidatedName(key);
-            String nodePath = AddTranslationsTask.this.getBasePath() + keyNodeName;
+        void addTaskForKey(ResourceBundle bundle, String key, Session session) {
+            String keyNodeName = _nodeNameHelper.getValidatedName(key);
+            String nodePath = _basePath + keyNodeName;
 
             try {
                 final String propertyName = Translation.PREFIX_NAME + _locale;
@@ -128,7 +176,7 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
             }
         }
 
-        private Task createAddTranslationOperation(String nodePath, String key, String propertyName, String translation) {
+        Task createAddTranslationOperation(String nodePath, String key, String propertyName, String translation) {
             String name = removeStart(nodePath, ROOT_PATH);
             return new NodeBuilderTask("Add translation for probably existing node", "", logging, WS_TRANSLATION,
                 new AbstractNodeOperation() {

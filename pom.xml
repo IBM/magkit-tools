@@ -19,12 +19,24 @@
     </modules>
 
     <properties>
-        <version.magkit>1.0.0</version.magkit>
-        <version.magkit.test>1.0.5</version.magkit.test>
+        <version.magnolia>6.2.45</version.magnolia>
+        <version.magkit>1.0.1</version.magkit>
+        <version.magkit.test>1.0.10</version.magkit.test>
+        <junit.jupiter.version>5.14.0</junit.jupiter.version>
+        <mockitoVersion>5.20.0</mockitoVersion>
+        <commons.collections4.version>4.5.0</commons.collections4.version>
+        <maven-surefire-plugin.version>3.5.4</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Third party dependencies: -->
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons.collections4.version}</version>
+            </dependency>
+            <!-- Magkit dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-core</artifactId>
@@ -35,14 +47,37 @@
                 <artifactId>magkit-setup</artifactId>
                 <version>${version.magkit}</version>
             </dependency>
+            <!-- Test dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-test-cms</artifactId>
                 <version>${version.magkit.test}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit.jupiter.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <scope>test</scope>
+                <version>${mockitoVersion}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+            </plugin>
+        </plugins>
+    </build>
 
     <scm>
         <url>https://github.com/IBM/magkit-tools.git</url>
@@ -52,6 +87,10 @@
     </scm>
 
     <repositories>
+        <repository>
+            <id>magnolia.forge.releases</id>
+            <url>https://nexus.magnolia-cms.com/repository/magnolia.forge.releases/</url>
+        </repository>
         <repository>
             <id>magnolia.enterprise</id>
             <name>Magnolia Enterprise Group</name>

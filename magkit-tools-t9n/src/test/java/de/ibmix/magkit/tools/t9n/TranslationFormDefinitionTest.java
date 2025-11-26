@@ -20,60 +20,112 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
-import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.security.User;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.field.EditorPropertyDefinition;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import javax.jcr.RepositoryException;
 import java.util.List;
 import java.util.Locale;
 
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
+import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI18nContentSupport;
+import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubLocales;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsEqual.equalTo;
+import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
+import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * Test the form creation.
+ * Tests for {@link TranslationFormDefinition}.
  *
  * @author frank.sommer
- * @since 23.08.2022
+ * @since 2022-08-23
  */
 public class TranslationFormDefinitionTest {
-    @Before
-    public void setUp() throws Exception {
-        final User user = mock(User.class);
-        when(user.getLanguage()).thenReturn("en");
-        mockWebContext(stubUser(user));
+    private SimpleTranslator _simpleTranslator;
 
-        final SimpleTranslator simpleTranslator = mockComponentInstance(SimpleTranslator.class);
-        when(simpleTranslator.translate(anyString())).thenReturn("Key");
+    @BeforeEach
+    public void setUp() throws Exception {
+        final User user = mockUser("Paul", stubLanguage("en"));
+        mockWebContext(stubUser(user));
+        _simpleTranslator = mockComponentInstance(SimpleTranslator.class);
+        when(_simpleTranslator.translate(anyString())).thenReturn("Key");
     }
 
+    /**
+     * Verifies property names, ordering and country suffix handling.
+     */
     @Test
-    public void testLocaleFields() {
-        final I18nContentSupport i18nContentSupport = mockComponentInstance(I18nContentSupport.class);
-        when(i18nContentSupport.getLocales()).thenReturn(List.of(Locale.ENGLISH, Locale.UK));
-
+    public void testPropertyNamesAndOrder() throws RepositoryException {
+        mockI18nContentSupport(stubLocales(Locale.ENGLISH, Locale.GERMANY, Locale.FRANCE));
         final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
-
-        assertThat(properties.size(), is(3));
-        assertThat(properties.get(0).getLabel(), equalTo("Key"));
-        assertThat(properties.get(1).getLabel(), equalTo("English"));
-        assertThat(properties.get(2).getLabel(), equalTo("English (United Kingdom)"));
+        assertEquals(4, properties.size());
+        assertTrue(properties.stream().allMatch(p -> p.getLabel() != null));
+        assertEquals(TranslationNodeTypes.Translation.PN_KEY, properties.get(0).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH, properties.get(1).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.GERMANY, properties.get(2).getName());
+        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.FRANCE, properties.get(3).getName());
+        assertEquals("English", properties.get(1).getLabel());
+        assertEquals("German (Germany)", properties.get(2).getLabel());
+        assertEquals("French (France)", properties.get(3).getLabel());
     }
 
-    @After
+    /**
+     * Verifies that user locale influences language and country display names.
+     */
+    @Test
+    public void testUserLocaleInfluencesLabels() throws Exception {
+        cleanContext();
+        final User user = mockUser("Erika", stubLanguage("de"));
+        mockWebContext(stubUser(user));
+        _simpleTranslator = mockComponentInstance(SimpleTranslator.class);
+        when(_simpleTranslator.translate(anyString())).thenReturn("Schlüssel");
+        mockI18nContentSupport(stubLocales(Locale.FRANCE, Locale.ITALY));
+        final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
+        final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
+        assertEquals(3, properties.size());
+        assertEquals("Schlüssel", properties.get(0).getLabel());
+        // German localized names (Java default locale data)
+        assertEquals("Französisch (Frankreich)", properties.get(1).getLabel());
+        assertEquals("Italienisch (Italien)", properties.get(2).getLabel());
+    }
+
+    /**
+     * Verifies only key property is created when no locales are configured.
+     */
+    @Test
+    public void testNoLocalesConfigured() throws RepositoryException {
+        mockI18nContentSupport(stubLocales());
+        final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
+        final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
+        assertEquals(1, properties.size());
+        assertEquals(TranslationNodeTypes.Translation.PN_KEY, properties.get(0).getName());
+        assertEquals("Key", properties.get(0).getLabel());
+    }
+
+    /**
+     * Verifies translator invocation with expected key label pattern.
+     */
+    @Test
+    public void testTranslatorInvocation() throws RepositoryException {
+        mockI18nContentSupport(stubLocales(Locale.ENGLISH));
+        final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
+        translationFormDefinition.getProperties();
+        verify(_simpleTranslator).translate("translation.jcrDetail.main.key.label");
+    }
+
+    @AfterEach
     public void tearDown() {
         cleanContext();
     }

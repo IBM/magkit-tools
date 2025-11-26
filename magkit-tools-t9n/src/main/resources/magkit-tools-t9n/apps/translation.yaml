@@ -10,6 +10,7 @@ subApps:
       workspace: translation
       describeByProperty: key
       # need to add ordering explicitly so entries stop moving out of viewport after status change
+      # However, this does not help.
       sortBy:
         key: ascending
       allowedNodeTypes:

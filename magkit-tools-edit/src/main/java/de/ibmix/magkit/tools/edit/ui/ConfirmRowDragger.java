@@ -45,12 +45,33 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Custom {@link info.magnolia.ui.contentapp.browser.drop.RowDragger} with additional confirmation dialog on drop.
+ * Custom grid row dragger that displays a confirmation dialog before moving items in the content browser.
+ * This component extends Vaadin's {@link GridRowDragger} and adds an optional confirmation step before
+ * executing move operations, configurable per JCR workspace.
  *
- * @param <T> item type
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Optional confirmation dialog before moving items via drag and drop</li>
+ * <li>Configurable per JCR workspace through {@link EditToolsModule}</li>
+ * <li>Displays list of items to be moved in the confirmation dialog</li>
+ * <li>Integration with Magnolia's drop constraints for validation</li>
+ * </ul>
+ *
+ * <p><strong>Configuration:</strong></p>
+ * Configure the workspaces that require confirmation dialogs in the EditToolsModule configuration
+ * using the "moveConfirmWorkspaces" property.
+ *
+ * <p><strong>Usage:</strong></p>
+ * This component is typically injected and configured automatically by Magnolia's dependency injection
+ * framework when used in content browser configurations.
+ *
+ * <p><strong>Thread Safety:</strong></p>
+ * This component is designed for single-threaded UI operations within Vaadin's session context.
+ *
+ * @param <T> the type of items in the grid (typically JCR nodes)
  * @author Philipp Güttler (IBM iX)
  * @see info.magnolia.ui.contentapp.browser.drop.RowDragger
- * @since 1.4.1
+ * @since 2020-01-01
  */
 public class ConfirmRowDragger<T> extends GridRowDragger<T> {
 
@@ -87,9 +108,7 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
                         .withLevel(Notification.Type.WARNING_MESSAGE)
                         .withOkButtonCaption(_simpleTranslator.translate("magkit.moveItem.confirmText"))
                         .withDeclineButtonCaption(_simpleTranslator.translate("magkit.moveItem.cancelText"))
-                        .withConfirmationHandler(() -> {
-                            doMoveItems(datasource, grid, items);
-                        })
+                        .withConfirmationHandler(() -> doMoveItems(datasource, grid, items))
                         .buildAndOpen();
                 } else {
                     // move without confirmation
@@ -99,6 +118,12 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
         });
     }
 
+    /**
+     * Creates the HTML content for the confirmation dialog body, listing all items to be moved.
+     *
+     * @param items the collection of items to be moved
+     * @return HTML string with an unordered list of item paths
+     */
     protected String createConfirmContent(final Collection<T> items) {
         StringBuilder bodyText = new StringBuilder("<ul>");
 
@@ -117,11 +142,25 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
         return bodyText.append("</ul>").toString();
     }
 
+    /**
+     * Executes the move operation for the given items and refreshes the grid display.
+     *
+     * @param datasource the datasource managing the items
+     * @param grid the grid component displaying the items
+     * @param items the collection of items to move
+     */
     protected void doMoveItems(final Datasource<T> datasource, final Grid<T> grid, final Collection<T> items) {
         datasource.moveItems(items, getTarget(), getDropLocation());
         grid.getDataProvider().refreshAll();
     }
 
+    /**
+     * Determines whether a confirmation dialog should be shown for the current datasource.
+     * Confirmation is only shown for JCR datasources in workspaces configured in the EditToolsModule.
+     *
+     * @param datasource the datasource to check
+     * @return true if a confirmation dialog should be shown, false otherwise
+     */
     protected boolean showConfirmation(final Datasource<T> datasource) {
         if (!(datasource instanceof JcrDatasource)) {
             return false;
@@ -144,6 +183,12 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
         return isEnabled;
     }
 
+    /**
+     * Creates the confirmation dialog title based on the number of items being moved.
+     *
+     * @param items the collection of items to be moved
+     * @return the localized confirmation dialog title
+     */
     protected String createConfirmTitle(Collection<T> items) {
         if (items.size() > 1) {
             return _simpleTranslator.translate("magkit.moveItem.confirmationQuestionManyItems", items.size());
@@ -151,10 +196,20 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
         return _simpleTranslator.translate("magkit.moveItem.confirmationQuestionOneItem");
     }
 
+    /**
+     * Returns the target item for the drop operation.
+     *
+     * @return the target item
+     */
     protected T getTarget() {
         return _target;
     }
 
+    /**
+     * Returns the drop location relative to the target item.
+     *
+     * @return the drop location (e.g., above, below, on top)
+     */
     protected DropLocation getDropLocation() {
         return _dropLocation;
     }

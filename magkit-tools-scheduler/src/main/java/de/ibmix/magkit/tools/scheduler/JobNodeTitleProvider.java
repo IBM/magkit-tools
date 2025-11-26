@@ -32,19 +32,45 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 /**
- * Extended node name provider which ignores params content nodes.
+ * Custom title provider for scheduler job nodes that filters out parameter nodes from display.
+ * This provider extends the standard JCR title column provider to customize the display of job definitions
+ * in content app grids by hiding the "params" child nodes.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Displays node names for all job-related nodes</li>
+ * <li>Filters out nodes named "params" to reduce clutter in the UI</li>
+ * <li>Provides custom icon mapping based on node types</li>
+ * <li>Returns empty string for filtered nodes instead of null</li>
+ * </ul>
+ *
+ * <p><strong>Usage:</strong></p>
+ * Configured as a value provider for title columns in scheduler content app definitions
+ * to improve the visual presentation of job hierarchies.
  *
  * @author frank.sommer
  * @see JcrTitleColumnDefinition.JcrTitleValueProvider
- * @since 01.09.2023
+ * @since 2023-09-01
  */
 public class JobNodeTitleProvider extends JcrTitleColumnDefinition.IconValueProvider<Item, JcrTitleColumnDefinition> {
 
+    /**
+     * Creates a new JobNodeTitleProvider with the given column definition.
+     *
+     * @param definition the JCR title column definition containing configuration
+     */
     @Inject
     JobNodeTitleProvider(JcrTitleColumnDefinition definition) {
         super(definition);
     }
 
+    /**
+     * Provides the display value for a JCR item in the title column.
+     * Filters out nodes named "params" and returns an empty string for them.
+     *
+     * @param item the JCR item to get the display value for
+     * @return the display value combining icon and node name, or empty string for filtered nodes
+     */
     @Override
     public String apply(Item item) {
         String displayName = null;
@@ -55,6 +81,13 @@ public class JobNodeTitleProvider extends JcrTitleColumnDefinition.IconValueProv
         return displayName != null ? super.apply(item) + displayName : EMPTY;
     }
 
+    /**
+     * Determines the icon to display for the given JCR item based on its node type.
+     * Uses the node type to icon mapping from the column definition.
+     *
+     * @param item the JCR item to get the icon for
+     * @return the icon CSS class name, or empty string if item is not a node
+     */
     @Override
     protected String getIcon(Item item) {
         return Optional.of(item)

@@ -23,8 +23,19 @@ package de.ibmix.magkit.tools.edit.action;
 import info.magnolia.ui.api.action.ActionType;
 
 /**
+ * Action definition for opening a page in its published location.
+ * This definition is automatically registered with the action type "openPagePublishedLocation" and
+ * uses {@link OpenPagePublishedLocationAction} as its implementation.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Opens the public/published URL of a page in a new browser tab</li>
+ * <li>Registered as action type "openPagePublishedLocation" for use in Magnolia UI configuration</li>
+ * </ul>
+ *
  * @author Philipp Güttler (IBM iX)
- * @since 19.02.2021
+ * @see OpenPagePublishedLocationAction
+ * @since 2021-02-19
  */
 @ActionType("openPagePublishedLocation")
 public class OpenPagePublishedLocationActionDefinition extends OpenAppViewLocationActionDefinition {

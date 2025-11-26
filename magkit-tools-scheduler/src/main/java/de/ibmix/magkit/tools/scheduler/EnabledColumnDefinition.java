@@ -34,28 +34,51 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
- * Column definition that shows a tick if enabled property is true.
+ * Custom column definition for displaying the enabled status of scheduler jobs with a visual tick icon.
+ * This column uses an HTML renderer to display a tick icon when a job's "enabled" property is set to true.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Displays a tick icon for enabled jobs</li>
+ * <li>Shows empty space for disabled jobs</li>
+ * <li>Uses HTML rendering with Vaadin icon elements</li>
+ * <li>Reads the "enabled" boolean property from JCR nodes</li>
+ * </ul>
+ *
+ * <p><strong>Usage:</strong></p>
+ * Configured as a column type "enabledColumn" in content app definitions for scheduler job management,
+ * providing quick visual feedback about job activation status.
  *
  * @author frank.sommer
- * @since 01.09.2023
+ * @since 2023-09-01
  */
 @Slf4j
 @ColumnType("enabledColumn")
 public class EnabledColumnDefinition extends ConfiguredColumnDefinition<Item> {
 
+    /**
+     * Creates a new EnabledColumnDefinition with HTML renderer and tick value provider.
+     */
     public EnabledColumnDefinition() {
         setRenderer(HtmlRenderer.class);
         setValueProvider(TickValueProvider.class);
     }
 
     /**
-     * Value provider setting the tick in the column.
+     * Value provider that generates HTML markup for displaying a tick icon when a job is enabled.
+     * Reads the "enabled" property from JCR nodes and returns appropriate HTML span elements with icon classes.
      *
      * @author frank.sommer
-     * @since 01.09.2023
+     * @since 2023-09-01
      */
     public static class TickValueProvider implements ValueProvider<Item, String> {
 
+        /**
+         * Generates the HTML markup for the enabled status icon.
+         *
+         * @param item the JCR item to evaluate
+         * @return HTML span element with tick icon if enabled, null otherwise
+         */
         @Override
         public String apply(Item item) {
             if (item.isNode()) {
@@ -67,6 +90,12 @@ public class EnabledColumnDefinition extends ConfiguredColumnDefinition<Item> {
             return null;
         }
 
+        /**
+         * Determines the icon class based on the enabled property of the node.
+         *
+         * @param node the JCR node to evaluate
+         * @return "icon-tick" if enabled property is true, empty string otherwise
+         */
         protected String getIcon(Node node) {
             return PropertyUtil.getBoolean(node, "enabled", false) ? "icon-tick" : EMPTY;
         }

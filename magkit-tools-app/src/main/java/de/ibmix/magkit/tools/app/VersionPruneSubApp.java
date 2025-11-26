@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -49,13 +49,27 @@ import java.util.List;
 
 import static info.magnolia.jcr.util.NodeUtil.getNodeIdentifierIfPossible;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static java.lang.String.valueOf;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isEmpty;
 import static org.apache.commons.lang.math.NumberUtils.toInt;
 
 /**
- * VersionPruneSubApp prints the results of a version prune.
+ * Sub-application for pruning version history of JCR nodes in Magnolia CMS.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Removes old versions from node version history</li>
+ *   <li>Processes nodes recursively from a given path</li>
+ *   <li>Keeps a configurable number of most recent versions</li>
+ *   <li>Reports pruned versions and errors</li>
+ *   <li>Handles referential integrity constraints</li>
+ * </ul>
+ * <p><strong>Usage:</strong></p>
+ * Users specify a workspace, a node path, and the number of versions to keep.
+ * The operation traverses all child nodes and removes excess versions while
+ * preserving the root version and the specified number of recent versions.
+ * <p><strong>Error Handling:</strong></p>
+ * Handles various repository exceptions including unversionable nodes and
+ * referential integrity violations. Errors are logged and reported to the user.
  *
  * @author frank.sommer
  * @since 1.5.0
@@ -68,9 +82,19 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
     private final SimpleTranslator _simpleTranslator;
     private final Provider<Context> _contextProvider;
     private final FormViewReduced _formView;
-    private List<String> _prunedHandles;
-    private StringBuilder _resultMessages;
+    private final List<String> _prunedHandles = new ArrayList<>();
+    private final StringBuilder _resultMessages = new StringBuilder();
 
+    /**
+     * Constructs a new VersionPruneSubApp instance.
+     *
+     * @param subAppContext the sub-application context
+     * @param formView the reduced form view for input
+     * @param view the result view for displaying results
+     * @param builder the form builder
+     * @param simpleTranslator the translator for i18n messages
+     * @param contextProvider the context provider for accessing JCR sessions
+     */
     @Inject
     public VersionPruneSubApp(final SubAppContext subAppContext, final FormViewReduced formView, final VersionPruneResultView view, final FormBuilder builder, final SimpleTranslator simpleTranslator, final Provider<Context> contextProvider) {
         super(subAppContext, formView, view, builder);
@@ -80,10 +104,15 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         _contextProvider = contextProvider;
     }
 
+    /**
+     * Executes the version pruning operation with parameters from the form.
+     * Retrieves the workspace, path, and number of versions to keep, then
+     * processes the node tree and displays the results.
+     */
     @Override
     public void doAction() {
-        _resultMessages = new StringBuilder();
-        _prunedHandles = new ArrayList<>();
+        _resultMessages.setLength(0);
+        _prunedHandles.clear();
 
         final Item item = _formView.getItemDataSource();
         String path = item.getItemProperty("path").getValue().toString();
@@ -113,7 +142,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
             if (versions > 0) {
                 _resultMessages.append(SPACER);
                 _resultMessages.append(_simpleTranslator.translate("versionPrune.nothingPruned.prefix")).append(" ");
-                _resultMessages.append(valueOf(versions));
+                _resultMessages.append(versions);
                 _resultMessages.append(" ").append(_simpleTranslator.translate("versionPrune.nothingPruned.postfix"));
                 _resultMessages.append(SPACER);
             } else {
@@ -122,7 +151,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
                 _resultMessages.append(SPACER);
             }
         } else {
-            final String successfulPrunedMessage = SPACER + valueOf(_prunedHandles.size()) + " " + _simpleTranslator.translate("versionPrune.pruned") + "\n" + SPACER;
+            final String successfulPrunedMessage = SPACER + _prunedHandles.size() + " " + _simpleTranslator.translate("versionPrune.pruned") + "\n" + SPACER;
             _resultMessages.append(successfulPrunedMessage);
             for (String handle : _prunedHandles) {
                 _resultMessages.append(handle).append("\n");
@@ -133,7 +162,13 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         _view.buildResultView(_resultMessages.toString());
     }
 
-    private void handleNode(Node node, int versions) {
+    /**
+     * Processes a single node and removes excess versions from its version history.
+     *
+     * @param node the node to process
+     * @param versions the number of versions to keep (0 means remove all except root)
+     */
+    void handleNode(Node node, int versions) {
         LOGGER.debug("Check node with uuid [{}].", getNodeIdentifierIfPossible(node));
 
         VersionHistory versionHistory = getVersionHistory(node);
@@ -148,30 +183,7 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
                     allVersions.nextVersion();
                     // remove the version after rootVersion
                     while (indexToRemove > 0) {
-                        Version currentVersion = allVersions.nextVersion();
-                        String versionNameToRemove = getVersionName(currentVersion);
-                        String errorMessage = EMPTY;
-                        try {
-                            versionHistory.removeVersion(versionNameToRemove);
-                        } catch (UnsupportedRepositoryOperationException e) {
-                            errorMessage = MessageFormat.format("Unversionable node with uuid [{0}].", getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        } catch (ReferentialIntegrityException e) {
-                            errorMessage = MessageFormat.format("Node with path [{0}] and VersionNumber [{1}] is referenced by [{2}] - uuid: [{3}]",
-                                getPathIfPossible(node), getVersionName(currentVersion), getReferences(currentVersion), getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        } catch (Exception e) {
-                            errorMessage = MessageFormat.format("Unable to perform a versioning operation on node with uuid [{0}].", getNodeIdentifierIfPossible(node));
-                            LOGGER.warn(errorMessage, e);
-                        }
-
-                        if (isEmpty(errorMessage)) {
-                            String info = getPathIfPossible(node) + ", Version: " + versionNameToRemove;
-                            LOGGER.info("Removed version [{}].", info);
-                            _prunedHandles.add(info);
-                        } else {
-                            _resultMessages.append(errorMessage).append("\n");
-                        }
+                        removeVersion(node, allVersions, versionHistory);
                         indexToRemove--;
                     }
                 }
@@ -179,12 +191,52 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         }
     }
 
-    private long getIndexToRemove(VersionIterator allVersions, int versions) {
+    void removeVersion(Node node, VersionIterator allVersions, VersionHistory versionHistory) {
+        Version currentVersion = allVersions.nextVersion();
+        String versionNameToRemove = getVersionName(currentVersion);
+        String errorMessage = EMPTY;
+        try {
+            versionHistory.removeVersion(versionNameToRemove);
+        } catch (UnsupportedRepositoryOperationException e) {
+            errorMessage = MessageFormat.format("Unversionable node with uuid [{0}].", getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        } catch (ReferentialIntegrityException e) {
+            errorMessage = MessageFormat.format("Node with path [{0}] and VersionNumber [{1}] is referenced by [{2}] - uuid: [{3}]",
+                getPathIfPossible(node), getVersionName(currentVersion), getReferences(currentVersion), getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        } catch (Exception e) {
+            errorMessage = MessageFormat.format("Unable to perform a versioning operation on node with uuid [{0}].", getNodeIdentifierIfPossible(node));
+            LOGGER.warn(errorMessage, e);
+        }
+
+        if (isEmpty(errorMessage)) {
+            String info = getPathIfPossible(node) + ", Version: " + versionNameToRemove;
+            LOGGER.info("Removed version [{}].", info);
+            _prunedHandles.add(info);
+        } else {
+            _resultMessages.append(errorMessage).append("\n");
+        }
+    }
+
+    /**
+     * Calculates the number of versions to remove from the version history.
+     *
+     * @param allVersions the version iterator containing all versions
+     * @param versions the number of versions to keep
+     * @return the number of versions to remove
+     */
+    long getIndexToRemove(VersionIterator allVersions, int versions) {
         // size - 2 to skip root version
         return (allVersions.getSize() - 2) - ((versions > 0 ? versions - 1 : 0));
     }
 
-    private VersionHistory getVersionHistory(Node node) {
+    /**
+     * Retrieves the version history for a node.
+     *
+     * @param node the node to get version history for
+     * @return the version history or null if not available
+     */
+    VersionHistory getVersionHistory(Node node) {
         VersionHistory versionHistory = null;
         try {
             VersionManager versionManager = Components.getComponent(VersionManager.class);
@@ -197,7 +249,14 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return versionHistory;
     }
 
-    private VersionIterator getAllVersions(Node node, VersionHistory versionHistory) {
+    /**
+     * Retrieves all versions from the version history of a node.
+     *
+     * @param node the node to get versions for
+     * @param versionHistory the version history
+     * @return iterator over all versions or null on error
+     */
+    VersionIterator getAllVersions(Node node, VersionHistory versionHistory) {
         VersionIterator allVersions = null;
 
         try {
@@ -210,7 +269,13 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return allVersions;
     }
 
-    private String getVersionName(Version version) {
+    /**
+     * Retrieves the name of a version.
+     *
+     * @param version the version
+     * @return the version name or empty string on error
+     */
+    String getVersionName(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
             try {
@@ -222,7 +287,13 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return returnValue;
     }
 
-    private String getReferences(Version version) {
+    /**
+     * Retrieves references to a version.
+     *
+     * @param version the version
+     * @return string representation of references or empty string
+     */
+    String getReferences(Version version) {
         String returnValue = EMPTY;
         if (version != null) {
             try {
@@ -237,7 +308,14 @@ public class VersionPruneSubApp extends ToolsBaseSubApp<VersionPruneResultView> 
         return returnValue;
     }
 
-    private Node getNode(final String path, final String workspace) {
+    /**
+     * Retrieves a JCR node by path from the specified workspace.
+     *
+     * @param path the node path
+     * @param workspace the workspace name
+     * @return the node or null if not found
+     */
+    Node getNode(final String path, final String workspace) {
         Node node = null;
         try {
             final Session session = _contextProvider.get().getJCRSession(workspace);

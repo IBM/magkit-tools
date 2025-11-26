@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,11 +21,22 @@ package de.ibmix.magkit.tools.app;
  */
 
 /**
- * View for version prune sub app.
+ * View interface for displaying version pruning results.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Displays version pruning operation results</li>
+ *   <li>Shows pruned nodes and their versions</li>
+ *   <li>Reports errors and warnings during the pruning process</li>
+ * </ul>
  *
  * @author frank.sommer
  * @since 1.5.0
  */
 public interface VersionPruneResultView extends ResultView {
+    /**
+     * Builds and displays the version pruning results.
+     *
+     * @param pruneResult the text result containing pruning information
+     */
     void buildResultView(String pruneResult);
 }

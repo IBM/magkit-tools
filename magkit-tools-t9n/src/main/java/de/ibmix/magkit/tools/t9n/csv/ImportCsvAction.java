@@ -38,7 +38,7 @@ import info.magnolia.ui.datasource.optionlist.Option;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 
 import javax.inject.Inject;
 import javax.jcr.Node;
@@ -63,10 +63,27 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * Translation import csv action.
+ * Action for importing translations from CSV files into the Magnolia translation workspace.
+ * <p><strong>Purpose:</strong></p>
+ * Enables bulk import of translation data from CSV files, allowing editors to work with
+ * translations in spreadsheet applications and import them back into Magnolia.
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Imports translations from CSV files with configurable encoding and separator</li>
+ * <li>Automatically detects locale columns based on header row</li>
+ * <li>Creates new translation nodes or updates existing ones</li>
+ * <li>Supports custom base paths for organizing translations</li>
+ * <li>Validates node names and ensures proper JCR naming</li>
+ * <li>Updates last modified timestamps on all affected nodes</li>
+ * </ul>
+ * <p><strong>CSV Format:</strong></p>
+ * The CSV file must have a header row with "Key" as the first column, followed by locale names.
+ * Subsequent rows contain the translation key and values for each locale.
+ * <p><strong>Error Handling:</strong></p>
+ * Logs errors but does not throw exceptions, allowing partial imports to succeed.
  *
  * @author frank.sommer
- * @since 1.0.5
+ * @since 2023-01-05
  */
 @Slf4j
 public class ImportCsvAction extends CommitAction<Node> {
@@ -77,6 +94,17 @@ public class ImportCsvAction extends CommitAction<Node> {
 
     private TranslationModule _translationModule;
 
+    /**
+     * Creates a new CSV import action with all required dependencies.
+     *
+     * @param definition the action definition configuration
+     * @param closeHandler the handler for closing the form
+     * @param valueContext the context providing access to the current node
+     * @param form the form view containing import parameters (file, encoding, separator)
+     * @param datasource the datasource managing the JCR nodes
+     * @param datasourceObservation the observation mechanism for triggering UI updates
+     * @param i18nContentSupport the i18n support providing configured locales
+     */
     @Inject
     public ImportCsvAction(CommitActionDefinition definition, CloseHandler closeHandler, ValueContext<Node> valueContext, FormView<Node> form, Datasource<Node> datasource, DatasourceObservation.Manual datasourceObservation, I18nContentSupport i18nContentSupport) {
         super(definition, closeHandler, valueContext, form, datasource, datasourceObservation);
@@ -85,6 +113,9 @@ public class ImportCsvAction extends CommitAction<Node> {
         _nodeNameHelper = Components.getComponent(NodeNameHelper.class);
     }
 
+    /**
+     * Executes the CSV import by reading the uploaded file and creating or updating translation nodes.
+     */
     @Override
     public void write() {
         Optional<File> importCsv = _form.getPropertyValue("importCsv");
@@ -92,7 +123,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         importCsv.ifPresent(csvFile -> doCsvImport(basePath, csvFile));
     }
 
-    private void doCsvImport(final String basePath, final File csvFile) {
+    void doCsvImport(final String basePath, final File csvFile) {
         try (InputStream inputStream = new FileInputStream(csvFile)) {
             CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream, getPropertyValue("encoding", UTF_8.name())), getPropertyValue("separator", ",").charAt(0));
             List<String[]> lines = csvReader.readAll();
@@ -107,12 +138,12 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private String getPropertyValue(final String propertyId, final String defaultValue) {
+    String getPropertyValue(final String propertyId, final String defaultValue) {
         Optional<Option> propertyValue = _form.getPropertyValue(propertyId);
         return propertyValue.isPresent() ? propertyValue.get().getValue() : defaultValue;
     }
 
-    private void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
+    void persistTranslations(final String basePath, final Map<Integer, String> indexedPropertyNames, final List<String[]> lines) {
         try {
             Session jcrSession = MgnlContext.getJCRSession(WS_TRANSLATION);
             Node baseNode;
@@ -128,7 +159,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private void createNodesForLines(final Node baseNode, final List<String[]> lines, final Map<Integer, String> indexedPropertyNames) throws RepositoryException {
+    void createNodesForLines(final Node baseNode, final List<String[]> lines, final Map<Integer, String> indexedPropertyNames) throws RepositoryException {
         for (int i = 1; i < lines.size(); i++) {
             String[] values = lines.get(i);
             String key = values[0];
@@ -152,7 +183,7 @@ public class ImportCsvAction extends CommitAction<Node> {
         }
     }
 
-    private Map<Integer, String> detectColumns(final String[] headings) {
+    Map<Integer, String> detectColumns(final String[] headings) {
         Map<Integer, String> cols = new TreeMap<>();
         int index = 0;
         for (String heading : headings) {
@@ -167,12 +198,13 @@ public class ImportCsvAction extends CommitAction<Node> {
                     }
                 }
             }
+            // TODO: Check if this counting strategy is correct. It counts columns for ignored (unknown) languages as well.
             index++;
         }
         return cols;
     }
 
-    private TranslationModule getTranslationModule() {
+    TranslationModule getTranslationModule() {
         if (_translationModule == null) {
             _translationModule = Components.getComponent(TranslationModule.class);
         }

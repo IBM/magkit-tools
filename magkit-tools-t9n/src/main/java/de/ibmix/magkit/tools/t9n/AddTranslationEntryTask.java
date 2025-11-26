@@ -61,9 +61,32 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.removeStart;
 
 /**
- * Add all not existing keys from a properties file to translation workspace.
+ * Magnolia install task that imports translation keys from property files into the translation workspace.
+ * <p><strong>Purpose:</strong></p>
+ * This task reads translation entries from resource bundles (properties files) and creates corresponding
+ * nodes in the Magnolia translation workspace if they don't already exist.
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Imports translation keys from properties files for specified locales</li>
+ * <li>Checks for existing keys to avoid duplicates</li>
+ * <li>Supports custom base paths for organizing translations</li>
+ * <li>Automatically generates valid node names from translation keys</li>
+ * <li>Sets last modified timestamps on created nodes</li>
+ * </ul>
+ * <p><strong>Usage Example:</strong></p>
+ * <pre>
+ * Task task = new AddTranslationEntryTask(
+ *     "Import German translations",
+ *     "Import translations from messages_de.properties",
+ *     "com.example.messages",
+ *     Locale.GERMAN
+ * );
+ * </pre>
+ * <p><strong>Thread Safety:</strong></p>
+ * This class is not thread-safe and should only be used within Magnolia's module installation context.
  *
  * @author diana.racho (IBM iX)
+ * @since 2023-01-01
  */
 @Slf4j
 public class AddTranslationEntryTask extends AbstractTask {
@@ -77,25 +100,25 @@ public class AddTranslationEntryTask extends AbstractTask {
     private final Calendar _now;
 
     /**
-     * Constructor for messages bundle registration.
+     * Creates a new task to import translation entries from a resource bundle.
      *
-     * @param taskName        task name
-     * @param taskDescription task description
-     * @param baseName        bundle base name
-     * @param locale          locale
+     * @param taskName        the display name of the task
+     * @param taskDescription the detailed description of what the task does
+     * @param baseName        the fully qualified base name of the resource bundle (e.g., "com.example.messages")
+     * @param locale          the locale for which to import translations
      */
     public AddTranslationEntryTask(String taskName, String taskDescription, String baseName, Locale locale) {
         this(taskName, taskDescription, baseName, locale, EMPTY);
     }
 
     /**
-     * Constructor for messages bundle registration.
+     * Creates a new task to import translation entries from a resource bundle with a custom base path.
      *
-     * @param taskName        task name
-     * @param taskDescription task description
-     * @param baseName        bundle base name
-     * @param locale          locale
-     * @param basePath        base path
+     * @param taskName        the display name of the task
+     * @param taskDescription the detailed description of what the task does
+     * @param baseName        the fully qualified base name of the resource bundle (e.g., "com.example.messages")
+     * @param locale          the locale for which to import translations
+     * @param basePath        the base path in the translation workspace where nodes will be created
      */
     public AddTranslationEntryTask(String taskName, String taskDescription, String baseName, Locale locale, String basePath) {
         super(taskName, taskDescription);
@@ -107,6 +130,12 @@ public class AddTranslationEntryTask extends AbstractTask {
         _now = Calendar.getInstance();
     }
 
+    /**
+     * Executes the task by creating subtasks for each translation entry that needs to be imported.
+     *
+     * @param installContext the installation context providing access to the JCR session
+     * @throws TaskExecutionException if an error occurs during task execution
+     */
     @Override
     public void execute(InstallContext installContext) throws TaskExecutionException {
         ArrayDelegateTask task = new ArrayDelegateTask("Add translation key tasks");
@@ -119,6 +148,12 @@ public class AddTranslationEntryTask extends AbstractTask {
         task.execute(installContext);
     }
 
+    /**
+     * Reads the resource bundle and creates tasks for each translation key that doesn't already exist.
+     *
+     * @param task the delegate task to which individual translation import tasks are added
+     * @param installContext the installation context for warnings and errors
+     */
     protected void addTranslationNodeTasks(ArrayDelegateTask task, InstallContext installContext) {
         Resource resource = getResource(_locale.toString());
         addTasksForResource(resource, bundle -> {
@@ -131,6 +166,12 @@ public class AddTranslationEntryTask extends AbstractTask {
         });
     }
 
+    /**
+     * Loads a resource bundle from the given resource and applies the consumer to it.
+     *
+     * @param resource the resource to load as a property resource bundle
+     * @param bundleConsumer the consumer that processes the loaded resource bundle
+     */
     protected void addTasksForResource(Resource resource, Consumer<ResourceBundle> bundleConsumer) {
         try (InputStream inputStream = resource.openStream()) {
             final PropertyResourceBundle bundle = new PropertyResourceBundle(new InputStreamReader(inputStream, UTF_8));
@@ -140,7 +181,7 @@ public class AddTranslationEntryTask extends AbstractTask {
         }
     }
 
-    private boolean keyExists(String key) {
+    boolean keyExists(String key) {
         boolean keyExists = false;
         String statement = BASE_QUERY + '\'' + key + '\'';
         try {
@@ -152,7 +193,7 @@ public class AddTranslationEntryTask extends AbstractTask {
         return keyExists;
     }
 
-    private Task createTranslationEntryOperation(String keyNodeName, String key, String value) {
+    Task createTranslationEntryOperation(String keyNodeName, String key, String value) {
         NodeOperation addKeyNode = addNode(keyNodeName, Translation.NAME).then(
             addProperty(PN_KEY, (Object) key),
             addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),
@@ -162,20 +203,30 @@ public class AddTranslationEntryTask extends AbstractTask {
     }
 
     /**
-     * Loads the i18n resource.
+     * Retrieves the properties file resource for the specified locale.
      *
-     * @param locale locale string
-     * @return the resource
+     * @param locale the locale string (e.g., "de", "en_US")
+     * @return the resource representing the properties file
      */
     protected Resource getResource(String locale) {
         final ResourceOrigin resourceOrigins = Components.getComponent(ResourceOrigin.class);
         return resourceOrigins.getByPath("/" + _baseName.replace(".", "/") + "_" + locale + ".properties");
     }
 
+    /**
+     * Returns the node name helper used for generating valid JCR node names.
+     *
+     * @return the node name helper instance
+     */
     public NodeNameHelper getNodeNameHelper() {
         return _nodeNameHelper;
     }
 
+    /**
+     * Returns the base path where translation nodes are created.
+     *
+     * @return the base path in the translation workspace
+     */
     public String getBasePath() {
         return _basePath;
     }

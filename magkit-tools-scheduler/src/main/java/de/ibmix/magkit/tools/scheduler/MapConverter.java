@@ -34,14 +34,44 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Converter for string to string map.
+ * Vaadin converter for bidirectional conversion between JSON string representation and Map&lt;String, String&gt;.
+ * This converter enables editing of key-value parameter maps in Vaadin form fields for scheduler job configurations.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Converts JSON-formatted strings to Map&lt;String, String&gt; objects</li>
+ * <li>Converts Map&lt;String, String&gt; objects back to JSON string format</li>
+ * <li>Uses TreeMap to maintain sorted order of keys</li>
+ * <li>Automatically wraps input in curly braces for JSON parsing</li>
+ * <li>Strips outer braces from presentation format</li>
+ * </ul>
+ *
+ * <p><strong>Error Handling:</strong></p>
+ * Invalid JSON syntax results in an error result with descriptive message logged at error level.
+ *
+ * <p><strong>Null Handling:</strong></p>
+ * Null values in model conversion return Result.ok(null).
+ *
+ * <p><strong>Usage Example:</strong></p>
+ * <pre>
+ * // Input string: "key1": "value1", "key2": "value2"
+ * // Output map: {key1=value1, key2=value2}
+ * </pre>
  *
  * @author frank.sommer
- * @since 01.09.2023
+ * @since 2023-09-01
  */
 @Slf4j
 public class MapConverter implements Converter<String, Map<String, String>> {
 
+    /**
+     * Converts a JSON string to a Map&lt;String, String&gt;.
+     * The input string should contain JSON key-value pairs without outer curly braces.
+     *
+     * @param value the JSON string to convert (may be null)
+     * @param context the value context for the conversion
+     * @return a Result containing the parsed map or an error if JSON parsing fails
+     */
     @Override
     public Result<Map<String, String>> convertToModel(String value, ValueContext context) {
         Result<Map<String, String>> result = Result.ok(null);
@@ -59,6 +89,14 @@ public class MapConverter implements Converter<String, Map<String, String>> {
         return result;
     }
 
+    /**
+     * Converts a Map&lt;String, String&gt; to its JSON string representation.
+     * The output string has the outer curly braces removed for cleaner display in form fields.
+     *
+     * @param value the map to convert (may be null)
+     * @param context the value context for the conversion
+     * @return the JSON string representation without outer braces
+     */
     @Override
     public String convertToPresentation(Map<String, String> value, ValueContext context) {
         return StringUtils.removeEnd(StringUtils.removeStart(new GsonBuilder().create().toJson(value), "{"), "}");

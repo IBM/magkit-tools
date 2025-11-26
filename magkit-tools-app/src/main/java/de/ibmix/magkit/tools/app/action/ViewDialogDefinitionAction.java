@@ -9,9 +9,9 @@ package de.ibmix.magkit.tools.app.action;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,9 +47,9 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 public class ViewDialogDefinitionAction extends AbstractAction<ViewDialogDefinitionActionDefinition> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewDialogDefinitionAction.class);
 
-    private AbstractJcrNodeAdapter _item;
-    private LocationController _locationController;
-    private TemplateDefinitionRegistry _templateRegistry;
+    private final AbstractJcrNodeAdapter _item;
+    private final LocationController _locationController;
+    private final TemplateDefinitionRegistry _templateRegistry;
 
     @Inject
     public ViewDialogDefinitionAction(ViewDialogDefinitionActionDefinition definition, AbstractJcrNodeAdapter item, LocationController locationController, final TemplateDefinitionRegistry templateRegistry) {
@@ -72,6 +72,11 @@ public class ViewDialogDefinitionAction extends AbstractAction<ViewDialogDefinit
         }
     }
 
+    /**
+     * Navigates to the dialog definition in the definitions app.
+     *
+     * @param dialogId the dialog ID in format "module:path"
+     */
     private void goToDialogDefinition(final String dialogId) {
         if (isNotBlank(dialogId)) {
             String moduleName = substringBefore(dialogId, ":");

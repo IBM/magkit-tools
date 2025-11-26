@@ -45,10 +45,30 @@ import java.util.function.Predicate;
 import static javax.jcr.query.Query.JCR_SQL2;
 
 /**
- * Describer describes asset usage in statusbar.
+ * Item describer that enhances the status bar display with asset usage information.
+ * This component extends {@link DefaultItemDescriber} to append the number of references to an asset
+ * across configured JCR workspaces.
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Displays reference count for assets in the AdminCentral status bar</li>
+ * <li>Searches for references across multiple configurable workspaces</li>
+ * <li>Uses JCR SQL2 queries to find nodes referencing the asset's UUID</li>
+ * <li>Only active when single item is selected</li>
+ * </ul>
+ *
+ * <p><strong>Configuration:</strong></p>
+ * Configure the workspaces to search in the {@link StatusBarConfig} using the "assetUsageWorkspaces" property.
+ *
+ * <p><strong>Display Format:</strong></p>
+ * Appends the reference count in parentheses to the item description (e.g., "/path/to/asset (5)").
+ *
+ * <p><strong>Performance:</strong></p>
+ * The reference search is performed synchronously when displaying the status bar, which may impact
+ * performance for assets with many references or when searching across multiple large workspaces.
  *
  * @author Philipp Güttler (IBM iX)
- * @since 11.03.2021
+ * @since 2021-03-11
  */
 public class AssetUsageItemDescriber extends DefaultItemDescriber<JcrNodeWrapper> {
 
@@ -61,11 +81,23 @@ public class AssetUsageItemDescriber extends DefaultItemDescriber<JcrNodeWrapper
         _editToolsModule = editToolsModule;
     }
 
+    /**
+     * Applies the item description logic. For single item selections, appends usage information.
+     *
+     * @param items the collection of selected items
+     * @return the item description with optional usage count
+     */
     @Override
     public String apply(final Collection<JcrNodeWrapper> items) {
         return items.size() == 1 ? applySingle(items.iterator().next()) : super.apply(items);
     }
 
+    /**
+     * Creates the description for a single item, including the reference count across configured workspaces.
+     *
+     * @param item the selected JCR node
+     * @return the item path with reference count appended in parentheses, or just the path if no configuration exists
+     */
     public String applySingle(final JcrNodeWrapper item) {
         return NodeUtil.getPathIfPossible(item) + Optional.ofNullable(_editToolsModule.get().getStatusBarConfig())
             .map(StatusBarConfig::getAssetUsageWorkspaces)
@@ -76,6 +108,14 @@ public class AssetUsageItemDescriber extends DefaultItemDescriber<JcrNodeWrapper
     }
 
 
+    /**
+     * Counts the number of references to the given item across the specified workspaces.
+     * Uses JCR SQL2 queries to search for nodes containing references to the item's UUID.
+     *
+     * @param item the JCR node to count references for
+     * @param workspaces the list of workspace names to search in
+     * @return the total number of references found across all workspaces
+     */
     protected int getReferencesToWorkspacesCount(JcrNodeWrapper item, List<String> workspaces) {
         int size = 0;
 

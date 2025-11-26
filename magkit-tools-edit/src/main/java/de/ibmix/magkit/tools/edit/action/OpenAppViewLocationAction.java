@@ -27,10 +27,22 @@ import info.magnolia.ui.api.location.LocationController;
 import info.magnolia.ui.contentapp.ContentBrowserSubApp.BrowserLocation;
 
 /**
- * Action to open the current node in a new browser location. See {@link info.magnolia.ui.contentapp.action.OpenLocationAction}
+ * Abstract action for opening JCR nodes in specific app views within the Magnolia AdminCentral.
+ * This action navigates to a browser location with a specific view type (e.g., tree view, list view).
+ *
+ * <p><strong>Key Features:</strong></p>
+ * <ul>
+ * <li>Navigate to specific app and sub-app locations within Magnolia AdminCentral</li>
+ * <li>Support for different view types (tree view, list view, etc.)</li>
+ * <li>Extensible through abstract method for node path resolution</li>
+ * </ul>
+ *
+ * <p><strong>Usage:</strong></p>
+ * Extend this class and implement the {@link #getNodePath()} method to define which node path to navigate to.
  *
  * @author jean-charles.robert
- * @since 09.05.18
+ * @see info.magnolia.ui.contentapp.action.OpenLocationAction
+ * @since 2018-05-09
  */
 public abstract class OpenAppViewLocationAction extends AbstractAction<OpenAppViewLocationActionDefinition> {
 
@@ -45,6 +57,11 @@ public abstract class OpenAppViewLocationAction extends AbstractAction<OpenAppVi
         _locationController = locationController;
     }
 
+    /**
+     * Executes the action by constructing a browser location and navigating to it.
+     *
+     * @throws ActionExecutionException if the action execution fails
+     */
     @Override
     public void execute() throws ActionExecutionException {
         BrowserLocation location = new BrowserLocation(getDefinition().getAppName(), getDefinition().getSubAppId(),
@@ -55,10 +72,11 @@ public abstract class OpenAppViewLocationAction extends AbstractAction<OpenAppVi
     }
 
     /**
-     * Implement this method to get the path to open.
+     * Returns the JCR path of the node to navigate to. Subclasses must implement this method
+     * to define the target node path based on their specific requirements.
      *
-     * @return node path
-     * @throws ActionExecutionException action execution exception
+     * @return the JCR node path as a string
+     * @throws ActionExecutionException if the node path cannot be determined
      */
     protected abstract String getNodePath() throws ActionExecutionException;
 
