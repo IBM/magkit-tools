@@ -22,15 +22,23 @@ package de.ibmix.magkit.tools.scheduler;
 
 import com.vaadin.data.provider.Query;
 import de.ibmix.magkit.query.sql2.Sql2;
+import info.magnolia.jcr.iterator.FilteringNodeIterator;
 import info.magnolia.ui.contentapp.JcrDataProvider;
+import info.magnolia.ui.contentapp.JcrDataProviderUtils;
+import info.magnolia.ui.contentapp.JcrQueryBuilder;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import info.magnolia.ui.datasource.jcr.JcrDatasourceDefinition;
 import info.magnolia.ui.filter.DataFilter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 
 import javax.inject.Inject;
+import javax.jcr.Item;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import java.util.stream.Stream;
+
+import static info.magnolia.ui.contentapp.JcrDataProviderUtils.streamJcrItems;
 
 /**
  * Data provider for scheduled job nodes backed by a Magnolia JCR datasource.
@@ -68,6 +76,7 @@ import java.util.stream.Stream;
 public class SchedularJobsDataProvider extends JcrDataProvider {
 
     private final JcrDatasourceDefinition _definition;
+    private final JcrDatasource _datasource;
 
     /**
      * Constructs a new data provider for scheduled job nodes.
@@ -80,6 +89,7 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
     public SchedularJobsDataProvider(JcrDatasourceDefinition definition, JcrDatasource datasource) {
         super(definition, datasource);
         _definition = definition;
+        _datasource = datasource;
     }
 
     /**
@@ -103,8 +113,25 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
      */
     @Override
     public Stream<Node> fetchFromBackEnd(Query<Node, DataFilter> query) {
-        return Sql2.Query.nodesFrom(_definition.getWorkspace(), getFirstAllowedNodeType(),
+        NodeIterator result = new NodeIteratorAdapter(Sql2.Query.nodesFrom(_definition.getWorkspace(), getFirstAllowedNodeType(),
             Sql2.Condition.Path.isChild(_definition.getRootPath())
-        ).stream();
+        ));
+        // Add result handling from JcrDataProvider
+        boolean queryFilteringStatus = JcrQueryBuilder.isFilteringStatus(query);
+        if (queryFilteringStatus) {
+            result = new FilteringNodeIterator(result, new JcrDataProviderUtils.ActivationStatusFilteringPredicate(query));
+        }
+        Stream<Node> stream = streamJcrItems(result).map(item -> _datasource.wrapItem((Item) item));
+        if (queryFilteringStatus) {
+            stream = stream
+                // We don't use javax.jcr.query.Query.setLimit because the result is post processed by
+                // FilteringNodeIterator.
+                // This should not be a performance issue since the same call (with size max) is done by info
+                // .magnolia.ui.contentapp.JcrDataProvider#sizeInBackEnd.
+                // As the query result is already cached by jackrabbit, this might be even better performance wise.
+                .skip(query.getOffset())
+                .limit(query.getLimit());
+        }
+        return stream;
     }
 }
