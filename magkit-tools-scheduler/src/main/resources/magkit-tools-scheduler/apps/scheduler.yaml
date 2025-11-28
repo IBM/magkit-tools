@@ -124,7 +124,6 @@ subApps:
                 required: true
 datasource:
   $type: jcrDatasource
-  name: schedulerJobDatasource
   workspace: config
   rootPath: /modules/scheduler/config/jobs
   allowedNodeTypes:
