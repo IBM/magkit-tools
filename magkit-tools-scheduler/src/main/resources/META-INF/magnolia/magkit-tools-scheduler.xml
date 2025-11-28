@@ -31,6 +31,10 @@
             <type>info.magnolia.ui.datasource.ItemResolver</type>
             <implementation>info.magnolia.ui.contentapp.JcrNodeResolver</implementation>
         </component>
+        <component>
+            <type>info.magnolia.ui.datasource.PropertySetFactory</type>
+            <implementation>info.magnolia.ui.contentapp.JcrPropertySetFactory</implementation>
+        </component>
 
         <type-mapping>
             <type>info.magnolia.ui.contentapp.JcrDataProvider</type>
