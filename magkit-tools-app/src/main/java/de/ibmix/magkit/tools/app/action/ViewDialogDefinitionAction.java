@@ -40,9 +40,16 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 
 /**
  * Action to navigate to dialog definition for a node.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Retrieves the dialog definition of the node's template</li>
+ *   <li>Navigates to the dialog definition in the definitions app</li>
+ * </ul>
+ * <p><strong>Error Handling:</strong></p>
+ * Skips navigation and logs debug information when required components (node, registry) are unavailable.
  *
  * @author philipp.guettler
- * @since 23.05.2014
+ * @since 2014-05-23
  */
 public class ViewDialogDefinitionAction extends AbstractAction<ViewDialogDefinitionActionDefinition> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ViewDialogDefinitionAction.class);
@@ -59,6 +66,10 @@ public class ViewDialogDefinitionAction extends AbstractAction<ViewDialogDefinit
         _item = item;
     }
 
+    /**
+     * Executes the action by resolving the template dialog ID and navigating to its definition.
+     * Skips execution if item, underlying JCR node, or template registry is absent.
+     */
     @Override
     public void execute() {
         if (_item != null && _item.getJcrItem() != null && _templateRegistry != null) {

@@ -31,6 +31,9 @@ import info.magnolia.ui.api.action.ConfiguredActionDefinition;
  */
 public class ViewSourceActionDefinition extends ConfiguredActionDefinition {
 
+    /**
+     * Creates a new ViewSourceActionDefinition setting the implementation class.
+     */
     public ViewSourceActionDefinition() {
         setImplementationClass(ViewSourceAction.class);
     }
