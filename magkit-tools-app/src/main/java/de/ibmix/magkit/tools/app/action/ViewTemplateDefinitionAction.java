@@ -34,9 +34,17 @@ import static org.apache.commons.lang.StringUtils.substringBefore;
 
 /**
  * Action to navigate to template definition in config app.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Extracts template identifier from the selected JCR node</li>
+ *   <li>Parses module and path parts of the template ID</li>
+ *   <li>Navigates to the template definition in the definitions app</li>
+ * </ul>
+ * <p><strong>Null Handling:</strong></p>
+ * Execution is skipped if node or template identifier is missing.
  *
  * @author philipp.guettler
- * @since 23.05.2014
+ * @since 2014-05-23
  */
 public class ViewTemplateDefinitionAction extends AbstractAction<ViewTemplateDefinitionActionDefinition> {
     private final LocationController _locationController;

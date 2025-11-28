@@ -36,6 +36,9 @@ import static java.util.Collections.singletonList;
  */
 public class ViewTemplateDefinitionActionDefinition extends ConfiguredActionDefinition {
 
+    /**
+     * Creates a new ViewTemplateDefinitionActionDefinition configuring availability rules.
+     */
     public ViewTemplateDefinitionActionDefinition() {
         setImplementationClass(ViewTemplateDefinitionAction.class);
         ((ConfiguredAvailabilityDefinition) getAvailability()).setRules(

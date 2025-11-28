@@ -36,6 +36,9 @@ import static java.util.Collections.singletonList;
  */
 public class ViewDialogDefinitionActionDefinition extends ConfiguredActionDefinition {
 
+    /**
+     * Creates a new ViewDialogDefinitionActionDefinition configuring availability rules.
+     */
     public ViewDialogDefinitionActionDefinition() {
         setImplementationClass(ViewDialogDefinitionAction.class);
         ((ConfiguredAvailabilityDefinition) getAvailability()).setRules(

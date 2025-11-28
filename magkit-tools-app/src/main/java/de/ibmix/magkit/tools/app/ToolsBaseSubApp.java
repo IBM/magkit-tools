@@ -70,6 +70,7 @@ public abstract class ToolsBaseSubApp<T extends ResultView> extends BaseSubApp<R
      * Handles action trigger events from the view.
      * Validates the form before executing the action.
      */
+    @Override
     public void onActionTriggered() {
         _formView.showValidation(true);
         if (_formView.isValid()) {

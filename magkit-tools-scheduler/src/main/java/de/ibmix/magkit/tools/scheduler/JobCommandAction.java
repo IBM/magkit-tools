@@ -24,10 +24,12 @@ import info.magnolia.commands.CommandsManager;
 import info.magnolia.context.Context;
 import info.magnolia.jcr.node2bean.Node2BeanProcessor;
 import info.magnolia.module.scheduler.JobDefinition;
+import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.CommandActionDefinition;
 import info.magnolia.ui.contentapp.action.CommandAction;
 import info.magnolia.ui.contentapp.async.AsyncActionExecutor;
+import info.magnolia.ui.observation.DatasourceObservation;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
@@ -59,6 +61,7 @@ public class JobCommandAction extends CommandAction<Node, CommandActionDefinitio
 
     private final CommandsManager _commandsManager;
     private final Node2BeanProcessor _nodeToBeanProcessor;
+    private final DatasourceObservation.Manual _datasourceObservation;
 
     /**
      * Creates a new JobCommandAction instance with required dependencies.
@@ -75,6 +78,7 @@ public class JobCommandAction extends CommandAction<Node, CommandActionDefinitio
         super(definition, commandsManager, valueContext, context, asyncActionExecutor);
         _commandsManager = commandsManager;
         _nodeToBeanProcessor = nodeToBeanProcessor;
+        _datasourceObservation = Components.getComponent(DatasourceObservation.Manual.class);
     }
 
     /**
@@ -95,6 +99,8 @@ public class JobCommandAction extends CommandAction<Node, CommandActionDefinitio
         final Map<String, Object> params = buildParams(node);
         Optional.ofNullable(jobDefinition.getParams()).ifPresent(params::putAll);
 
-        return _commandsManager.executeCommand(catalog, command, params);
+        boolean result = _commandsManager.executeCommand(catalog, command, params);
+        _datasourceObservation.trigger();
+        return result;
     }
 }

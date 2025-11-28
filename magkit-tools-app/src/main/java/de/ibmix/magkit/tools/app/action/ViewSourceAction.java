@@ -31,9 +31,16 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 /**
  * Action to display the rendering output for a node.
+ * <p><strong>Main Functionalities:</strong></p>
+ * <ul>
+ *   <li>Generates an external link for the underlying JCR node</li>
+ *   <li>Opens the link in a new browser tab for source/output inspection</li>
+ * </ul>
+ * <p><strong>Error Handling:</strong></p>
+ * Silently ignores execution if node or link is not available.
  *
  * @author philipp.guettler
- * @since 23.05.2014
+ * @since 2014-05-23
  */
 public class ViewSourceAction extends AbstractAction<ViewSourceActionDefinition> {
 
