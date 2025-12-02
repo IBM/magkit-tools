@@ -109,19 +109,20 @@ subApps:
           defaultValue: default
         isConcurrent:
           $type: checkBoxField
-        params:
-          $type: jcrMultiField
-          field:
-            $type: compositeField
-            itemProvider:
-              $type: jcrGetProperty
-            properties:
-              name:
-                $type: textField
-                required: true
-              value:
-                $type: textField
-                required: true
+# TODO: implement provider to get and store parameters
+#        params:
+#          $type: jcrMultiField
+#          field:
+#            $type: compositeField
+#            itemProvider:
+#              $type: jcrGetProperty
+#            properties:
+#              name:
+#                $type: textField
+#                required: true
+#              value:
+#                $type: textField
+#                required: true
 datasource:
   $type: jcrDatasource
   workspace: config
