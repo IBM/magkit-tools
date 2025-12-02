@@ -34,9 +34,9 @@ import javax.inject.Inject;
 import javax.jcr.Node;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.substringAfter;
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
  * Action to navigate to dialog definition for a node.
