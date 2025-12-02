@@ -35,6 +35,7 @@ subApps:
         class: info.magnolia.ui.api.action.CommandActionDefinition
         implementationClass: de.ibmix.magkit.tools.scheduler.JobCommandAction
         asynchronous: true
+        alwaysShowSuccessMessage: true
     actionbar:
       defaultAction: editJob
       sections:
@@ -68,15 +69,23 @@ subApps:
               valueProvider: de.ibmix.magkit.tools.scheduler.JobNodeTitleProvider
               nodeTypeToIcon:
                 mgnl:contentNode: icon-datepicker
+              width: 300
+            - name: description
+              $type: jcrPropertyColumn
+              propertyName: description
             - name: enabled
               $type: enabledColumn
-              width: 130
-            - name: next-run
-              #TODO: show next run in column
+              width: 100
+            - name: cron
+              $type: jcrPropertyColumn
+              propertyName: cron
+              width: 100
+            - name: nextRun
+              valueProvider: de.ibmix.magkit.tools.scheduler.CronNextRunDateProvider
               width: 200
             - name: status
               $type: jcrStatusColumn
-              width: 130
+              width: 100
   detail:
     class: info.magnolia.ui.contentapp.detail.DetailDescriptor
     itemProvider:
@@ -97,23 +106,23 @@ subApps:
           required: true
         catalog:
           $type: textField
-          required: true
           defaultValue: default
         isConcurrent:
           $type: checkBoxField
-        params:
-          $type: jcrMultiField
-          field:
-            $type: compositeField
-            itemProvider:
-              $type: jcrGetProperty
-            properties:
-              name:
-                $type: textField
-                required: true
-              value:
-                $type: textField
-                required: true
+# TODO: implement provider to get and store parameters
+#        params:
+#          $type: jcrMultiField
+#          field:
+#            $type: compositeField
+#            itemProvider:
+#              $type: jcrGetProperty
+#            properties:
+#              name:
+#                $type: textField
+#                required: true
+#              value:
+#                $type: textField
+#                required: true
 datasource:
   $type: jcrDatasource
   workspace: config

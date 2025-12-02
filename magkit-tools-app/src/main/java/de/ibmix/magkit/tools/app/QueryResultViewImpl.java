@@ -89,6 +89,7 @@ public class QueryResultViewImpl extends BaseResultViewImpl implements QueryResu
      * @param showCols whether to display all columns
      * @param duration the query execution time in milliseconds
      */
+    @Override
     public void buildResultTable(QueryResult queryResult, boolean showScore, boolean showCols, long duration) {
         QueryResultTable resultTable = new QueryResultTable();
         resultTable.buildResultTable(queryResult, showScore, showCols, duration);

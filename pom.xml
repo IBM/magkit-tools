@@ -44,6 +44,11 @@
             </dependency>
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
+                <artifactId>magkit-query</artifactId>
+                <version>${version.magkit}</version>
+            </dependency>
+            <dependency>
+                <groupId>de.ibmix.magkit</groupId>
                 <artifactId>magkit-setup</artifactId>
                 <version>${version.magkit}</version>
             </dependency>

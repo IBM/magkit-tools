@@ -65,6 +65,16 @@ public class QueryResultTable extends Table {
         setSortEnabled(true);
     }
 
+    /**
+     * Builds the result table from a JCR {@link QueryResult}.
+     * Populates container properties based on flags and iterates rows to add them to the table.
+     * Logs repository exceptions instead of throwing them to keep UI responsive.
+     *
+     * @param queryResult the JCR query result, may be null
+     * @param showScore true to show path and score columns
+     * @param showCols true to add all query result columns
+     * @param duration execution time in milliseconds to display in caption
+     */
     public void buildResultTable(final QueryResult queryResult, final boolean showScore, final boolean showCols, final long duration) {
         try {
             if (queryResult != null) {
@@ -91,6 +101,12 @@ public class QueryResultTable extends Table {
         }
     }
 
+    /**
+     * Normalizes a column name for display by removing selector prefix when appropriate.
+     *
+     * @param columnName the original column name (never null)
+     * @return normalized column name for use as container property id
+     */
     protected String normalizeColumnName(final String columnName) {
         String normalizedColName = columnName;
         if (normalizedColName.contains(":") && normalizedColName.indexOf('.') > normalizedColName.indexOf(":")) {
@@ -99,6 +115,17 @@ public class QueryResultTable extends Table {
         return normalizedColName;
     }
 
+    /**
+     * Adds a single row of query result data to the table.
+     * Builds path and score values and populates property columns when flags are set.
+     *
+     * @param row the current JCR query row
+     * @param selectorNames selector names from the query result
+     * @param columnNames column names from the query result
+     * @param showScore true to show path and score values
+     * @param showCols true to show all column values
+     * @throws RepositoryException if reading path, score or value fails
+     */
     void addTableItem(final Row row, final String[] selectorNames, final String[] columnNames, final boolean showScore, final boolean showCols) throws RepositoryException {
         Item newItem = getItem(addItem());
         if (showScore) {

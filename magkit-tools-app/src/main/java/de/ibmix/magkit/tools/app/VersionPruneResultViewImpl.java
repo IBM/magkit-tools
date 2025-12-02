@@ -87,6 +87,7 @@ public class VersionPruneResultViewImpl extends BaseResultViewImpl implements Ve
      *
      * @param result the text result containing pruning information
      */
+    @Override
     public void buildResultView(String result) {
         // set first read only false, otherwise the new value can't set
         _textArea.setReadOnly(false);
