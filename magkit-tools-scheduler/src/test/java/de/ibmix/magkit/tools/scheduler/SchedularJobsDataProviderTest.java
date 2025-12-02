@@ -23,6 +23,8 @@ package de.ibmix.magkit.tools.scheduler;
 import com.vaadin.data.provider.Query;
 import de.ibmix.magkit.test.cms.context.ContextMockUtils;
 import de.ibmix.magkit.test.jcr.query.QueryStubbingOperation;
+import info.magnolia.context.Context;
+import info.magnolia.periscope.rank.ResultRankerFactory;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import info.magnolia.ui.datasource.jcr.JcrDatasourceDefinition;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +36,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
@@ -54,6 +57,8 @@ class SchedularJobsDataProviderTest {
     @BeforeEach
     void setUp() {
         ContextMockUtils.cleanContext();
+        mockComponentInstance(Context.class);
+        mockComponentInstance(ResultRankerFactory.class);
         _definition = mock(JcrDatasourceDefinition.class);
         _datasource = mock(JcrDatasource.class);
         when(_definition.getWorkspace()).thenReturn("config");
