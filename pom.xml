@@ -52,6 +52,11 @@
                 <artifactId>magkit-setup</artifactId>
                 <version>${version.magkit}</version>
             </dependency>
+            <dependency>
+                <groupId>de.ibmix.magkit</groupId>
+                <artifactId>magkit-test-assert</artifactId>
+                <version>${version.magkit.test}</version>
+            </dependency>
             <!-- Test dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>

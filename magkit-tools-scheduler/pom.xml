@@ -28,6 +28,10 @@
             <groupId>de.ibmix.magkit</groupId>
             <artifactId>magkit-query</artifactId>
         </dependency>
+        <dependency>
+            <groupId>de.ibmix.magkit</groupId>
+            <artifactId>magkit-test-assert</artifactId>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

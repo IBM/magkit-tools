@@ -58,6 +58,27 @@ subApps:
             root: true
             nodes: false
     workbench:
+      sortFilterOptions: true
+      filters:
+      - name: enabled
+        filterOperator: EQUALS
+        $type: dropdown
+        propertyName: enabled
+        datasource:
+          $type: optionListDatasource
+          options:
+            - name: 'true'
+              value: 'true'
+              label: 'filters.enabled.true.label'
+            - name: 'false'
+              value: 'false'
+              label: 'filters.enabled.false.label'
+      - name: jcrPublishingStatus
+        $type: dropdownMultiselect
+        datasource:
+          $type: enumDatasource
+          enumeration: info.magnolia.ui.contentapp.configuration.column.StatusColumnDefinition$PublicationStatus
+          sorted: true
       contentViews:
         - name: list
           $type: listView
@@ -65,20 +86,18 @@ subApps:
           multiSelect: false
           columns:
             - name: jcrName
-              $type: jcrTitleColumn
+              $type: titleColumn
               valueProvider: de.ibmix.magkit.tools.scheduler.JobNodeTitleProvider
               nodeTypeToIcon:
                 mgnl:contentNode: icon-datepicker
               width: 300
             - name: description
-              $type: jcrPropertyColumn
-              propertyName: description
+              $type: textField
             - name: enabled
               $type: enabledColumn
               width: 100
             - name: cron
-              $type: jcrPropertyColumn
-              propertyName: cron
+              $type: textField
               width: 100
             - name: nextRun
               valueProvider: de.ibmix.magkit.tools.scheduler.CronNextRunDateProvider
