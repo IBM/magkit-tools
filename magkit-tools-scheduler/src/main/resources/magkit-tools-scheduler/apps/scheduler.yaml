@@ -61,6 +61,7 @@ subApps:
       sortFilterOptions: true
       filters:
       - name: enabled
+        icon: icon-check-circle
         filterOperator: EQUALS
         $type: dropdown
         propertyName: enabled
@@ -74,6 +75,7 @@ subApps:
               value: 'false'
               label: 'filters.enabled.false.label'
       - name: jcrPublishingStatus
+        icon: icon-spinner-full
         $type: dropdownMultiselect
         datasource:
           $type: enumDatasource
@@ -102,7 +104,7 @@ subApps:
             - name: nextRun
               valueProvider: de.ibmix.magkit.tools.scheduler.CronNextRunDateProvider
               width: 200
-            - name: status
+            - name: jcrPublishingStatus
               $type: jcrStatusColumn
               width: 100
   detail:

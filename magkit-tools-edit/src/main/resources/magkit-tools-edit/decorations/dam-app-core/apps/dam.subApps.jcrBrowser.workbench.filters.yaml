@@ -1,0 +1,6 @@
+- name: mgnl:lastModifiedBy
+  icon: icon-user-public
+  filterOperator: EQUALS
+  $type: dropdownMultiselect
+  datasource:
+    name: available-filtering-users

@@ -27,7 +27,10 @@ import de.ibmix.magkit.query.sql2.Sql2;
 import de.ibmix.magkit.query.sql2.condition.Sql2DynamicOperand;
 import de.ibmix.magkit.query.sql2.condition.Sql2JoinConstraint;
 import de.ibmix.magkit.query.sql2.condition.Sql2StaticOperandMultiple;
+import info.magnolia.jcr.iterator.FilteringNodeIterator;
 import info.magnolia.ui.contentapp.JcrDataProvider;
+import info.magnolia.ui.contentapp.JcrDataProviderUtils;
+import info.magnolia.ui.contentapp.JcrQueryBuilder;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import info.magnolia.ui.datasource.jcr.JcrDatasourceDefinition;
 import info.magnolia.ui.filter.DataFilter;
@@ -136,11 +139,16 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
             conditions.add(Sql2.Condition.FullText.contains().any(fullTextSearch + '*'));
         }
 
-        return new NodeIteratorAdapter(Sql2.Query.nodesFrom(_definition.getWorkspace()).withStatement(
+        NodeIterator nodeIterator = new NodeIteratorAdapter(Sql2.Query.nodesFrom(_definition.getWorkspace()).withStatement(
             Sql2.Statement.select().from(getFirstAllowedNodeType()).as("n").whereAll(
                 conditions.toArray(new Sql2JoinConstraint[0])
             )
         ).getResultNodes());
+
+        if (JcrQueryBuilder.isFilteringStatus(query)) {
+            nodeIterator = new FilteringNodeIterator(nodeIterator, new JcrDataProviderUtils.ActivationStatusFilteringPredicate(query));
+        }
+        return nodeIterator;
     }
 
     /**
