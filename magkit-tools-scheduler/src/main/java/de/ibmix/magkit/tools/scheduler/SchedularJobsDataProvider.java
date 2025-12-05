@@ -133,17 +133,24 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
         Require.Argument.notNull(query, "Query must not be null.");
         Map<String, Object> filters = query.getFilter().map(DataFilter::getPropertyFilters).orElse(Collections.emptyMap());
         String fullTextSearch = query.getFilter().map(DataFilter::getFullTextSearchStatement).orElse(StringUtils.EMPTY);
+        if (isNotEmpty(fullTextSearch) && !fullTextSearch.endsWith("*")) {
+            fullTextSearch += "*";
+        }
         List<Sql2JoinConstraint> conditions = getPropertyConditions(filters);
+        // Always restrict to children of the root path to avoid unwanted "params" sub-nodes in search results:
         conditions.add(Sql2.Condition.Path.isChild(_definition.getRootPath()));
+
         if (isNotEmpty(fullTextSearch)) {
-            conditions.add(Sql2.Condition.FullText.contains().any(fullTextSearch + '*'));
+            conditions.add(Sql2.Condition.FullText.contains().any(fullTextSearch));
         }
 
-        NodeIterator nodeIterator = new NodeIteratorAdapter(Sql2.Query.nodesFrom(_definition.getWorkspace()).withStatement(
-            Sql2.Statement.select().from(getFirstAllowedNodeType()).as("n").whereAll(
-                conditions.toArray(new Sql2JoinConstraint[0])
-            )
-        ).getResultNodes());
+        NodeIterator nodeIterator = new NodeIteratorAdapter(
+            Sql2.Query.nodesFrom(_definition.getWorkspace()).withStatement(
+                Sql2.Statement.select().from(getFirstAllowedNodeType()).as("n").whereAll(
+                    conditions.toArray(new Sql2JoinConstraint[0])
+                )
+            ).getResultNodes()
+        );
 
         if (JcrQueryBuilder.isFilteringStatus(query)) {
             nodeIterator = new FilteringNodeIterator(nodeIterator, new JcrDataProviderUtils.ActivationStatusFilteringPredicate(query));
