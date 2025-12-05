@@ -40,12 +40,11 @@ subApps:
             name: available-filtering-users
       contentViews:
         - name : list
-          $type: listView
+          $type: translationListView
           multiSelect: true
           columns:
-            key:
-              $type: textField
-              width: 300
+#   all translation columns will be added automatically by de.ibmix.magkit.tools.t9n.TranslationListView
+#   here we just add some standard columns
             jcrPublishingStatus:
               $type: jcrStatusColumn
               width: 100

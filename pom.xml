@@ -19,7 +19,7 @@
     </modules>
 
     <properties>
-        <version.magnolia>6.3.17</version.magnolia>
+        <version.magnolia>6.3.18</version.magnolia>
         <version.magkit>1.1.0</version.magkit>
         <version.magkit.test>1.1.0</version.magkit.test>
         <junit.jupiter.version>5.14.0</junit.jupiter.version>
