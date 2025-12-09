@@ -7,7 +7,7 @@
         <version>1.0.6</version>
     </parent>
     <artifactId>magkit-tools</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <name>IBM iX Magnolia Kit Tools</name>
     <packaging>pom</packaging>
 
