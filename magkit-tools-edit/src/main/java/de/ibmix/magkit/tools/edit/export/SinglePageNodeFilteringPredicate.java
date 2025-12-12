@@ -85,6 +85,7 @@ public class SinglePageNodeFilteringPredicate extends NodeFilteringPredicate {
                 evaluated = _basePageNodePath.startsWith(originNodePath);
             }
         } catch (RepositoryException e) {
+            evaluated = false;
             LOGGER.error("Error evaluate node type.", e);
         }
         return evaluated;
