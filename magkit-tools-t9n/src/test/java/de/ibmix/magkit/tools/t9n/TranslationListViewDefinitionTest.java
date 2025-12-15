@@ -33,7 +33,7 @@ import java.util.Locale;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI18nContentSupport;
-import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubLocales;
+import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubDefaultLocale;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
 import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
 import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
@@ -76,37 +76,6 @@ public class TranslationListViewDefinitionTest {
         final ColumnDefinition<String> firstColumn = columns.get(0);
         assertEquals("key", firstColumn.getName(), "First column should be the key column");
         assertNull(firstColumn.getLabel(), "Key column label should be null");
-    }
-
-    /**
-     * Verifies translation columns are created for each configured locale.
-     */
-    @Test
-    public void testTranslationColumnsCreatedForEachLocale() throws RepositoryException {
-        mockI18nContentSupport(stubLocales(Locale.ENGLISH, Locale.GERMANY, Locale.FRANCE));
-
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
-
-        assertEquals(4, columns.size(), "Should have 4 translation columns (key + 3 locales)");
-
-        final ColumnDefinition<String> keyColumn = columns.get(0);
-        assertEquals("key", keyColumn.getName(), "First column should be key");
-        assertEquals("key", keyColumn.getPropertyName(), "Property name should be key");
-        assertNull(keyColumn.getLabel(), "Key column label should be null");
-
-        final ColumnDefinition<String> englishColumn = columns.get(1);
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH, englishColumn.getName());
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH, englishColumn.getPropertyName());
-        assertEquals("English", englishColumn.getLabel(), "English locale should display as 'English'");
-
-        final ColumnDefinition<String> germanyColumn = columns.get(2);
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.GERMANY, germanyColumn.getName());
-        assertEquals("German", germanyColumn.getLabel(), "Germany locale should display language name");
-
-        final ColumnDefinition<String> franceColumn = columns.get(3);
-        assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.FRANCE, franceColumn.getName());
-        assertEquals("French", franceColumn.getLabel(), "France locale should display language name");
     }
 
     /**
@@ -173,20 +142,16 @@ public class TranslationListViewDefinitionTest {
     public void testUserLocaleInfluencesColumnLabels() throws RepositoryException {
         final User germanUser = mockUser("DeutschUser", stubLanguage("de"));
         mockWebContext(stubUser(germanUser));
-        mockI18nContentSupport(stubLocales(Locale.FRANCE, Locale.ITALY));
+        mockI18nContentSupport(stubDefaultLocale(Locale.FRANCE));
 
         final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
         final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
 
-        assertEquals(3, columns.size(), "Should have 3 translation columns (key + 2 locales)");
+        assertEquals(2, columns.size(), "Should have 2 translation columns (key + 1 locale)");
 
         final ColumnDefinition<String> franceColumn = columns.get(1);
-        assertEquals("Französisch", franceColumn.getLabel(),
-            "French locale should display in German user's language");
+        assertEquals("Französisch", franceColumn.getLabel(), "French locale should display in German user's language");
 
-        final ColumnDefinition<String> italyColumn = columns.get(2);
-        assertEquals("Italienisch", italyColumn.getLabel(),
-            "Italian locale should display in German user's language");
     }
 
     /**
@@ -194,7 +159,7 @@ public class TranslationListViewDefinitionTest {
      */
     @Test
     public void testSingleLocaleConfiguration() throws RepositoryException {
-        mockI18nContentSupport(stubLocales(Locale.ENGLISH));
+        mockI18nContentSupport(stubDefaultLocale(Locale.ENGLISH));
 
         final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
         final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
@@ -206,26 +171,6 @@ public class TranslationListViewDefinitionTest {
 
         final ColumnDefinition<String> englishColumn = columns.get(1);
         assertEquals("English", englishColumn.getLabel(), "English locale should be present");
-    }
-
-    /**
-     * Verifies handling of multiple locales with complex locale objects.
-     */
-    @Test
-    public void testMultipleLocalesWithCountryCode() throws RepositoryException {
-        mockI18nContentSupport(stubLocales(Locale.US, Locale.CANADA, Locale.CANADA_FRENCH));
-
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
-
-        assertEquals(4, columns.size(), "Should have 4 columns (key + 3 locales)");
-
-        for (ColumnDefinition<String> column : columns) {
-            assertNotNull(column.getName(), "Column name should not be null");
-            assertNotNull(column.getPropertyName(), "Column property name should not be null");
-            assertTrue(column.isSortable(), "Column should be sortable");
-            assertEquals(300, column.getWidth(), "Column width should be 300");
-        }
     }
 }
 

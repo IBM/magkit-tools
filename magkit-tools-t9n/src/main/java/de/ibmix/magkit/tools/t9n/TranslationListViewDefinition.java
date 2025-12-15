@@ -41,8 +41,8 @@ import java.util.Locale;
  * <p><strong>Main Functionalities:</strong></p>
  * <ul>
  * <li>Extends the standard {@link ListViewDefinition} to provide translation-specific column configuration</li>
- * <li>Automatically generates translation columns based on configured locales from {@link I18nContentSupport}</li>
- * <li>Dynamically displays language columns with localized language names based on the current user's language</li>
+ * <li>Automatically generates a translation column based on configured default locale from {@link I18nContentSupport}</li>
+ * <li>Dynamically displays language column with localized language names based on the current user's language</li>
  * <li>Combines translation-specific columns with standard columns from the parent definition</li>
  * </ul>
  *
@@ -74,7 +74,7 @@ import java.util.Locale;
 public class TranslationListViewDefinition<T> extends ListViewDefinition<T> {
 
     /**
-     * Retrieves the complete list of column definitions, combining translation-specific columns
+     * Retrieves the complete list of column definitions, combining translation-specific columns (key, translations for default locale)
      * with columns from the parent list view definition.
      *
      * @return a list of {@link ColumnDefinition} objects, with translation columns added first
@@ -82,33 +82,28 @@ public class TranslationListViewDefinition<T> extends ListViewDefinition<T> {
     @Override
     @Generated
     public List<ColumnDefinition<T>> getColumns() {
-        List<ColumnDefinition<T>> columns = getTranslationColumns();
+        List<ColumnDefinition<T>> columns = new ArrayList<>();
+        columns.add(buildTranslationColumn("key", null));
+        addDefaultLocalTranslationColumn(columns);
         columns.addAll(super.getColumns());
         return columns;
     }
 
     /**
-     * Generates translation column definitions based on configured locales and the user's language preference.
+     * Generates translation column definition for the default locale based on configured locales and the user's language preference.
+     * Adds this column definition to the provided list of columns.
      *
-     * <p>This method creates columns for:</p>
-     * <ul>
-     * <li>A "key" column for identifying translation entries</li>
-     * <li>One column per locale configured in {@link I18nContentSupport}, with localized language names as headers</li>
-     * </ul>
-     *
-     * @return a list of {@link ColumnDefinition} objects for all translation columns
+     * @param columns the list to which the generated column definitions will be added
      */
-    private List<ColumnDefinition<T>> getTranslationColumns() {
-        List<ColumnDefinition<T>> columns = new ArrayList<>();
-        columns.add(buildTranslationColumn("key", null));
+    void addDefaultLocalTranslationColumn(List<ColumnDefinition<T>> columns) {
         I18nContentSupport i18nContentSupport = Components.getComponent(I18nContentSupport.class);
         final Locale userLocale = new Locale(MgnlContext.getUser().getLanguage());
-        for (Locale locale : i18nContentSupport.getLocales()) {
-            String name = TranslationNodeTypes.Translation.PREFIX_NAME + locale;
-            String label = StringUtils.capitalize(locale.getDisplayLanguage(userLocale));
+        final Locale defaultLocale = i18nContentSupport.getDefaultLocale();
+        if (defaultLocale != null) {
+            String name = TranslationNodeTypes.Translation.PREFIX_NAME + defaultLocale;
+            String label = StringUtils.capitalize(defaultLocale.getDisplayLanguage(userLocale));
             columns.add(buildTranslationColumn(name, label));
         }
-        return columns;
     }
 
     /**
@@ -119,7 +114,7 @@ public class TranslationListViewDefinition<T> extends ListViewDefinition<T> {
      *
      * @return a configured {@link ColumnDefinition} with sortable enabled and a fixed width of 300 pixels
      */
-    public ColumnDefinition<T> buildTranslationColumn(String name, String label) {
+    ColumnDefinition<T> buildTranslationColumn(String name, String label) {
         ConfiguredColumnDefinition<T> column = new ConfiguredColumnDefinition<T>();
         column.setName(name);
         column.setPropertyName(name);
