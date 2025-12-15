@@ -34,10 +34,10 @@ import java.util.Map;
 import static de.ibmix.magkit.core.utils.NodeUtils.IS_PAGE;
 import static de.ibmix.magkit.core.utils.NodeUtils.getAncestorOrSelf;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static org.apache.commons.lang.StringUtils.defaultString;
-import static org.apache.commons.lang.StringUtils.isNotEmpty;
-import static org.apache.commons.lang.StringUtils.remove;
-import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.remove;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 /**
  * Service providing utility methods for generating links within the Magnolia CMS environment.

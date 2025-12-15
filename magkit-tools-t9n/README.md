@@ -22,7 +22,7 @@ Add the dependency to your Magnolia project (use the latest released version, se
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.0.4-SNAPSHOT</version> <!-- or a released version -->
+    <version>1.1.0-SNAPSHOT</version> <!-- or a released version -->
 </dependency>
 ```
 See the [CHANGELOG](../CHANGELOG.md) for available versions.
@@ -31,7 +31,7 @@ See the [CHANGELOG](../CHANGELOG.md) for available versions.
 Add the `AddTranslationsTask` for each messages bundle you want to expose. Typically done in your `ModuleVersionHandler` update delta:
 ```java
 // ...existing code...
-DeltaBuilder.update("1.0", "Register translation keys")
+DeltaBuilder.update("1.1", "Register translation keys")
     .addTask(new AddTranslationsTask("your-module.i18n.messages", Locale.ENGLISH, Locale.GERMAN))
     .addTask(new AddTranslationsTask("another-module.i18n.messages", Locale.ENGLISH))
 // ...existing code...
@@ -57,28 +57,33 @@ Assign them to editors as needed.
 
 ### Optional App Column Decoration
 Add a decoration file `translation.subApps.browser.workbench.contentViews.yaml` in your module to define which language columns appear:
+
+(!) Note, that with version 1.1.0 and later the key column and a default language column are always added automatically by the `TranslationListViewDefinition`. You only need to define additional language columns and any metadata columns you want to keep.
+
+When migrating from an earlier version, make sure to remove the key and default language columns from your decoration file.
 ```yaml
 #  This is only one example:
 - name : list
   columns: !override
-    key:
-      filterComponent:
-      $type: textField
-      width: 300
-    translation_en:
-      filterComponent:
-      $type: textField
-      expandRatio: 2
+    # The 'key' column and a default language column are added automatically by the TranslationListViewDefinition.
+    # Only define additional language columns as needed
     translation_de:
       filterComponent:
       $type: textField
       expandRatio: 2
-    jcrPublishingStatus:
-      $type: jcrStatusColumn
-      width: 68
-    mgnl:lastModified:
-      $type: dateColumn
-      width: 190
+    # and add any metadata columns you want to keep
+      jcrPublishingStatus:
+        $type: jcrStatusColumn
+        width: 100
+      mgnl:lastModified:
+        $type: dateColumn
+        width: 180
+      mgnl:lastModifiedBy:
+        label: column.lastModUser.label
+        width: 150
+      mgnl:createdBy:
+        label: column.createdByUser.label
+        width: 150
 ```
 
 ## Examples

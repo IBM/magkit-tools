@@ -49,9 +49,9 @@ import java.util.List;
 
 import static info.magnolia.jcr.util.NodeUtil.getNodeIdentifierIfPossible;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isEmpty;
-import static org.apache.commons.lang.math.NumberUtils.toInt;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.math.NumberUtils.toInt;
 
 /**
  * Sub-application for pruning version history of JCR nodes in Magnolia CMS.

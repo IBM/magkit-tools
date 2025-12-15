@@ -27,7 +27,7 @@ import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.editor.ConfiguredFormDefinition;
 import info.magnolia.ui.field.EditorPropertyDefinition;
 import info.magnolia.ui.field.TextFieldDefinition;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;

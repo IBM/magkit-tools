@@ -35,6 +35,7 @@ import java.util.Map;
 
 import static de.ibmix.magkit.test.cms.context.AggregationStateStubbingOperation.stubCharacterEncoding;
 import static de.ibmix.magkit.test.cms.context.AggregationStateStubbingOperation.stubMainContentNode;
+import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockAggregationState;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
@@ -54,7 +55,7 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for {@link LinkService}.
  *
- * @author frank.sommer
+ * @author frank.sommer, wolf.bubenik
  * @since 2015-07-09
  */
 public class LinkServiceTest {
@@ -69,6 +70,7 @@ public class LinkServiceTest {
         mockServerConfiguration(stubDefaultExtension("html"), stubDefaultBaseUrl("https://test.ibmix.de"));
         mockWebContext(stubContextPath("/author"));
         mockAggregationState(stubCharacterEncoding("UTF-8"));
+        mockComponentInstance(MagnoliaConfigurationProperties.class);
         _linkService = new LinkService();
 
         _site1Node = mockPageNode("/site1/de");
