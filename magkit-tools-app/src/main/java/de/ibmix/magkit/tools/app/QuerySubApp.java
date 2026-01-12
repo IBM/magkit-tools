@@ -44,7 +44,7 @@ import javax.jcr.query.QueryResult;
 import java.util.List;
 
 import static info.magnolia.context.Context.SESSION_SCOPE;
-import static org.apache.commons.lang.BooleanUtils.toBoolean;
+import static org.apache.commons.lang3.BooleanUtils.toBoolean;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**

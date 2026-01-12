@@ -22,7 +22,7 @@ package de.ibmix.magkit.tools.scheduler;
 
 import com.vaadin.data.ValueProvider;
 import info.magnolia.jcr.util.PropertyUtil;
-import org.apache.commons.lang.time.FastDateFormat;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.quartz.CronExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

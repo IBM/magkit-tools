@@ -29,7 +29,7 @@ import info.magnolia.cms.security.Permission;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.jcr.util.PropertyUtil;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,9 +48,9 @@ import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static info.magnolia.jcr.util.SessionUtil.getNodeByIdentifier;
 import static info.magnolia.repository.RepositoryConstants.USER_GROUPS;
 import static info.magnolia.repository.RepositoryConstants.USER_ROLES;
-import static org.apache.commons.lang.StringUtils.EMPTY;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.apache.commons.lang.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 /**
  * Custom Vaadin field that displays Access Control List (ACL) information for a user.

@@ -23,6 +23,7 @@ package de.ibmix.magkit.tools.app.action;
 import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
 import com.vaadin.util.CurrentInstance;
+import info.magnolia.init.MagnoliaConfigurationProperties;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
 
+import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ServerConfigurationMockUtils.mockServerConfiguration;
 import static de.ibmix.magkit.test.cms.context.ServerConfigurationStubbingOperation.stubDefaultBaseUrl;
@@ -67,6 +69,7 @@ class ViewSourceActionTest {
 
     @Test
     void executeWithValidNode() throws Exception {
+        mockComponentInstance(MagnoliaConfigurationProperties.class);
         Node node = mockPageNode("/test/page");
         ViewSourceAction action = createViewSourceAction(mockAbstractJcrNodeAdapter(node));
         Page page = mockCurrentPage();
