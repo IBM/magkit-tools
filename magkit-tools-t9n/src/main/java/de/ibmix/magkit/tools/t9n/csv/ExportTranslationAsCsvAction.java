@@ -20,6 +20,7 @@ package de.ibmix.magkit.tools.t9n.csv;
  * #L%
  */
 
+import com.vaadin.server.DownloadStream;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation;
@@ -156,10 +157,18 @@ public class ExportTranslationAsCsvAction extends AbstractAction<ConfiguredActio
     void streamFile(final TranslationCsvWriter csvWriter) {
         StreamResource.StreamSource source = csvWriter::getStream;
         String fileName = csvWriter.getFile().getName();
-        StreamResource resource = new StreamResource(source, fileName);
-        resource.getStream().setParameter("Content-Disposition", "attachment; filename=" + fileName + "\"");
+        StreamResource resource = new StreamResource(source, fileName) {
+            @Override
+            public DownloadStream getStream() {
+                DownloadStream stream = super.getStream();
+                if (stream != null) {
+                    stream.setParameter("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+                    stream.setCacheTime(0);
+                }
+                return stream;
+            }
+        };
         resource.setMIMEType("application/octet-stream");
-        resource.setCacheTime(0);
         Page.getCurrent().open(resource, "csv export", true);
     }
 }

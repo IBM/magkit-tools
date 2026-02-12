@@ -20,6 +20,7 @@
 
 package de.ibmix.magkit.tools.t9n.csv;
 
+import au.com.bytecode.opencsv.CSVReader;
 import com.vaadin.server.Page;
 import com.vaadin.ui.UI;
 import com.vaadin.util.CurrentInstance;
@@ -43,11 +44,10 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
-
-import au.com.bytecode.opencsv.CSVReader;
 
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
@@ -175,7 +175,7 @@ class ExportTranslationAsCsvActionTest {
     }
 
     /**
-     * Verifies retrieveTranslationNodes uses query when root node is selected.
+     * Verifies retrieveTranslationNodes uses a query when the root node is selected.
      */
     @Test
     void retrieveTranslationNodesUsesQueryForRootNode() throws Exception {
@@ -228,7 +228,7 @@ class ExportTranslationAsCsvActionTest {
         when(_valueContext.get()).thenReturn(java.util.stream.Stream.of(node1, node2));
 
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
-        java.util.Map<String, java.util.Map<String, String>> entries = action.getEntries(List.of(Locale.ENGLISH, Locale.GERMAN));
+        Map<String, Map<String, String>> entries = action.getEntries(List.of(Locale.ENGLISH, Locale.GERMAN));
 
         assertEquals(2, entries.size());
         assertTrue(entries.containsKey("key1"));
@@ -251,14 +251,14 @@ class ExportTranslationAsCsvActionTest {
         when(_valueContext.get()).thenReturn(Stream.of(nodeWithKey, nodeWithoutKey));
 
         ExportTranslationAsCsvAction action = new ExportTranslationAsCsvAction(_definition, _valueContext, _i18nContentSupport, _fileSystemHelper);
-        java.util.Map<String, java.util.Map<String, String>> entries = action.getEntries(List.of(Locale.ENGLISH));
+        Map<String, Map<String, String>> entries = action.getEntries(List.of(Locale.ENGLISH));
 
         assertEquals(1, entries.size());
         assertTrue(entries.containsKey("withKey"));
     }
 
     /**
-     * Verifies execute handles null file gracefully without calling streamFile.
+     * Verifies execute handles a null file gracefully without calling streamFile.
      */
     @Test
     void executeDoesNotStreamWhenFileIsNull() throws Exception {
