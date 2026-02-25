@@ -25,8 +25,7 @@ import info.magnolia.ui.api.app.AppView;
 import info.magnolia.ui.api.location.DefaultLocation;
 import info.magnolia.ui.api.location.Location;
 import info.magnolia.ui.framework.app.BaseApp;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Base application class for the administrative tools app in Magnolia CMS.

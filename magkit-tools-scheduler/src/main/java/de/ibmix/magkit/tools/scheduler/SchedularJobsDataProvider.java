@@ -22,7 +22,6 @@ package de.ibmix.magkit.tools.scheduler;
 
 import com.machinezoo.noexception.Exceptions;
 import com.vaadin.data.provider.Query;
-import de.ibmix.magkit.assertions.Require;
 import de.ibmix.magkit.query.sql2.Sql2;
 import de.ibmix.magkit.query.sql2.condition.Sql2DynamicOperand;
 import de.ibmix.magkit.query.sql2.condition.Sql2JoinConstraint;
@@ -36,13 +35,13 @@ import info.magnolia.ui.datasource.jcr.JcrDatasourceDefinition;
 import info.magnolia.ui.filter.DataFilter;
 import info.magnolia.ui.filter.FilterOperator;
 import info.magnolia.ui.filter.FilterValue;
+import jakarta.inject.Inject;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.commons.iterator.NodeIteratorAdapter;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -88,7 +87,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class SchedularJobsDataProvider extends JcrDataProvider {
 
     private final JcrDatasourceDefinition _definition;
-    private final JcrDatasource _datasource;
 
     /**
      * Constructs a new data provider for scheduled job nodes.
@@ -103,7 +101,6 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
     public SchedularJobsDataProvider(JcrDatasourceDefinition definition, JcrDatasource datasource) {
         super(definition, datasource);
         _definition = definition;
-        _datasource = datasource;
     }
 
     /**
@@ -126,11 +123,9 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
      *
      * @param query the Vaadin query containing offset, limit, and optional {@link DataFilter}
      * @return an iterator over matching nodes
-     * @throws RepositoryException if repository access fails during query execution
      */
     @Override
-    protected NodeIterator getNodeIterator(Query<Node, DataFilter> query) throws RepositoryException {
-        Require.Argument.notNull(query, "Query must not be null.");
+    protected NodeIterator getNodeIterator(@NonNull Query<Node, DataFilter> query) {
         Map<String, Object> filters = query.getFilter().map(DataFilter::getPropertyFilters).orElse(Collections.emptyMap());
         String fullTextSearch = query.getFilter().map(DataFilter::getFullTextSearchStatement).orElse(StringUtils.EMPTY);
         if (isNotEmpty(fullTextSearch) && !fullTextSearch.endsWith("*")) {
@@ -165,7 +160,7 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
      * Other string properties are mapped according to the provided {@link FilterOperator}.
      *
      * @param filters a map of property names to filter values coming from the {@link DataFilter}
-     * @param <T> the raw type of origin filter values
+     * @param <T>     the raw type of origin filter values
      * @return a list of join constraints to be applied in the query
      */
     <T> List<Sql2JoinConstraint> getPropertyConditions(Map<String, ? super FilterValue<T>> filters) {
@@ -185,8 +180,7 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
                 } else if (!"jcrPublishingStatus".equals(filterEntryKey)) {
                     conditions.add(toSql2JoinConstraint(filterEntryKey, filterOperator, originValues));
                 }
-            })
-        );
+            }));
         return conditions;
     }
 
@@ -195,15 +189,15 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
      * <p><strong>Important Details:</strong></p>
      * Currently supports string values; returns {@code null} for unsupported types.
      *
-     * @param propertyName the name of the property to filter
+     * @param propertyName   the name of the property to filter
      * @param filterOperator the operator selected in the UI (e.g. CONTAINS, STARTS_WITH, EQUALS)
-     * @param values the origin values to match against
-     * @param <T> the generic value type
+     * @param values         the origin values to match against
+     * @param <T>            the generic value type
      * @return a join constraint or {@code null} if the type is not supported
      */
     <T> Sql2JoinConstraint toSql2JoinConstraint(String propertyName, FilterOperator filterOperator, T[] values) {
         if (values instanceof String[]) {
-            return toSql2StaticOperand(Sql2.Condition.String.property(propertyName), filterOperator).values((String[]) values);
+            return toSql2StaticOperand(Sql2.Condition.String.property(propertyName), filterOperator).values(values);
         } else {
             // other types can be added as needed
             return null;
@@ -215,12 +209,12 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
      * <p><strong>Main Functionalities:</strong></p>
      * Provides LIKE, STARTS WITH, or EQUALS matching depending on the operator.
      *
-     * @param operand the dynamic operand representing the property in the query
+     * @param operand        the dynamic operand representing the property in the query
      * @param filterOperator the operator defining how values should be matched
      * @return a static operand builder configured for multiple values
      */
     Sql2StaticOperandMultiple toSql2StaticOperand(Sql2DynamicOperand operand, FilterOperator filterOperator) {
-        Sql2StaticOperandMultiple result = null;
+        Sql2StaticOperandMultiple result;
         switch (filterOperator) {
             case CONTAINS:
                 result = operand.likeAny();
@@ -237,10 +231,10 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
     /**
      * Extracts origin values from a filter entry and returns them as a strongly typed array.
      * <p><strong>Key Features:</strong></p>
-     * Supports single values and iterable collections; preserves element type for array creation.
+     * Supports single values and iterable collections; preserves an element type for array creation.
      *
      * @param filterEntryValue the filter entry value container
-     * @param <T> the element type of the origin values
+     * @param <T>              the element type of the origin values
      * @return an array containing the origin values
      */
     <T> T[] getOriginValues(Object filterEntryValue) {
@@ -250,10 +244,9 @@ public class SchedularJobsDataProvider extends JcrDataProvider {
             for (T value : (Iterable<T>) values) {
                 valueList.add(value);
             }
-            return valueList.toArray((T[]) java.lang.reflect.Array.newInstance(
-                valueList.isEmpty() ? Object.class : valueList.get(0).getClass(), valueList.size()));
+            return valueList.toArray((T[]) java.lang.reflect.Array.newInstance(valueList.isEmpty() ? Object.class : valueList.get(0).getClass(), valueList.size()));
         } else {
-            T singleValue = (T) values;
+            T singleValue = values;
             T[] array = (T[]) java.lang.reflect.Array.newInstance(singleValue.getClass(), 1);
             array[0] = singleValue;
             return array;

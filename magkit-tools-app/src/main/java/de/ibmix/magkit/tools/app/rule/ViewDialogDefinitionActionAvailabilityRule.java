@@ -27,8 +27,8 @@ import info.magnolia.rendering.template.TemplateDefinition;
 import info.magnolia.rendering.template.registry.TemplateDefinitionRegistry;
 import info.magnolia.ui.api.availability.AbstractAvailabilityRule;
 import info.magnolia.ui.vaadin.integration.jcr.JcrNodeItemId;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.getNodeByIdentifier;

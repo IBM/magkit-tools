@@ -25,8 +25,8 @@ import de.ibmix.magkit.tools.edit.util.LinkService;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 
 /**

@@ -27,8 +27,7 @@ import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.api.context.UiContext;
 import info.magnolia.ui.api.i18n.I18NAuthoringSupport;
 import info.magnolia.ui.form.field.factory.AbstractFieldFactory;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Factory for creating AclField instances in Magnolia forms.

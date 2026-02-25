@@ -27,8 +27,7 @@ import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.objectfactory.ComponentProvider;
 import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.dialog.formdialog.FormBuilder;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
 

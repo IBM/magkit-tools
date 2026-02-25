@@ -22,27 +22,27 @@ package de.ibmix.magkit.tools.t9n.rest;
 
 import de.ibmix.magkit.test.cms.context.ContextMockUtils;
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes;
-import info.magnolia.rest.registry.ConfiguredEndpointDefinition;
 import info.magnolia.context.MgnlContext;
+import info.magnolia.rest.registry.ConfiguredEndpointDefinition;
+import jakarta.ws.rs.core.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.jcr.Session;
 import javax.jcr.RepositoryException;
-import javax.ws.rs.core.Response;
-import java.util.Map;
-import java.util.List;
+import javax.jcr.Session;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockSystemContext;
 import static de.ibmix.magkit.test.cms.context.SystemContextStubbingOperation.stubJcrSession;
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
 import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubProperty;
 import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubType;
-import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PN_KEY;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PREFIX_NAME;
+import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;

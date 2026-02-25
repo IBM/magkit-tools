@@ -33,8 +33,7 @@ import info.magnolia.ui.dialog.formdialog.FormBuilder;
 import info.magnolia.ui.form.definition.FormDefinition;
 import info.magnolia.ui.vaadin.form.FormViewReduced;
 import info.magnolia.ui.vaadin.layout.SmallAppLayout;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  * Abstract base implementation for result views in tool sub-applications.

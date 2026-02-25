@@ -25,11 +25,11 @@ import de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils;
 import de.ibmix.magkit.tools.edit.setup.EditToolsModule;
 import de.ibmix.magkit.tools.edit.setup.StatusBarConfig;
 import info.magnolia.ui.datasource.jcr.JcrNodeWrapper;
+import jakarta.inject.Provider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;

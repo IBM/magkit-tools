@@ -24,8 +24,7 @@ import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.location.LocationController;
 import info.magnolia.ui.contentapp.browser.BrowserLocation;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;

@@ -31,8 +31,8 @@ import info.magnolia.ui.api.availability.AvailabilityDefinition;
 import info.magnolia.ui.vaadin.gwt.client.shared.AbstractElement;
 import info.magnolia.ui.vaadin.gwt.client.shared.ComponentElement;
 import info.magnolia.ui.vaadin.gwt.client.shared.PageElement;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.IS_PAGE;

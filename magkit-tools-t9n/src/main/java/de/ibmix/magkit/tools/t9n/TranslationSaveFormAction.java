@@ -30,8 +30,8 @@ import info.magnolia.ui.contentapp.action.CommitAction;
 import info.magnolia.ui.contentapp.action.CommitActionDefinition;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.Property;
 

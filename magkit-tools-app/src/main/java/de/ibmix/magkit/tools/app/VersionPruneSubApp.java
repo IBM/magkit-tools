@@ -29,11 +29,11 @@ import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.dialog.formdialog.FormBuilder;
 import info.magnolia.ui.vaadin.form.FormViewReduced;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;

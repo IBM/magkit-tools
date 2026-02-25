@@ -35,12 +35,12 @@ import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.dialog.formdialog.FormBuilder;
 import info.magnolia.ui.form.definition.FormDefinition;
 import info.magnolia.ui.vaadin.form.FormViewReduced;
+import jakarta.inject.Provider;
 import org.apache.jackrabbit.commons.iterator.VersionIteratorAdapter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.inject.Provider;
 import javax.jcr.Node;
 import javax.jcr.PropertyIterator;
 import javax.jcr.ReferentialIntegrityException;
@@ -50,7 +50,6 @@ import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
-
 import java.util.Arrays;
 
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
