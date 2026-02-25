@@ -22,7 +22,7 @@ Add the dependency to your Magnolia project (use the latest released version, se
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.1.0-SNAPSHOT</version> <!-- or a released version -->
+    <version>1.1.0</version>
 </dependency>
 ```
 See the [CHANGELOG](../CHANGELOG.md) for available versions.
