@@ -22,10 +22,10 @@ package de.ibmix.magkit.tools.app;
 
 import com.vaadin.v7.data.Item;
 import com.vaadin.v7.ui.Table;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.QueryResult;

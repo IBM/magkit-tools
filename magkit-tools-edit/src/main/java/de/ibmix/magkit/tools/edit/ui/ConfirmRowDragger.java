@@ -34,11 +34,11 @@ import info.magnolia.ui.AlertBuilder;
 import info.magnolia.ui.contentapp.Datasource;
 import info.magnolia.ui.contentapp.browser.drop.DropConstraint;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.jcr.Item;
 import javax.jcr.RepositoryException;
 import java.util.Collection;

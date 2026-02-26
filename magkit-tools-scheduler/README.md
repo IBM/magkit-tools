@@ -27,7 +27,7 @@ Add the dependency to your Magnolia project's `pom.xml`:
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-scheduler</artifactId>
-    <version>1.0.3</version><!-- or 1.0.4-SNAPSHOT for latest development version -->
+    <version>1.1.0</version>
 </dependency>
 ```
 

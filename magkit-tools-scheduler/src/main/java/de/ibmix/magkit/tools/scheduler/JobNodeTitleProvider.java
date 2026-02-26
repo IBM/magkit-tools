@@ -23,8 +23,8 @@ package de.ibmix.magkit.tools.scheduler;
 import com.machinezoo.noexception.Exceptions;
 import info.magnolia.jcr.util.NodeUtil;
 import info.magnolia.ui.contentapp.column.jcr.JcrTitleColumnDefinition;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Item;
 import javax.jcr.Node;
 import java.util.Optional;

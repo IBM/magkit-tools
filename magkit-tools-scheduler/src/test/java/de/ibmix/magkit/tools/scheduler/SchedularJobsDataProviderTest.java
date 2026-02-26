@@ -30,13 +30,14 @@ import info.magnolia.ui.datasource.jcr.JcrDatasourceDefinition;
 import info.magnolia.ui.filter.DataFilter;
 import info.magnolia.ui.filter.FilterOperator;
 import info.magnolia.ui.filter.FilterValue;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import javax.jcr.RepositoryException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -72,7 +73,6 @@ class SchedularJobsDataProviderTest {
 
     @BeforeEach
     void setUp() {
-        cleanContext();
         mockComponentInstance(Context.class);
         mockComponentInstance(ResultRankerFactory.class);
         _definition = mock(JcrDatasourceDefinition.class);
@@ -129,14 +129,14 @@ class SchedularJobsDataProviderTest {
     @Test
     void toSql2JoinConstraintReturnsNullForUnsupportedTypes() {
         SchedularJobsDataProvider provider = new SchedularJobsDataProvider(_definition, _datasource);
-        Integer[] values = new Integer[] {1, 2};
+        Integer[] values = new Integer[]{1, 2};
         assertNull(provider.toSql2JoinConstraint("prop", FilterOperator.EQUALS, values));
     }
 
     @Test
     void toSql2JoinConstraintReturnsConstraintForStringArray() {
         SchedularJobsDataProvider provider = new SchedularJobsDataProvider(_definition, _datasource);
-        String[] values = new String[] {"a", "b"};
+        String[] values = new String[]{"a", "b"};
         Sql2JoinConstraint constraint = provider.toSql2JoinConstraint("title", FilterOperator.CONTAINS, values);
         assertNotNull(constraint);
         assertEquals("([title] LIKE '%a%' OR [title] LIKE '%b%')", constraint.asString());
@@ -210,6 +210,10 @@ class SchedularJobsDataProviderTest {
         provider.getNodeIterator(new com.vaadin.data.provider.Query<>(0, 10, null, null, filter));
         verify(queryManager).createQuery(expectedStatement, Query.JCR_SQL2);
         verify(queryMock).execute();
+    }
 
+    @AfterEach
+    void tearDown() {
+        cleanContext();
     }
 }

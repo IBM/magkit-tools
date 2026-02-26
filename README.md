@@ -18,14 +18,14 @@ The project consists of four specialized modules:
 
 #### 2. **[magkit-tools-edit](magkit-tools-edit/README.md)** - Authoring & Editing Enhancements
 - **Edit Page Properties Anywhere**: Access page properties action directly in browser view, areas, and components
-- **Move Confirmation**: Adds confirmation dialog before moving pages to prevent accidental drags
+- **Move Confirmation**: Adds a confirmation dialog before moving pages to prevent accidental drags
 - **Public View Action**: Open the currently selected page on a public instance
 - **Author Instance Link**: Render a direct link back to the author instance from public pages
 - **Additional Browser Columns**: Last Modified and Creator columns for Pages and Assets apps
 - **Extended Status Bar**: Shows asset usage count for configured workspaces
 - **Single Page Export Filter**: Export only nodes required for a single page
 
-#### 3. **magkit-tools-scheduler** - Task Scheduling (Work in Progress)
+#### 3. **m[agkit-tools-scheduler](magkit-tools-scheduler/README.md)** - Task Scheduling
 - Task scheduling utilities for Magnolia CMS
 
 #### 4. **[magkit-tools-t9n](magkit-tools-t9n/README.md)** - Translation Management
@@ -46,7 +46,7 @@ Add the desired module dependencies to your Magnolia project's `pom.xml`. You ca
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-app</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -55,7 +55,7 @@ Add the desired module dependencies to your Magnolia project's `pom.xml`. You ca
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-edit</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -64,7 +64,7 @@ Add the desired module dependencies to your Magnolia project's `pom.xml`. You ca
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
 </dependency>
 ```
 
@@ -73,11 +73,9 @@ Add the desired module dependencies to your Magnolia project's `pom.xml`. You ca
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-scheduler</artifactId>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
 </dependency>
 ```
-
-> **Note**: Use `1.0.4-SNAPSHOT` version only if you need unreleased changes. For production, always use the latest released version.
 
 ### Maven Artifacts
 
@@ -169,7 +167,7 @@ See also [CONTRIBUTING](CONTRIBUTING.md), [SECURITY](SECURITY.md) and [MAINTAINE
 
 ## License
 
-The modules are published under the Apache 2.0 license. If you would like to see the detailed LICENSE click [here](LICENSE).
+The modules are published under the Apache 2.0 license. If you would like to see the detailed LICENSE, click [here](LICENSE).
 
 Copyright © 2025 IBM iX
 

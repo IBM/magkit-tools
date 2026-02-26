@@ -28,8 +28,8 @@ import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.objectfactory.ComponentProvider;
 import info.magnolia.ui.api.app.SubAppContext;
 import info.magnolia.ui.dialog.formdialog.FormBuilder;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.query.QueryResult;
 
 /**

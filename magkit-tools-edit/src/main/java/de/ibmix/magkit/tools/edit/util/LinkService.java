@@ -26,8 +26,8 @@ import info.magnolia.context.MgnlContext;
 import info.magnolia.init.MagnoliaConfigurationProperties;
 import info.magnolia.link.LinkUtil;
 import info.magnolia.module.site.SiteManager;
+import jakarta.inject.Inject;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import java.util.Map;
 

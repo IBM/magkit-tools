@@ -24,7 +24,7 @@ Add the dependency to your Magnolia project. Prefer the latest released version 
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-app</artifactId>
-    <version>1.0.3</version><!-- or 1.0.4-SNAPSHOT -->
+    <version>1.1.0</version>
 </dependency>
 ```
 

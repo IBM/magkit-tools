@@ -24,8 +24,7 @@ import com.vaadin.server.Page;
 import info.magnolia.link.LinkUtil;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
-
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 

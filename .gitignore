@@ -9,3 +9,6 @@
 # build files
 target
 .DS_Store
+
+# temprorary files of Maven plugins
+pom.xml.versionsBackup

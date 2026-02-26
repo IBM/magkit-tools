@@ -27,10 +27,10 @@ import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.location.LocationController;
 import info.magnolia.ui.contentapp.browser.BrowserLocation;
 import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;

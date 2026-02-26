@@ -30,9 +30,9 @@ import info.magnolia.ui.api.action.CommandActionDefinition;
 import info.magnolia.ui.contentapp.action.CommandAction;
 import info.magnolia.ui.contentapp.async.AsyncActionExecutor;
 import info.magnolia.ui.observation.DatasourceObservation;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import java.util.Map;
 import java.util.Optional;

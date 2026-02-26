@@ -29,15 +29,15 @@ import info.magnolia.ui.contentapp.Datasource;
 import info.magnolia.ui.contentapp.browser.drop.DropConstraint;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import info.magnolia.ui.datasource.jcr.JcrSessionWrapper;
+import jakarta.inject.Provider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.inject.Provider;
 import javax.jcr.Item;
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
-import javax.jcr.Node;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,8 +52,8 @@ import static org.mockito.ArgumentMatchers.anyCollection;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link ConfirmRowDragger} covering confirmation content generation, title creation, move execution and confirmation decision logic.

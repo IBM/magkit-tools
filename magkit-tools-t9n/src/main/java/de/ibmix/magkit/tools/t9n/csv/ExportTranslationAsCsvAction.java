@@ -30,9 +30,9 @@ import info.magnolia.cms.util.QueryUtil;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.AbstractAction;
 import info.magnolia.ui.api.action.ConfiguredActionDefinition;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.inject.Inject;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.File;
