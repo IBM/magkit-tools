@@ -40,7 +40,6 @@
         </dependency>
         <dependency>
             <name>ui-admincentral</name>
-            <version>${version.magnolia}/*</version>
         </dependency>
     </dependencies>
     <repositories>
