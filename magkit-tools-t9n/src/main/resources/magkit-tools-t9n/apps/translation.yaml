@@ -124,6 +124,7 @@ subApps:
           multiple: true
       importTranslation:
         $type: openDialogAction
+        populate: false
         icon: icon-import
         dialogId: magkit-tools-t9n:import
         availability:
