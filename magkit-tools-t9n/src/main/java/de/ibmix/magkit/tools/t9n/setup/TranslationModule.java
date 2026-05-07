@@ -22,6 +22,8 @@ package de.ibmix.magkit.tools.t9n.setup;
 
 import info.magnolia.module.ModuleLifecycle;
 import info.magnolia.module.ModuleLifecycleContext;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,6 +45,8 @@ import lombok.extern.slf4j.Slf4j;
  * @author IBM iX
  * @since 2023-01-01
  */
+@Setter
+@Getter
 @Slf4j
 public class TranslationModule implements ModuleLifecycle {
 
@@ -68,21 +72,4 @@ public class TranslationModule implements ModuleLifecycle {
         LOGGER.info("Stop translation module ...");
     }
 
-    /**
-     * Returns the configured base path for translations in the workspace.
-     *
-     * @return the base path, or null if not configured
-     */
-    public String getBasePath() {
-        return _basePath;
-    }
-
-    /**
-     * Sets the base path for organizing translations within the workspace.
-     *
-     * @param basePath the base path (e.g., "/myproject")
-     */
-    public void setBasePath(String basePath) {
-        _basePath = basePath;
-    }
 }

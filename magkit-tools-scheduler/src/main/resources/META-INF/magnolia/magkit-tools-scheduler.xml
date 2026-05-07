@@ -52,7 +52,7 @@
     <dependencies>
         <dependency>
             <name>ui-admincentral</name>
-            <version>6.2/*</version>
+            <version>${version.magnolia}/*</version>
         </dependency>
         <dependency>
             <name>scheduler</name>

@@ -25,19 +25,11 @@
         <version.magkit>1.2.0-SNAPSHOT</version.magkit>
         <version.magkit.test>1.2.0-SNAPSHOT</version.magkit.test>
 
-        <swagger-annotations.version>2.2.43</swagger-annotations.version>
-
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-annotations</artifactId>
-                <version>${swagger-annotations.version}</version>
-            </dependency>
-
             <!-- Magkit dependencies: -->
             <dependency>
                 <groupId>de.ibmix.magkit</groupId>
