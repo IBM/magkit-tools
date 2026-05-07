@@ -25,7 +25,6 @@ import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.ui.CloseHandler;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.contentapp.Datasource;
-import info.magnolia.ui.contentapp.action.CommitActionDefinition;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import org.junit.jupiter.api.AfterEach;
@@ -59,7 +58,7 @@ import static org.mockito.Mockito.when;
  * @since 2025-11-20
  */
 public class TranslationSaveFormActionTest {
-    private CommitActionDefinition _definition;
+    private TranslationSaveFormActionDefinition _definition;
     private CloseHandler _closeHandler;
     private ValueContext<Node> _valueContext;
     private FormView<Node> _formView;
@@ -69,7 +68,7 @@ public class TranslationSaveFormActionTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        _definition = mock(CommitActionDefinition.class);
+        _definition = new TranslationSaveFormActionDefinition();
         _closeHandler = mock(CloseHandler.class);
         _valueContext = mock(ValueContext.class);
         _formView = mock(FormView.class);
@@ -99,7 +98,7 @@ public class TranslationSaveFormActionTest {
         TranslationSaveFormAction action = new TranslationSaveFormAction(_definition, _closeHandler, _valueContext, _formView, _datasource, _datasourceObservation, _nodeNameHelper);
         action.write();
         verify(_formView).write(node);
-        verify(_datasource).commit(node);
+        verify(_datasource).save(node);
         verify(_datasourceObservation).trigger();
         verify(_nodeNameHelper).getValidatedName("someKey");
         verify(_nodeNameHelper).getUniqueName(parent, "someKey");
@@ -118,7 +117,7 @@ public class TranslationSaveFormActionTest {
         TranslationSaveFormAction action = new TranslationSaveFormAction(_definition, _closeHandler, _valueContext, _formView, _datasource, _datasourceObservation, _nodeNameHelper);
         action.write();
         verify(_formView).write(node);
-        verify(_datasource).commit(node);
+        verify(_datasource).save(node);
         verify(_datasourceObservation).trigger();
         verify(_nodeNameHelper, never()).getUniqueName(any(Node.class), anyString());
         verify(node.getSession(), never()).move(anyString(), anyString());
@@ -135,7 +134,7 @@ public class TranslationSaveFormActionTest {
         TranslationSaveFormAction action = new TranslationSaveFormAction(_definition, _closeHandler, _valueContext, _formView, _datasource, _datasourceObservation, _nodeNameHelper);
         action.write();
         verify(_formView).write(node);
-        verify(_datasource).commit(node);
+        verify(_datasource).save(node);
         verify(_datasourceObservation).trigger();
         verify(_nodeNameHelper, never()).getUniqueName(any(Node.class), anyString());
         verify(node.getSession(), never()).move(anyString(), anyString());
@@ -150,7 +149,7 @@ public class TranslationSaveFormActionTest {
         TranslationSaveFormAction action = new TranslationSaveFormAction(_definition, _closeHandler, _valueContext, _formView, _datasource, _datasourceObservation, _nodeNameHelper);
         action.write();
         verify(_formView, never()).write(any());
-        verify(_datasource, never()).commit(any());
+        verify(_datasource, never()).save(any());
         verify(_datasourceObservation, never()).trigger();
         verify(_nodeNameHelper, never()).getValidatedName(anyString());
     }

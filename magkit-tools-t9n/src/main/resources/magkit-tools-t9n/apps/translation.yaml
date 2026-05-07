@@ -167,8 +167,7 @@ subApps:
       nodeType: mgnl:translation
     actions:
       commit:
-        $type: commitAction
-        implementationClass: de.ibmix.magkit.tools.t9n.TranslationSaveFormAction
+        $type: translationSaveAction
       cancel:
         $type: closeAction
     form:

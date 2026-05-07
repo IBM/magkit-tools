@@ -27,7 +27,6 @@ import info.magnolia.ui.CloseHandler;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.contentapp.Datasource;
 import info.magnolia.ui.contentapp.action.CommitAction;
-import info.magnolia.ui.contentapp.action.CommitActionDefinition;
 import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import jakarta.inject.Inject;
@@ -60,16 +59,16 @@ public class TranslationSaveFormAction extends CommitAction<Node> {
     /**
      * Creates a new translation save form action with all required dependencies.
      *
-     * @param definition the action definition configuration
-     * @param closeHandler the handler for closing the form
-     * @param valueContext the context providing access to the edited node
-     * @param form the form view containing the edited data
-     * @param datasource the datasource managing the JCR nodes
+     * @param definition            the action definition configuration
+     * @param closeHandler          the handler for closing the form
+     * @param valueContext          the context providing access to the edited node
+     * @param form                  the form view containing the edited data
+     * @param datasource            the datasource managing the JCR nodes
      * @param datasourceObservation the observation mechanism for triggering UI updates
-     * @param nodeNameHelper the helper for generating valid JCR node names
+     * @param nodeNameHelper        the helper for generating valid JCR node names
      */
     @Inject
-    public TranslationSaveFormAction(CommitActionDefinition definition, CloseHandler closeHandler, ValueContext<Node> valueContext, FormView<Node> form, Datasource<Node> datasource, DatasourceObservation.Manual datasourceObservation, NodeNameHelper nodeNameHelper) {
+    public TranslationSaveFormAction(TranslationSaveFormActionDefinition definition, CloseHandler closeHandler, ValueContext<Node> valueContext, FormView<Node> form, Datasource<Node> datasource, DatasourceObservation.Manual datasourceObservation, NodeNameHelper nodeNameHelper) {
         super(definition, closeHandler, valueContext, form, datasource, datasourceObservation);
         _nodeNameHelper = nodeNameHelper;
     }
@@ -91,7 +90,7 @@ public class TranslationSaveFormAction extends CommitAction<Node> {
                 NodeUtil.renameNode(item, newNodeName);
             }
 
-            getDatasource().commit(item);
+            getDatasource().save(item);
             getDatasourceObservation().trigger();
         }));
     }
