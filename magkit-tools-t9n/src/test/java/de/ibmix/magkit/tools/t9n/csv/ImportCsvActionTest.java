@@ -20,10 +20,15 @@ package de.ibmix.magkit.tools.t9n.csv;
  * #L%
  */
 
-import de.ibmix.magkit.test.cms.context.ContextMockUtils;
+import de.ibmix.magkit.test.cms.context.ComponentsMockUtils;
+import de.ibmix.magkit.tools.t9n.setup.TranslationModule;
 import info.magnolia.cms.i18n.I18nContentSupport;
 import info.magnolia.cms.security.User;
+import info.magnolia.cms.security.userprofile.LocaleSettingsProfile;
+import info.magnolia.cms.security.userprofile.UserProfileManager;
 import info.magnolia.context.MgnlContext;
+import info.magnolia.jcr.util.NodeNameHelper;
+import info.magnolia.jcr.util.PropertyUtil;
 import info.magnolia.ui.CloseHandler;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.contentapp.Datasource;
@@ -33,6 +38,7 @@ import info.magnolia.ui.editor.FormView;
 import info.magnolia.ui.observation.DatasourceObservation;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatchers;
@@ -46,26 +52,25 @@ import java.nio.file.Files;
 import java.util.Locale;
 import java.util.Optional;
 
-import de.ibmix.magkit.tools.t9n.setup.TranslationModule;
-import info.magnolia.jcr.util.NodeNameHelper;
-import info.magnolia.jcr.util.PropertyUtil;
-
 import static de.ibmix.magkit.test.cms.context.ComponentsMockUtils.mockComponentInstance;
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockWebContext;
 import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI18nContentSupport;
 import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubLocales;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubJcrSession;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
 import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
-import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
 import static de.ibmix.magkit.test.jcr.NodeStubbingOperation.stubProperty;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PN_KEY;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.Translation.PREFIX_NAME;
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,13 +91,21 @@ class ImportCsvActionTest {
         NodeNameHelper nodeNameHelper = mockComponentInstance(NodeNameHelper.class);
         when(nodeNameHelper.getValidatedName(ArgumentMatchers.anyString())).thenAnswer(inv -> inv.getArguments()[0]);
 
-        final User user = mockUser("Paul", stubLanguage("fr"));
+        final UserProfileManager userProfileManager = ComponentsMockUtils.mockComponentInstance(UserProfileManager.class);
+        when(userProfileManager.getUserProfile(any(), eq(LocaleSettingsProfile.class))).thenAnswer(invocation -> {
+            final User user = invocation.getArgument(0);
+            final LocaleSettingsProfile settingsProfile = new LocaleSettingsProfile();
+            settingsProfile.setLanguage(new Locale(substringBefore(user.getName(), "_")));
+            return settingsProfile;
+        });
+
+        final User user = mockUser("fr_Paul");
         mockWebContext(stubUser(user), stubJcrSession(WS_TRANSLATION));
     }
 
     @AfterEach
     void tearDown() {
-        ContextMockUtils.cleanContext();
+        cleanContext();
     }
 
     /**
@@ -111,7 +124,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies import creates a new translation node at root when base path is empty.
+     * Verifies import creates a new translation node at root when the base path is empty.
      */
     @Test
     void importCreatesNodesAtRootWhenBasePathEmpty() throws Exception {
@@ -133,7 +146,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies import places nodes under configured base path.
+     * Verifies import places nodes under the configured base path.
      */
     @Test
     void importCreatesNodesUnderBasePath() throws Exception {
@@ -191,7 +204,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies import with custom separator.
+     * Verifies import with a custom separator.
      */
     @Test
     void importUsesCustomSeparator() throws Exception {
@@ -213,12 +226,12 @@ class ImportCsvActionTest {
     /**
      * Verifies import of multiple rows creates multiple nodes.
      */
-//    @Test
+    @Disabled
+    @Test
     void importCreatesMultipleNodes() throws Exception {
         File csv = new File(_tempDir, "t6.csv");
         Files.writeString(csv.toPath(), "Key," + Locale.ENGLISH.getDisplayName() + "," + Locale.GERMAN.getDisplayName() + "\nkey1,Value1,Wert1\nkey2,Value2,Wert2\nkey3,Value3,Wert3\n");
         FormView<Node> view = mockFormViewWithCsvFile(csv, null, null);
-
 
         ImportCsvAction action = createImportCsvAction(view);
         action.write();
@@ -233,7 +246,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies detectColumns recognizes locale by display name in current locale.
+     * Verifies detectColumns recognizes locale by display name in the current locale.
      */
     @Test
     void detectColumnsMatchesLocaleDisplayNameInCurrentLocale() throws RepositoryException {
@@ -249,7 +262,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies detectColumns recognizes locale by default display name or user local display name and ignores unknown column headings.
+     * Verifies detectColumns recognizes a locale by default display name or user local display name and ignores unknown column headings.
      */
     @Test
     void detectColumnsMatchesLocaleDisplayNameDefault() throws RepositoryException {
@@ -304,7 +317,7 @@ class ImportCsvActionTest {
     }
 
     /**
-     * Verifies import handles empty CSV file gracefully.
+     * Verifies import handles an empty CSV file gracefully.
      */
     @Test
     void importHandlesEmptyCsvFile() throws Exception {
@@ -348,6 +361,5 @@ class ImportCsvActionTest {
 
         I18nContentSupport i18nContentSupport = mockI18nContentSupport(stubLocales(Locale.ENGLISH, Locale.GERMAN));
         return new ImportCsvAction(definition, closeHandler, valueContext, formView, datasource, datasourceObservation, i18nContentSupport);
-
     }
 }

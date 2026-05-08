@@ -20,8 +20,13 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
+import de.ibmix.magkit.test.cms.context.ComponentsMockUtils;
 import info.magnolia.cms.security.User;
+import info.magnolia.cms.security.userprofile.LocaleSettingsProfile;
+import info.magnolia.cms.security.userprofile.UserProfileManager;
 import info.magnolia.ui.contentapp.configuration.column.ColumnDefinition;
+import info.magnolia.ui.contentapp.configuration.column.ConfiguredColumnDefinition;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,11 +41,12 @@ import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI
 import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubDefaultLocale;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
 import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
-import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for {@link TranslationListViewDefinition}.
@@ -49,128 +55,88 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @since 2025-12-05
  */
 public class TranslationListViewDefinitionTest {
+    private static final List<Pair<String, String>> COLUMNS = List.of(Pair.of("key", "Key"), Pair.of("translation_en", "English"));
+
+    private TranslationListViewDefinition<String> _viewDefinition;
 
     @BeforeEach
     public void setUp() throws RepositoryException {
-        cleanContext();
-        final User user = mockUser("TestUser", stubLanguage("en"));
-        mockWebContext(stubUser(user));
-    }
+        final UserProfileManager userProfileManager = ComponentsMockUtils.mockComponentInstance(UserProfileManager.class);
+        when(userProfileManager.getUserProfile(any(), eq(LocaleSettingsProfile.class))).thenAnswer(invocation -> {
+            final User user = invocation.getArgument(0);
+            final LocaleSettingsProfile settingsProfile = new LocaleSettingsProfile();
+            settingsProfile.setLanguage(new Locale(substringBefore(user.getName(), "_")));
+            return settingsProfile;
+        });
 
-    @AfterEach
-    public void tearDown() {
-        cleanContext();
+        final User user = mockUser("en_user");
+        mockWebContext(stubUser(user));
+        mockI18nContentSupport(stubDefaultLocale(Locale.ENGLISH));
+
+        _viewDefinition = new TranslationListViewDefinition<>();
+
+        final ConfiguredColumnDefinition<String> keyCol = new ConfiguredColumnDefinition<>();
+        keyCol.setName(TranslationNodeTypes.Translation.PN_KEY);
+        keyCol.setLabel("Key");
+        _viewDefinition.setColumns(List.of(keyCol));
     }
 
     /**
      * Verifies that getColumns returns translation columns followed by parent columns.
      */
     @Test
-    public void testGetColumnsOrdersTranslationColumnsFirst() {
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
+    public void testDefaultTranslationColumns() {
+        final List<ColumnDefinition<String>> columns = _viewDefinition.getColumns();
+        assertEquals(2, columns.size(), "Should have 2 translation columns (key + 1 locale)");
 
-        assertNotNull(columns, "Columns list should not be null");
-        assertTrue(columns.size() > 0, "Should contain at least translation columns");
-
-        final ColumnDefinition<String> firstColumn = columns.get(0);
-        assertEquals("key", firstColumn.getName(), "First column should be the key column");
-        assertNull(firstColumn.getLabel(), "Key column label should be null");
-    }
-
-    /**
-     * Verifies that all translation columns are sortable.
-     */
-    @Test
-    public void testAllTranslationColumnsAreSortable() {
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
-
-        for (ColumnDefinition<String> column : columns) {
+        for (int i = 0; i < columns.size(); i++) {
+            ColumnDefinition<String> column = columns.get(i);
+            final Pair<String, String> expectedColumn = COLUMNS.get(i);
+            assertEquals(expectedColumn.getKey(), column.getName(), "Column at position " + i + " should be the " + expectedColumn.getKey() + " column");
             assertTrue(column.isSortable(), "Column " + column.getName() + " should be sortable");
+            assertEquals(expectedColumn.getValue(), column.getLabel(), expectedColumn.getValue() + " label should be present");
         }
-    }
-
-    /**
-     * Verifies that all translation columns have fixed width of 300 pixels.
-     */
-    @Test
-    public void testAllTranslationColumnsHaveFixedWidth() {
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
-
-        for (ColumnDefinition<String> column : columns) {
-            assertEquals(300, column.getWidth(), "Column " + column.getName() + " should have width of 300");
-        }
-    }
-
-    /**
-     * Verifies that buildTranslationColumn creates properly configured columns.
-     */
-    @Test
-    public void testBuildTranslationColumnConfiguration() {
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-
-        final ColumnDefinition<String> column = viewDefinition.buildTranslationColumn("testColumn", "Test Label");
-
-        assertNotNull(column, "Built column should not be null");
-        assertEquals("testColumn", column.getName(), "Column name should match");
-        assertEquals("testColumn", column.getPropertyName(), "Property name should match column name");
-        assertEquals("Test Label", column.getLabel(), "Column label should match");
-        assertTrue(column.isSortable(), "Column should be sortable");
-        assertEquals(300, column.getWidth(), "Column width should be 300");
-    }
-
-    /**
-     * Verifies that buildTranslationColumn handles null labels correctly.
-     */
-    @Test
-    public void testBuildTranslationColumnWithNullLabel() {
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-
-        final ColumnDefinition<String> column = viewDefinition.buildTranslationColumn("keyColumn", null);
-
-        assertNotNull(column, "Built column should not be null");
-        assertEquals("keyColumn", column.getName(), "Column name should match");
-        assertNull(column.getLabel(), "Column label should be null");
     }
 
     /**
      * Verifies that user locale influences translation column labels.
      */
     @Test
-    public void testUserLocaleInfluencesColumnLabels() throws RepositoryException {
-        final User germanUser = mockUser("DeutschUser", stubLanguage("de"));
+    public void testGermanEditorColumnLabels() throws RepositoryException {
+        final User germanUser = mockUser("de_user");
         mockWebContext(stubUser(germanUser));
-        mockI18nContentSupport(stubDefaultLocale(Locale.FRANCE));
+        mockI18nContentSupport(stubDefaultLocale(Locale.FRENCH));
 
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
-
+        final List<ColumnDefinition<String>> columns = _viewDefinition.getColumns();
         assertEquals(2, columns.size(), "Should have 2 translation columns (key + 1 locale)");
 
-        final ColumnDefinition<String> franceColumn = columns.get(1);
-        assertEquals("Französisch", franceColumn.getLabel(), "French locale should display in German user's language");
-
+        final ColumnDefinition<String> localeColumn = columns.get(1);
+        assertEquals("Französisch", localeColumn.getLabel(), "French locale should display in German user's language");
     }
 
     /**
-     * Verifies correct behavior with single locale configuration.
+     * Verifies further language columns.
      */
     @Test
-    public void testSingleLocaleConfiguration() throws RepositoryException {
-        mockI18nContentSupport(stubDefaultLocale(Locale.ENGLISH));
+    public void testFurtherLanguageColumns() throws RepositoryException {
+        final User germanUser = mockUser("de_user");
+        mockWebContext(stubUser(germanUser));
 
-        final TranslationListViewDefinition<String> viewDefinition = new TranslationListViewDefinition<>();
-        final List<ColumnDefinition<String>> columns = viewDefinition.getColumns();
+        _viewDefinition.setFurtherLanguages("de, de_CH");
+        final List<ColumnDefinition<String>> columns = _viewDefinition.getColumns();
+        assertEquals(4, columns.size(), "Should have 4 translation columns (key + default locale + 2 further locales)");
 
-        assertEquals(2, columns.size(), "Should have 2 columns (key + 1 locale)");
+        final ColumnDefinition<String> firstColumn = columns.get(1);
+        assertEquals("Englisch", firstColumn.getLabel());
+        final ColumnDefinition<String> secondColumn = columns.get(2);
+        assertEquals("Deutsch", secondColumn.getLabel());
+        final ColumnDefinition<String> thirdColumn = columns.get(3);
+        assertEquals("Deutsch (Schweiz)", thirdColumn.getLabel());
+    }
 
-        final ColumnDefinition<String> keyColumn = columns.get(0);
-        assertEquals("key", keyColumn.getName(), "First column should be key");
-
-        final ColumnDefinition<String> englishColumn = columns.get(1);
-        assertEquals("English", englishColumn.getLabel(), "English locale should be present");
+    @AfterEach
+    public void tearDown() {
+        cleanContext();
     }
 }
 

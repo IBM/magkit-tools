@@ -21,6 +21,7 @@ package de.ibmix.magkit.tools.t9n.csv;
  */
 
 import au.com.bytecode.opencsv.CSVReader;
+import de.ibmix.magkit.tools.t9n.TranslationListViewDefinition;
 import de.ibmix.magkit.tools.t9n.TranslationNodeTypes;
 import de.ibmix.magkit.tools.t9n.setup.TranslationModule;
 import info.magnolia.cms.i18n.I18nContentSupport;
@@ -190,7 +191,7 @@ public class ImportCsvAction extends CommitAction<Node> {
             if (heading.equals(TranslationCsvWriter.COLUMN_KEY)) {
                 cols.put(index, PN_KEY);
             } else {
-                final Locale currentLocale = new Locale(MgnlContext.getUser().getLanguage());
+                final Locale currentLocale = TranslationListViewDefinition.retrieveDisplayLocale(Locale.ENGLISH);
                 for (Locale locale : _locales) {
                     if (heading.equals(locale.getDisplayName(currentLocale)) || heading.equals(locale.getDisplayName())) {
                         cols.put(index, PREFIX_NAME + locale.getLanguage());

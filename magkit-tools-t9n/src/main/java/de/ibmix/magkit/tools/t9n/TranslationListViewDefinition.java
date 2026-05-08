@@ -21,6 +21,8 @@ package de.ibmix.magkit.tools.t9n;
  */
 
 import info.magnolia.cms.i18n.I18nContentSupport;
+import info.magnolia.cms.security.userprofile.LocaleSettingsProfile;
+import info.magnolia.cms.security.userprofile.UserProfileManager;
 import info.magnolia.context.MgnlContext;
 import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.ViewType;
@@ -28,6 +30,9 @@ import info.magnolia.ui.contentapp.configuration.ListViewDefinition;
 import info.magnolia.ui.contentapp.configuration.column.ColumnDefinition;
 import info.magnolia.ui.contentapp.configuration.column.ConfiguredColumnDefinition;
 import lombok.Generated;
+import lombok.Getter;
+import lombok.Setter;
+import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -61,17 +66,20 @@ import java.util.Locale;
  * <li>Must be registered with the {@code @ViewType("translationListView")} annotation</li>
  * </ul>
  *
- * <p><strong>Thread-Safety:</strong> This class is thread-safe as it does not maintain mutable state between
+ * <p><strong>Thread-Safety:</strong> This class is thread-safe as it does not maintain a mutable state between
  * method calls. However, the {@link I18nContentSupport} and {@link MgnlContext} components should be
  * thread-safe.</p>
  *
  * @param <T> the type of items displayed in the list view
- *
  * @author wolf.bubenik IBM iX
  * @since 2025-12-05
  */
+@Setter
+@Getter
 @ViewType("translationListView")
 public class TranslationListViewDefinition<T> extends ListViewDefinition<T> {
+
+    private String _furtherLanguages;
 
     /**
      * Retrieves the complete list of column definitions, combining translation-specific columns (key, translations for default locale)
@@ -82,45 +90,54 @@ public class TranslationListViewDefinition<T> extends ListViewDefinition<T> {
     @Override
     @Generated
     public List<ColumnDefinition<T>> getColumns() {
-        List<ColumnDefinition<T>> columns = new ArrayList<>();
-        columns.add(buildTranslationColumn("key", null));
-        addDefaultLocalTranslationColumn(columns);
-        columns.addAll(super.getColumns());
+        List<ColumnDefinition<T>> columns = new ArrayList<>(super.getColumns());
+        columns.addAll(1, retrieveDefaultLocaleTranslationColumn());
         return columns;
     }
 
-    /**
-     * Generates translation column definition for the default locale based on configured locales and the user's language preference.
-     * Adds this column definition to the provided list of columns.
-     *
-     * @param columns the list to which the generated column definitions will be added
-     */
-    void addDefaultLocalTranslationColumn(List<ColumnDefinition<T>> columns) {
+    private List<? extends ColumnDefinition<T>> retrieveDefaultLocaleTranslationColumn() {
+        List<ColumnDefinition<T>> columns = new ArrayList<>();
         I18nContentSupport i18nContentSupport = Components.getComponent(I18nContentSupport.class);
-        final Locale userLocale = new Locale(MgnlContext.getUser().getLanguage());
         final Locale defaultLocale = i18nContentSupport.getDefaultLocale();
-        if (defaultLocale != null) {
-            String name = TranslationNodeTypes.Translation.PREFIX_NAME + defaultLocale;
-            String label = StringUtils.capitalize(defaultLocale.getDisplayLanguage(userLocale));
-            columns.add(buildTranslationColumn(name, label));
+        final Locale displayLocale = retrieveDisplayLocale(defaultLocale);
+        columns.add(buildTranslationColumn(TranslationNodeTypes.Translation.PREFIX_NAME + defaultLocale, defaultLocale.getDisplayName(displayLocale)));
+
+        final String[] furtherLanguages = StringUtils.split(_furtherLanguages, ",");
+        if (furtherLanguages != null) {
+            for (String furtherLanguage : furtherLanguages) {
+                final Locale locale = LocaleUtils.toLocale(furtherLanguage.trim());
+                columns.add(buildTranslationColumn(TranslationNodeTypes.Translation.PREFIX_NAME + locale, locale.getDisplayName(displayLocale)));
+            }
         }
+
+        return columns;
     }
 
     /**
      * Constructs a configured column definition for a translation column.
      *
-     * @param name the name of the column, used as property name for data binding
+     * @param name  the name of the column, used as a property name for data binding
      * @param label the display label for the column header; may be {@code null} for the "key" column
-     *
      * @return a configured {@link ColumnDefinition} with sortable enabled and a fixed width of 300 pixels
      */
-    ColumnDefinition<T> buildTranslationColumn(String name, String label) {
-        ConfiguredColumnDefinition<T> column = new ConfiguredColumnDefinition<T>();
+    private ColumnDefinition<T> buildTranslationColumn(String name, String label) {
+        ConfiguredColumnDefinition<T> column = new ConfiguredColumnDefinition<>();
         column.setName(name);
         column.setPropertyName(name);
         column.setLabel(label);
         column.setSortable(true);
-        column.setWidth(300);
         return column;
+    }
+
+    /**
+     * Retrieves the preferred display locale for the current user. If the user's
+     * preferred locale is not available, the specified default locale will be used.
+     *
+     * @param defaultLocale the default locale to be used if no preferred locale is set for the user
+     * @return the user's preferred display locale, or the default locale if no preference is set
+     */
+    public static Locale retrieveDisplayLocale(Locale defaultLocale) {
+        final Locale userLocale = Components.getComponent(UserProfileManager.class).getUserProfile(MgnlContext.getUser(), LocaleSettingsProfile.class).getLanguage();
+        return userLocale != null ? userLocale : defaultLocale;
     }
 }
