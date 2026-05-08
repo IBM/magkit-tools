@@ -21,19 +21,17 @@ package de.ibmix.magkit.tools.t9n;
  */
 
 import info.magnolia.cms.i18n.I18nContentSupport;
-import info.magnolia.context.MgnlContext;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.objectfactory.Components;
 import info.magnolia.ui.editor.ConfiguredFormDefinition;
 import info.magnolia.ui.field.EditorPropertyDefinition;
 import info.magnolia.ui.field.TextFieldDefinition;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
+import static de.ibmix.magkit.tools.t9n.TranslationListViewDefinition.retrieveDisplayLocale;
 
 /**
  * Dynamic form definition that generates translation fields based on configured locales.
@@ -73,17 +71,13 @@ public class TranslationFormDefinition extends ConfiguredFormDefinition {
         keyProperty.setLabel(simpleTranslator.translate("translation.jcrDetail.main.key.label"));
         properties.add(keyProperty);
 
+        final Locale userLocale = retrieveDisplayLocale(Locale.ENGLISH);
         I18nContentSupport i18nContentSupport = Components.getComponent(I18nContentSupport.class);
-        final Locale userLocale = new Locale(MgnlContext.getUser().getLanguage());
         for (Locale locale : i18nContentSupport.getLocales()) {
             String displayName = TranslationNodeTypes.Translation.PREFIX_NAME + locale.toString();
             TextFieldDefinition field = new TextFieldDefinition();
             field.setName(displayName);
-            String label = StringUtils.capitalize(locale.getDisplayLanguage(userLocale));
-            if (isNotEmpty(locale.getCountry())) {
-                label += " (" + locale.getDisplayCountry(userLocale) + ")";
-            }
-            field.setLabel(label);
+            field.setLabel(locale.getDisplayName(userLocale));
             properties.add(field);
         }
         return properties;

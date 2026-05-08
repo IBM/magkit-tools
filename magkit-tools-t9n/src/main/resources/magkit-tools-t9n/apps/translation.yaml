@@ -1,21 +1,20 @@
 appClass: info.magnolia.ui.framework.app.BaseApp
-icon: icon-message
+icon: icon-content-translation-app
 class: info.magnolia.ui.contentapp.configuration.ContentAppDescriptor
+datasource: &datasource
+  $type: jcrDatasource
+  workspace: translation
+  describeByProperty: key
+  # need to add ordering explicitly so entries stop moving out of viewport after status change
+  # However, this does not help.
+  sortBy:
+    key: ascending
+  allowedNodeTypes:
+    folder: mgnl:folder
+    asset: mgnl:translation
 subApps:
   browser:
     class: info.magnolia.ui.contentapp.configuration.BrowserDescriptor
-    closable: false
-    datasource: &datasource
-      $type: jcrDatasource
-      workspace: translation
-      describeByProperty: key
-      # need to add ordering explicitly so entries stop moving out of viewport after status change
-      # However, this does not help.
-      sortBy:
-        key: ascending
-      allowedNodeTypes:
-        folder: mgnl:folder
-        asset: mgnl:translation
     workbench:
       sortFilterOptions: true
       filters:
@@ -46,7 +45,6 @@ subApps:
           furtherLanguages: de
           columns:
             key:
-              $type: textField
               width: 300
             jcrPublishingStatus:
               $type: jcrStatusColumn

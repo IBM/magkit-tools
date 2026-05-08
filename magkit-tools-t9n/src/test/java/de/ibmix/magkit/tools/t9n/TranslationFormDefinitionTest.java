@@ -20,7 +20,10 @@ package de.ibmix.magkit.tools.t9n;
  * #L%
  */
 
+import de.ibmix.magkit.test.cms.context.ComponentsMockUtils;
 import info.magnolia.cms.security.User;
+import info.magnolia.cms.security.userprofile.LocaleSettingsProfile;
+import info.magnolia.cms.security.userprofile.UserProfileManager;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.ui.field.EditorPropertyDefinition;
 import org.junit.jupiter.api.AfterEach;
@@ -38,10 +41,12 @@ import static de.ibmix.magkit.test.cms.context.I18nContentSupportMockUtils.mockI
 import static de.ibmix.magkit.test.cms.context.I18nContentSupportStubbingOperation.stubLocales;
 import static de.ibmix.magkit.test.cms.context.WebContextStubbingOperation.stubUser;
 import static de.ibmix.magkit.test.cms.security.SecurityMockUtils.mockUser;
-import static de.ibmix.magkit.test.cms.security.UserStubbingOperation.stubLanguage;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -56,14 +61,22 @@ public class TranslationFormDefinitionTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        final User user = mockUser("Paul", stubLanguage("en"));
+        final UserProfileManager userProfileManager = ComponentsMockUtils.mockComponentInstance(UserProfileManager.class);
+        when(userProfileManager.getUserProfile(any(), eq(LocaleSettingsProfile.class))).thenAnswer(invocation -> {
+            final User user = invocation.getArgument(0);
+            final LocaleSettingsProfile settingsProfile = new LocaleSettingsProfile();
+            settingsProfile.setLanguage(new Locale(substringBefore(user.getName(), "_")));
+            return settingsProfile;
+        });
+
+        final User user = mockUser("en_Paul");
         mockWebContext(stubUser(user));
         _simpleTranslator = mockComponentInstance(SimpleTranslator.class);
         when(_simpleTranslator.translate(anyString())).thenReturn("Key");
     }
 
     /**
-     * Verifies property names, ordering and country suffix handling.
+     * Verifies property names, ordering, and country suffix handling.
      */
     @Test
     public void testPropertyNamesAndOrder() throws RepositoryException {
@@ -86,12 +99,12 @@ public class TranslationFormDefinitionTest {
      */
     @Test
     public void testUserLocaleInfluencesLabels() throws Exception {
-        cleanContext();
-        final User user = mockUser("Erika", stubLanguage("de"));
+        final User user = mockUser("de_Erika");
         mockWebContext(stubUser(user));
         _simpleTranslator = mockComponentInstance(SimpleTranslator.class);
         when(_simpleTranslator.translate(anyString())).thenReturn("Schlüssel");
         mockI18nContentSupport(stubLocales(Locale.FRANCE, Locale.ITALY));
+
         final TranslationFormDefinition translationFormDefinition = new TranslationFormDefinition();
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
         assertEquals(3, properties.size());
@@ -102,7 +115,7 @@ public class TranslationFormDefinitionTest {
     }
 
     /**
-     * Verifies only key property is created when no locales are configured.
+     * Verifies only the key property is created when no locales are configured.
      */
     @Test
     public void testNoLocalesConfigured() throws RepositoryException {
@@ -115,7 +128,7 @@ public class TranslationFormDefinitionTest {
     }
 
     /**
-     * Verifies translator invocation with expected key label pattern.
+     * Verifies translator invocation with the expected key label pattern.
      */
     @Test
     public void testTranslatorInvocation() throws RepositoryException {
