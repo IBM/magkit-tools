@@ -1,5 +1,5 @@
 'appClass': 'de.ibmix.magkit.tools.app.ToolsBaseApp'
-'icon': 'icon-user-system'
+'icon': 'icon-development-app'
 'name': 'extendedtools'
 'theme': 'extendedtools'
 'subApps':
