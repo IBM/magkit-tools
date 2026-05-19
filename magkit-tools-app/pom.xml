@@ -27,6 +27,13 @@
             <groupId>de.ibmix.magkit</groupId>
             <artifactId>magkit-core</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- test dependencies -->
         <dependency>
             <groupId>de.ibmix.magkit</groupId>
             <artifactId>magkit-setup</artifactId>
