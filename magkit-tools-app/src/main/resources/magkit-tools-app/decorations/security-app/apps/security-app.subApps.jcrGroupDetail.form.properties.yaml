@@ -1,0 +1,3 @@
+aclOverview:
+  $type: aclOverview
+  label: aclOverview.field.label

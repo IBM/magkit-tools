@@ -20,18 +20,18 @@ package de.ibmix.magkit.tools.app.field;
  * #L%
  */
 
-import com.vaadin.ui.Component;
+import com.vaadin.data.BinderValidationStatus;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.v7.data.Item;
-import com.vaadin.v7.ui.CustomField;
 import info.magnolia.cms.security.Permission;
 import info.magnolia.i18nsystem.SimpleTranslator;
 import info.magnolia.jcr.util.PropertyUtil;
-import info.magnolia.ui.vaadin.integration.jcr.AbstractJcrNodeAdapter;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import info.magnolia.ui.editor.EditorView;
+import jakarta.inject.Inject;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -72,87 +72,75 @@ import static org.apache.commons.lang3.StringUtils.substringAfter;
  * @author diana.racho (IBM iX)
  * @since 2023-01-01
  */
-public class AclField extends CustomField<Object> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AclField.class);
-
+@Slf4j
+public class AclOverviewView extends GridLayout implements EditorView<Node> {
     private static final String CSS_PREFIX = "dependencies-";
     private static final String LAYOUT_CSS_CLASS = CSS_PREFIX + "layout";
     private static final String SECTION_CSS_STYLE = CSS_PREFIX + "section";
     private static final String TXT_CSS_STYLE = CSS_PREFIX + "txt";
     private static final String ROW_CSS_STYLE = CSS_PREFIX + "row";
 
-    private final Item _relatedFieldItem;
-    private final GridLayout _layout;
-
-    private int _currentRow;
-
     private final SimpleTranslator _i18n;
 
     /**
      * Constructs a new AclField instance.
      *
-     * @param relatedFieldItem the JCR node item representing the user
      * @param i18n the translator for i18n support
      */
-    public AclField(Item relatedFieldItem, SimpleTranslator i18n) {
-        _relatedFieldItem = relatedFieldItem;
-        _layout = new GridLayout();
+    @Inject
+    public AclOverviewView(SimpleTranslator i18n) {
         _i18n = i18n;
     }
 
-    /**
-     * Initializes and builds the content of the ACL field.
-     * Retrieves the user's roles from direct assignments and group memberships,
-     * then displays the ACL information for each repository.
-     *
-     * @return the Vaadin component containing the ACL grid or null if item is invalid
-     */
     @Override
-    protected Component initContent() {
-        AbstractJcrNodeAdapter item;
-        _currentRow = 0;
-        _layout.setColumns(3);
-        _layout.setWidth("100%");
-        _layout.setColumnExpandRatio(0, 0.6f);
-        _layout.setColumnExpandRatio(1, 0.2f);
-        _layout.setColumnExpandRatio(2, 0.25f);
-        _layout.addStyleName(LAYOUT_CSS_CLASS);
-        _layout.setSpacing(true);
+    public List<BinderValidationStatus<?>> validate() {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void populate(Node item) {
+        setColumns(3);
+        setWidth("100%");
+        setColumnExpandRatio(0, 0.6f);
+        setColumnExpandRatio(1, 0.2f);
+        setColumnExpandRatio(2, 0.25f);
+        addStyleName(LAYOUT_CSS_CLASS);
+        setSpacing(true);
         addHeaderRow();
-        if (_relatedFieldItem instanceof AbstractJcrNodeAdapter) {
-            item = (AbstractJcrNodeAdapter) _relatedFieldItem;
-        } else {
-            LOGGER.warn("Item {} is not a JcrItemAdapter. Field will not be initialized.", _relatedFieldItem);
-            return null;
-        }
-        Node node = item.getJcrItem();
-        List<Node> roles = getRoles(node);
-        List<Node> rolesFromGroup = getRolesFromGroup(node);
-        if (!rolesFromGroup.isEmpty()) {
-            roles.addAll(rolesFromGroup);
-        }
-        if (!roles.isEmpty()) {
-            Map<String, List<Acl>> repositories = new HashMap<>();
-            for (Node role : roles) {
-                Map<String, List<Acl>> newRepositories = getRepositories(role);
-                if (!newRepositories.isEmpty()) {
-                    repositories.putAll(newRepositories);
-                }
-            }
-            if (!repositories.isEmpty()) {
-                int size = repositories.size();
-                for (Map.Entry<String, List<Acl>> map : repositories.entrySet()) {
-                    size += (map.getValue()).size() + 1;
-                }
 
-                _layout.setRows(size);
-                for (Map.Entry<String, List<Acl>> map : repositories.entrySet()) {
-                    addReferencesToGrid(map.getKey(), map.getValue());
+        if (item != null) {
+            int currentRow = 1;
+            List<Node> roles = getRoles(item);
+            List<Node> rolesFromGroup = getRolesFromGroup(item);
+            if (!rolesFromGroup.isEmpty()) {
+                roles.addAll(rolesFromGroup);
+            }
+            if (!roles.isEmpty()) {
+                Map<String, List<Acl>> repositories = new HashMap<>();
+                for (Node role : roles) {
+                    Map<String, List<Acl>> newRepositories = getRepositories(role);
+                    if (!newRepositories.isEmpty()) {
+                        repositories.putAll(newRepositories);
+                    }
+                }
+                if (!repositories.isEmpty()) {
+                    int size = repositories.size();
+                    for (Map.Entry<String, List<Acl>> map : repositories.entrySet()) {
+                        size += (map.getValue()).size() + 1;
+                    }
+
+                    setRows(size);
+                    for (Map.Entry<String, List<Acl>> map : repositories.entrySet()) {
+                        currentRow = addReferencesToGrid(currentRow, map.getKey(), map.getValue());
+                    }
                 }
             }
         }
+    }
 
-        return _layout;
+    @Override
+    public void write(Node item) {
+        // do nothing on write
     }
 
     void addHeaderRow() {
@@ -165,10 +153,9 @@ public class AclField extends CustomField<Object> {
         Label role = new Label();
         role.addStyleName(SECTION_CSS_STYLE);
         role.setValue("ROLE");
-        _layout.addComponent(path, 0, _currentRow);
-        _layout.addComponent(permission, 1, _currentRow);
-        _layout.addComponent(role, 2, _currentRow);
-        _currentRow++;
+        addComponent(path, 0, 0);
+        addComponent(permission, 1, 0);
+        addComponent(role, 2, 0);
     }
 
     List<Node> getRoles(Node node) {
@@ -219,7 +206,7 @@ public class AclField extends CustomField<Object> {
             while (properties.hasNext()) {
                 Property property = properties.nextProperty();
                 String name = property.getName();
-                boolean isNamespacedProperty = StringUtils.contains(name, ":");
+                boolean isNamespacedProperty = Strings.CS.contains(name, ":");
 
                 if (!isNamespacedProperty) {
                     result.add(property);
@@ -277,25 +264,21 @@ public class AclField extends CustomField<Object> {
         return permissionString;
     }
 
-    @Override
-    public Class<?> getType() {
-        return Object.class;
-    }
-
-    void addReferencesToGrid(String headline, List<Acl> aclList) {
+    int addReferencesToGrid(int row, String headline, List<Acl> aclList) {
+        int currentRow = row;
         Label headlineLabel = new Label();
         headlineLabel.setValue(headline);
         headlineLabel.addStyleName(SECTION_CSS_STYLE);
-        _layout.addComponent(headlineLabel, 0, _currentRow, 2, _currentRow);
-        _currentRow++;
+        addComponent(headlineLabel, 0, currentRow, 2, currentRow);
+        currentRow++;
 
         if (aclList.isEmpty()) {
             Label label = new Label();
             label.setValue("keine Rechte vorhanden");
             label.addStyleName(TXT_CSS_STYLE);
-            _layout.insertRow(_currentRow);
-            _layout.addComponent(label, 0, _currentRow, 2, _currentRow);
-            _currentRow++;
+            insertRow(currentRow);
+            addComponent(label, 0, currentRow, 2, currentRow);
+            currentRow++;
         } else {
             for (Acl acl : aclList) {
                 Label permission = new Label();
@@ -307,17 +290,20 @@ public class AclField extends CustomField<Object> {
                 Label role = new Label();
                 role.addStyleName(ROW_CSS_STYLE);
                 role.setValue(acl.getRole());
-                _layout.addComponent(path, 0, _currentRow);
-                _layout.addComponent(permission, 1, _currentRow);
-                _layout.addComponent(role, 2, _currentRow);
-                _currentRow++;
+                addComponent(path, 0, currentRow);
+                addComponent(permission, 1, currentRow);
+                addComponent(role, 2, currentRow);
+                currentRow++;
             }
         }
+        return currentRow;
     }
 
     /**
      * Data holder class for ACL information.
      */
+    @Setter
+    @Getter
     static class Acl {
         private String _permission;
         private String _path;
@@ -327,36 +313,12 @@ public class AclField extends CustomField<Object> {
          * Constructs a new Acl instance.
          *
          * @param permission the permission type
-         * @param path the node path
-         * @param role the role name
+         * @param path       the node path
+         * @param role       the role name
          */
         Acl(String permission, String path, String role) {
             _permission = permission;
             _path = path;
-            _role = role;
-        }
-
-        public String getPermission() {
-            return _permission;
-        }
-
-        public void setPermission(String permission) {
-            _permission = permission;
-        }
-
-        public String getPath() {
-            return _path;
-        }
-
-        public void setPath(String path) {
-            _path = path;
-        }
-
-        public String getRole() {
-            return _role;
-        }
-
-        public void setRole(String role) {
             _role = role;
         }
     }

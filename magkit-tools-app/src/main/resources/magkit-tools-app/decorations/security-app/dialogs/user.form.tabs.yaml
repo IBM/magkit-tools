@@ -1,6 +1,0 @@
-aclOverview:
-  label: ACL Overview
-  fields:
-    overview:
-      class: de.ibmix.magkit.tools.app.field.AclFieldDefinition
-      label: Permissions

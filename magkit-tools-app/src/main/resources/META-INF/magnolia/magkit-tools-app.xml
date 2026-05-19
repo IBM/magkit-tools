@@ -24,6 +24,7 @@
     <name>${project.artifactId}</name>
     <displayName>${project.name}</displayName>
     <description>${project.description}</description>
+    <versionHandler>de.ibmix.magkit.tools.app.setup.AppModuleVersionHandler</versionHandler>
     <version>${project.version}</version>
 
     <components>
