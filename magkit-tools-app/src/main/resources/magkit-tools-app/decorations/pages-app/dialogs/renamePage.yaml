@@ -1,5 +1,7 @@
 form:
   properties:
+    title:
+      rows: 1
     identifier:
       $type: textField
       label: paged.editPage.identifier
