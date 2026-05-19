@@ -22,7 +22,7 @@ Add the dependency to your Magnolia project (use the latest released version, se
 <dependency>
     <groupId>de.ibmix.magkit</groupId>
     <artifactId>magkit-tools-t9n</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 See the [CHANGELOG](../CHANGELOG.md) for available versions.
@@ -36,7 +36,6 @@ DeltaBuilder.update("1.1", "Register translation keys")
     .addTask(new AddTranslationsTask("another-module.i18n.messages", Locale.ENGLISH))
 // ...existing code...
 ```
-If you omit locales the provided ones default to what you pass; add all locales you want initially created.
 
 ### Translation Service
 The module contributes its own `TranslationService` via module descriptor:
@@ -53,41 +52,24 @@ You can request translations in code exactly as with Magnolia's default service 
 Two roles are provided:
 - `translation-user` (read/write)
 - `translation-base` (read-only)
+
 Assign them to editors as needed.
 
 ### Optional App Column Decoration
-Add a decoration file `translation.subApps.browser.workbench.contentViews.yaml` in your module to define which language columns appear:
+Add a decoration file `translation.subApps.browser.workbench.contentViews.yaml` in your module to define which further language columns should appear:
 
-(!) Note, that with version 1.1.0 and later the key column and a default language column are always added automatically by the `TranslationListViewDefinition`. You only need to define additional language columns and any metadata columns you want to keep.
+(!) Note, that with version 1.1.0 and later the key column and the default language column are always added automatically by the `TranslationListViewDefinition`. You only need to define additional languages.
 
-When migrating from an earlier version, make sure to remove the key and default language columns from your decoration file.
+When migrating from an earlier version, make sure to remove column definitions from your decoration file.
 ```yaml
-#  This is only one example:
+#  This is only an example:
 - name : list
-  columns: !override
-    # The 'key' column and a default language column are added automatically by the TranslationListViewDefinition.
-    # Only define additional language columns as needed
-    translation_de:
-      filterComponent:
-      $type: textField
-      expandRatio: 2
-    # and add any metadata columns you want to keep
-      jcrPublishingStatus:
-        $type: jcrStatusColumn
-        width: 100
-      mgnl:lastModified:
-        $type: dateColumn
-        width: 180
-      mgnl:lastModifiedBy:
-        label: column.lastModUser.label
-        width: 150
-      mgnl:createdBy:
-        label: column.createdByUser.label
-        width: 150
+  # adds further languages after the default language column, in most cases 'en'
+  furtherLanguages: de,fr,es
 ```
 
 ## Examples
-### 1. Fetching a Translation in Java
+### 1. Fetching a translation in Java
 ```java
 import info.magnolia.i18nsystem.TranslationService;
 import info.magnolia.objectfactory.Components;
