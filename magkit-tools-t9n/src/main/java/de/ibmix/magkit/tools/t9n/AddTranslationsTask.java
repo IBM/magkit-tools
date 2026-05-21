@@ -28,6 +28,7 @@ import info.magnolia.jcr.util.NodeNameHelper;
 import info.magnolia.module.InstallContext;
 import info.magnolia.module.delta.ArrayDelegateTask;
 import info.magnolia.module.delta.Task;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -47,7 +48,6 @@ import static info.magnolia.jcr.util.PropertyUtil.getString;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.join;
-import static org.apache.commons.lang3.StringUtils.removeStart;
 import static org.apache.commons.lang3.StringUtils.trimToEmpty;
 
 /**
@@ -84,7 +84,7 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
      * Creates a new task to import translations for multiple locales.
      *
      * @param baseName the fully qualified base name of the resource bundle (e.g., "com.example.messages")
-     * @param locales the locales for which to import translations (at least one required)
+     * @param locales  the locales for which to import translations (at least one required)
      */
     public AddTranslationsTask(String baseName, Locale... locales) {
         this("Add translations for " + baseName,
@@ -98,11 +98,11 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
     /**
      * Creates a new task to import translations for multiple locales with custom name and base path.
      *
-     * @param name the display name of the task
+     * @param name        the display name of the task
      * @param description the detailed description of what the task does
-     * @param baseName the fully qualified base name of the resource bundle
-     * @param basePath the base path in the translation workspace where nodes will be created
-     * @param locales the locales for which to import translations (at least one required)
+     * @param baseName    the fully qualified base name of the resource bundle
+     * @param basePath    the base path in the translation workspace where nodes will be created
+     * @param locales     the locales for which to import translations (at least one required)
      */
     public AddTranslationsTask(String name, String description, String baseName, String basePath, Locale... locales) {
         super(name, description, baseName, locales[0], basePath);
@@ -113,7 +113,7 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
      * Processes all locales and creates tasks for creating or updating translation nodes.
      * For each locale, checks existing nodes and only adds missing properties.
      *
-     * @param task the delegate task to which individual translation import tasks are added
+     * @param task           the delegate task to which individual translation import tasks are added
      * @param installContext the installation context for warnings and errors
      */
     @Override
@@ -177,7 +177,7 @@ public class AddTranslationsTask extends AddTranslationEntryTask {
         }
 
         Task createAddTranslationOperation(String nodePath, String key, String propertyName, String translation) {
-            String name = removeStart(nodePath, ROOT_PATH);
+            String name = Strings.CS.removeStart(nodePath, ROOT_PATH);
             return new NodeBuilderTask("Add translation for probably existing node", "", logging, WS_TRANSLATION,
                 new AbstractNodeOperation() {
 

@@ -32,7 +32,9 @@ import info.magnolia.module.delta.TaskExecutionException;
 import info.magnolia.objectfactory.Components;
 import info.magnolia.resourceloader.Resource;
 import info.magnolia.resourceloader.ResourceOrigin;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -58,7 +60,6 @@ import static info.magnolia.jcr.util.NodeTypes.LastModified.LAST_MODIFIED;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.apache.commons.lang3.StringUtils.removeStart;
 
 /**
  * Magnolia install task that imports translation keys from property files into the translation workspace.
@@ -90,12 +91,13 @@ import static org.apache.commons.lang3.StringUtils.removeStart;
  */
 @Slf4j
 public class AddTranslationEntryTask extends AbstractTask {
-
     protected static final String ROOT_PATH = "/";
 
     private final String _baseName;
     private final Locale _locale;
+    @Getter
     private final String _basePath;
+    @Getter
     private final NodeNameHelper _nodeNameHelper;
     private final Calendar _now;
 
@@ -151,7 +153,7 @@ public class AddTranslationEntryTask extends AbstractTask {
     /**
      * Reads the resource bundle and creates tasks for each translation key that doesn't already exist.
      *
-     * @param task the delegate task to which individual translation import tasks are added
+     * @param task           the delegate task to which individual translation import tasks are added
      * @param installContext the installation context for warnings and errors
      */
     protected void addTranslationNodeTasks(ArrayDelegateTask task, InstallContext installContext) {
@@ -169,7 +171,7 @@ public class AddTranslationEntryTask extends AbstractTask {
     /**
      * Loads a resource bundle from the given resource and applies the consumer to it.
      *
-     * @param resource the resource to load as a property resource bundle
+     * @param resource       the resource to load as a property resource bundle
      * @param bundleConsumer the consumer that processes the loaded resource bundle
      */
     protected void addTasksForResource(Resource resource, Consumer<ResourceBundle> bundleConsumer) {
@@ -199,7 +201,7 @@ public class AddTranslationEntryTask extends AbstractTask {
             addProperty(PREFIX_NAME + _locale.getLanguage(), (Object) value),
             addProperty(LAST_MODIFIED, _now)
         );
-        return new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION, ROOT_PATH.equals(_basePath) ? addKeyNode : getOrAddNode(removeStart(_basePath, ROOT_PATH), Translation.NAME).then(addKeyNode));
+        return new NodeBuilderTask("Create translation node", "", logging, WS_TRANSLATION, ROOT_PATH.equals(_basePath) ? addKeyNode : getOrAddNode(Strings.CS.removeStart(_basePath, ROOT_PATH), Translation.NAME).then(addKeyNode));
     }
 
     /**
@@ -213,21 +215,4 @@ public class AddTranslationEntryTask extends AbstractTask {
         return resourceOrigins.getByPath("/" + _baseName.replace(".", "/") + "_" + locale + ".properties");
     }
 
-    /**
-     * Returns the node name helper used for generating valid JCR node names.
-     *
-     * @return the node name helper instance
-     */
-    public NodeNameHelper getNodeNameHelper() {
-        return _nodeNameHelper;
-    }
-
-    /**
-     * Returns the base path where translation nodes are created.
-     *
-     * @return the base path in the translation workspace
-     */
-    public String getBasePath() {
-        return _basePath;
-    }
 }

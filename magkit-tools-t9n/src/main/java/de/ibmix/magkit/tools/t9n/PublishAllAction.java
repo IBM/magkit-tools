@@ -33,6 +33,7 @@ import info.magnolia.ui.contentapp.action.JcrCommandActionDefinition;
 import info.magnolia.ui.contentapp.async.AsyncActionExecutor;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -41,7 +42,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import static de.ibmix.magkit.tools.t9n.TranslationNodeTypes.WS_TRANSLATION;
-import static org.apache.commons.lang3.StringUtils.startsWith;
 
 /**
  * Action for publishing all translation nodes from a configured base path.
@@ -69,14 +69,14 @@ import static org.apache.commons.lang3.StringUtils.startsWith;
 public class PublishAllAction extends JcrCommandAction<Node, JcrCommandActionDefinition> {
 
     /**
-     * Creates a new publish all action with all required dependencies.
+     * Creates a new "publish all" action with all required dependencies.
      *
-     * @param definition the action definition configuration
-     * @param commandsManager the manager for executing JCR commands
-     * @param valueContext the context providing access to the current node
-     * @param context the Magnolia context
+     * @param definition          the action definition configuration
+     * @param commandsManager     the manager for executing JCR commands
+     * @param valueContext        the context providing access to the current node
+     * @param context             the Magnolia context
      * @param asyncActionExecutor the executor for asynchronous action execution
-     * @param datasource the JCR datasource
+     * @param datasource          the JCR datasource
      */
     @Inject
     public PublishAllAction(JcrCommandActionDefinition definition, CommandsManager commandsManager, ValueContext<Node> valueContext, Context context, AsyncActionExecutor asyncActionExecutor, JcrDatasource datasource) {
@@ -110,7 +110,7 @@ public class PublishAllAction extends JcrCommandAction<Node, JcrCommandActionDef
     String getBasePath() {
         final TranslationModule module = Components.getComponent(TranslationModule.class);
         String path = "/";
-        if (startsWith(module.getBasePath(), "/")) {
+        if (Strings.CS.startsWith(module.getBasePath(), "/")) {
             path = module.getBasePath();
         }
         return path;

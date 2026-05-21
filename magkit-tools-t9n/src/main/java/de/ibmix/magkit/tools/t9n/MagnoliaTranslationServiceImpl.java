@@ -31,6 +31,7 @@ import jakarta.inject.Provider;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -39,7 +40,6 @@ import java.util.Locale;
 import java.util.function.Predicate;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.contains;
 
 /**
  * Enhanced translation service that retrieves translations from the Magnolia translation workspace.
@@ -53,7 +53,7 @@ import static org.apache.commons.lang3.StringUtils.contains;
  * <li>Falls back to standard property file translations if workspace lookup fails</li>
  * <li>Supports locale-specific and language-only translation lookups</li>
  * <li>Automatically escapes single quotes in placeholder messages for MessageFormat compatibility</li>
- * <li>Operates in system context for consistent access regardless of user permissions</li>
+ * <li>Operates in the system context for consistent access regardless of user permissions</li>
  * <li>Validates keys to prevent SQL injection in JCR queries</li>
  * </ul>
  * <p><strong>Null Handling:</strong></p>
@@ -87,7 +87,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
      * Automatically escapes single quotes in messages containing placeholders for proper MessageFormat handling.
      *
      * @param localeProvider provides the target locale for the translation
-     * @param basename the basename of the message bundle (may be empty when using workspace translations)
+     * @param basename the basename of the message bundle (maybe empty when using workspace translations)
      * @param keys array of translation keys to try in order of preference
      * @return the translated message, or the first key if no translation is found
      */
@@ -100,7 +100,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
 
     String escapeSingleQuotesIfPlaceholderMessage(final String message) {
         String escapedMessage = message;
-        if (contains(escapedMessage, "'") && !contains(escapedMessage, "''") && escapedMessage.matches(".*\\{[0-9]}.*")) {
+        if (Strings.CS.contains(escapedMessage, "'") && !Strings.CS.contains(escapedMessage, "''") && escapedMessage.matches(".*\\{[0-9]}.*")) {
             escapedMessage = escapedMessage.replace("'", "''");
         }
         return escapedMessage;
@@ -114,7 +114,7 @@ public class MagnoliaTranslationServiceImpl extends TranslationServiceImpl {
         // get first acceptable translation for list of keys:
         String message = null;
         for (String key : keys) {
-            if (!contains(key, "'")) {
+            if (!Strings.CS.contains(key, "'")) {
                 String newMessage = doMessageQuery(key, i18nPropertyNames);
                 if (MESSAGE_CONDITION.test(newMessage)) {
                     message = newMessage;

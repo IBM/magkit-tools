@@ -28,7 +28,7 @@ import com.vaadin.data.Converter;
 import com.vaadin.data.Result;
 import com.vaadin.data.ValueContext;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -69,7 +69,7 @@ public class MapConverter implements Converter<String, Map<String, String>> {
      * The input string should contain JSON key-value pairs without outer curly braces.
      * Any parsing exception (syntax or structural) results in an error Result.
      *
-     * @param value the JSON string to convert (may be null)
+     * @param value   the JSON string to convert (may be null)
      * @param context the value context for the conversion
      * @return a Result containing the parsed map or an error if JSON parsing fails
      */
@@ -97,12 +97,12 @@ public class MapConverter implements Converter<String, Map<String, String>> {
      * Converts a Map&lt;String, String&gt; to its JSON string representation.
      * The output string has the outer curly braces removed for cleaner display in form fields.
      *
-     * @param value the map to convert (may be null)
+     * @param value   the map to convert (may be null)
      * @param context the value context for the conversion
      * @return the JSON string representation without outer braces
      */
     @Override
     public String convertToPresentation(Map<String, String> value, ValueContext context) {
-        return StringUtils.removeEnd(StringUtils.removeStart(new GsonBuilder().create().toJson(value), "{"), "}");
+        return Strings.CS.removeEnd(Strings.CS.removeStart(new GsonBuilder().create().toJson(value), "{"), "}");
     }
 }

@@ -27,6 +27,7 @@ import info.magnolia.init.MagnoliaConfigurationProperties;
 import info.magnolia.link.LinkUtil;
 import info.magnolia.module.site.SiteManager;
 import jakarta.inject.Inject;
+import org.apache.commons.lang3.Strings;
 
 import javax.jcr.Node;
 import java.util.Map;
@@ -36,7 +37,6 @@ import static de.ibmix.magkit.core.utils.NodeUtils.getAncestorOrSelf;
 import static info.magnolia.jcr.util.NodeUtil.getPathIfPossible;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
-import static org.apache.commons.lang3.StringUtils.remove;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 
 /**
@@ -111,7 +111,7 @@ public class LinkService {
 
             url = createExternalLink(page);
             if (isNotEmpty(contextPath)) {
-                url = remove(url, contextPath);
+                url = Strings.CS.remove(url, contextPath);
             }
 
             final PublicLinkConfig publicLinkConfig = _editToolsModule.getPublicLinkConfig();
