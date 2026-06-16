@@ -67,6 +67,7 @@ public class TranslationFormDefinition extends ConfiguredFormDefinition {
 
         final TextFieldDefinition keyProperty = new TextFieldDefinition();
         keyProperty.setName(TranslationNodeTypes.Translation.PN_KEY);
+        keyProperty.setRequired(true);
         final SimpleTranslator simpleTranslator = Components.getComponent(SimpleTranslator.class);
         keyProperty.setLabel(simpleTranslator.translate("translation.jcrDetail.main.key.label"));
         properties.add(keyProperty);

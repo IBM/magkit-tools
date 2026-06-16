@@ -25,6 +25,7 @@ import info.magnolia.cms.security.User;
 import info.magnolia.cms.security.userprofile.LocaleSettingsProfile;
 import info.magnolia.cms.security.userprofile.UserProfileManager;
 import info.magnolia.i18nsystem.SimpleTranslator;
+import info.magnolia.ui.field.ConfiguredFieldDefinition;
 import info.magnolia.ui.field.EditorPropertyDefinition;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,9 @@ public class TranslationFormDefinitionTest {
         final List<EditorPropertyDefinition> properties = translationFormDefinition.getProperties();
         assertEquals(4, properties.size());
         assertTrue(properties.stream().allMatch(p -> p.getLabel() != null));
-        assertEquals(TranslationNodeTypes.Translation.PN_KEY, properties.get(0).getName());
+        final ConfiguredFieldDefinition<String> keyFieldDefinition = (ConfiguredFieldDefinition<String>) properties.get(0);
+        assertEquals(TranslationNodeTypes.Translation.PN_KEY, keyFieldDefinition.getName());
+        assertTrue(keyFieldDefinition.isRequired());
         assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.ENGLISH, properties.get(1).getName());
         assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.GERMANY, properties.get(2).getName());
         assertEquals(TranslationNodeTypes.Translation.PREFIX_NAME + Locale.FRANCE, properties.get(3).getName());
