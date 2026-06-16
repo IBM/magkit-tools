@@ -1,7 +1,6 @@
 icon: icon-jcr-tools
 class: info.magnolia.ui.contentapp.configuration.ContentAppDescriptor
 appClass: info.magnolia.ui.framework.app.BaseApp
-label: Scheduler App
 subApps:
   browser:
     class: info.magnolia.ui.contentapp.configuration.BrowserDescriptor
@@ -60,27 +59,27 @@ subApps:
     workbench:
       sortFilterOptions: true
       filters:
-      - name: enabled
-        icon: icon-check-circle
-        filterOperator: EQUALS
-        $type: dropdown
-        propertyName: enabled
-        datasource:
-          $type: optionListDatasource
-          options:
-            - name: 'true'
-              value: 'true'
-              label: 'filters.enabled.true.label'
-            - name: 'false'
-              value: 'false'
-              label: 'filters.enabled.false.label'
-      - name: jcrPublishingStatus
-        icon: icon-spinner-full
-        $type: dropdownMultiselect
-        datasource:
-          $type: enumDatasource
-          enumeration: info.magnolia.ui.contentapp.configuration.column.StatusColumnDefinition$PublicationStatus
-          sorted: true
+        - name: enabled
+          icon: icon-check-circle
+          filterOperator: EQUALS
+          $type: dropdown
+          propertyName: enabled
+          datasource:
+            $type: optionListDatasource
+            options:
+              - name: 'true'
+                value: 'true'
+                label: 'filters.enabled.true.label'
+              - name: 'false'
+                value: 'false'
+                label: 'filters.enabled.false.label'
+        - name: jcrPublishingStatus
+          icon: icon-spinner-full
+          $type: dropdownMultiselect
+          datasource:
+            $type: enumDatasource
+            enumeration: info.magnolia.ui.contentapp.configuration.column.StatusColumnDefinition$PublicationStatus
+            sorted: true
       contentViews:
         - name: list
           $type: listView
@@ -152,4 +151,5 @@ datasource:
     - mgnl:contentNode
 permissions:
   roles:
+    scheduler-app: scheduler-app-admin
     superuser: superuser
