@@ -22,8 +22,8 @@
         <!-- Magnolia version from super pom -->
         <!--version.magnolia>6.4.2/version.magnolia-->
 
-        <version.magkit>1.2.0-SNAPSHOT</version.magkit>
-        <version.magkit.test>1.2.0-SNAPSHOT</version.magkit.test>
+        <version.magkit>1.2.0</version.magkit>
+        <version.magkit.test>1.2.0</version.magkit.test>
 
         <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
     </properties>
