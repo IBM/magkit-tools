@@ -20,12 +20,12 @@ package de.ibmix.magkit.tools.edit.action;
  * #L%
  */
 
-import de.ibmix.magkit.core.utils.NodeUtils;
 import com.google.inject.Inject;
+import de.ibmix.magkit.core.utils.NodeUtils;
 import info.magnolia.jcr.util.NodeUtil;
 import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.location.LocationController;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.jcr.Node;
 

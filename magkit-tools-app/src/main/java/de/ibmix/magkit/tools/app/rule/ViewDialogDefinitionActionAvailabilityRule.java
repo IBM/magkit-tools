@@ -33,7 +33,7 @@ import javax.jcr.Node;
 
 import static de.ibmix.magkit.core.utils.NodeUtils.getNodeByIdentifier;
 import static de.ibmix.magkit.core.utils.NodeUtils.getTemplate;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 /**
  * Rule for enabling/disabling {@link ViewDialogDefinitionAction}.
