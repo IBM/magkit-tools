@@ -236,7 +236,7 @@ public class ConfirmRowDraggerTest {
     /**
      * Sets a private field value via reflection to prepare internal state for testing.
      *
-     * @param name the field name
+     * @param name  the field name
      * @param value the value to set
      * @throws Exception if reflection access fails
      */
@@ -246,7 +246,7 @@ public class ConfirmRowDraggerTest {
         field.set(_dragger, value);
     }
 
-     private JcrDatasource mockJcrDatasource() throws RepositoryException {
+    private JcrDatasource mockJcrDatasource() throws RepositoryException {
         JcrDatasource jcrDatasource = mock(JcrDatasource.class);
         JcrSessionWrapper session = mock(JcrSessionWrapper.class);
         Workspace workspace = mockWorkspace("website");
