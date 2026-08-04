@@ -41,6 +41,7 @@ import javax.jcr.Workspace;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
@@ -91,11 +92,11 @@ public class ConfirmRowDraggerTest {
     @Test
     public void testCreateConfirmContentListsPaths() throws RepositoryException {
         Node item1 = mockNode("website", "/path/one");
-        Node item2 = mockNode("website", "/path/two");
+        Node item2 = mockNode("website", "/path/two/<img src=\"image-url\"/>");
         String html = _dragger.createConfirmContent(Arrays.asList(item1, item2));
         assertTrue(html.startsWith("<ul>"));
         assertTrue(html.contains("<li>/path/one</li>"));
-        assertTrue(html.contains("<li>/path/two</li>"));
+        assertTrue(html.contains("<li>/path/two/&lt;img src=&quot;image-url&quot;/&gt;</li>"));
         assertTrue(html.endsWith("</ul>"));
     }
 
@@ -123,7 +124,7 @@ public class ConfirmRowDraggerTest {
     }
 
     /**
-     * Verifies title creation for multiple items selection.
+     * Verifies title creation for multiple items' selection.
      */
     @Test
     public void testCreateConfirmTitleMany() throws RepositoryException {
@@ -139,7 +140,7 @@ public class ConfirmRowDraggerTest {
      */
     @Test
     public void testDoMoveItemsDelegatesToDatasource() throws Exception {
-        Collection<Item> items = Arrays.asList(mockNode("website", "/path/one"));
+        Collection<Item> items = Collections.singletonList(mockNode("website", "/path/one"));
         Item target = mockNode("website", "/path/target");
         setPrivateField("_target", target);
         setPrivateField("_dropLocation", DropLocation.BELOW);
@@ -157,7 +158,7 @@ public class ConfirmRowDraggerTest {
         EditToolsModule module = new EditToolsModule();
         module.setMoveConfirmWorkspaces(List.of("website"));
         when(_moduleProvider.get()).thenReturn(module);
-        JcrDatasource jcrDatasource = mockJcrDatasource("website");
+        JcrDatasource jcrDatasource = mockJcrDatasource();
         boolean show = _dragger.showConfirmation(jcrDatasource);
         assertTrue(show);
     }
@@ -179,7 +180,7 @@ public class ConfirmRowDraggerTest {
         EditToolsModule module = new EditToolsModule();
         module.setMoveConfirmWorkspaces(List.of("other"));
         when(_moduleProvider.get()).thenReturn(module);
-        JcrDatasource jcrDatasource = mockJcrDatasource("website");
+        JcrDatasource jcrDatasource = mockJcrDatasource();
         boolean show = _dragger.showConfirmation(jcrDatasource);
         assertFalse(show);
     }
@@ -245,10 +246,10 @@ public class ConfirmRowDraggerTest {
         field.set(_dragger, value);
     }
 
-    JcrDatasource mockJcrDatasource(String workspaceName) throws RepositoryException {
+     private JcrDatasource mockJcrDatasource() throws RepositoryException {
         JcrDatasource jcrDatasource = mock(JcrDatasource.class);
         JcrSessionWrapper session = mock(JcrSessionWrapper.class);
-        Workspace workspace = mockWorkspace(workspaceName);
+        Workspace workspace = mockWorkspace("website");
         when(session.getWorkspace()).thenReturn(workspace);
         when(jcrDatasource.getJCRSession()).thenReturn(session);
         return jcrDatasource;

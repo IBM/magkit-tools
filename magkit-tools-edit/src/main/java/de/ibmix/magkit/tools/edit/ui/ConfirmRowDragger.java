@@ -36,6 +36,7 @@ import info.magnolia.ui.contentapp.browser.drop.DropConstraint;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
+import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,7 +133,7 @@ public class ConfirmRowDragger<T> extends GridRowDragger<T> {
                 // we can cast here without check because #showConfirmation is based on JcrDatasource
                 // use Item to allow both Nodes and Properties
                 String path = ((Item) item).getPath();
-                bodyText.append("<li>").append(path).append("</li>");
+                bodyText.append("<li>").append(StringEscapeUtils.escapeHtml4(path)).append("</li>");
             } catch (RepositoryException e) {
                 LOGGER.warn("Error creating dialog content: {}", e.getMessage());
                 LOGGER.debug(e.getMessage(), e);
