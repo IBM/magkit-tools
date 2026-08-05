@@ -21,12 +21,14 @@ package de.ibmix.magkit.tools.edit.export;
  */
 
 import info.magnolia.jcr.decoration.ContentDecoratorNodeWrapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.Mockito.mock;
@@ -67,6 +69,11 @@ class SinglePageNodeFilterTest {
         Node wrappedNode = _filter.wrapNode(pageNode);
 
         assertInstanceOf(ContentDecoratorNodeWrapper.class, wrappedNode);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        cleanContext();
     }
 }
 

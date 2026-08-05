@@ -24,6 +24,7 @@ import info.magnolia.ui.ValueContext;
 import info.magnolia.ui.api.action.ActionExecutionException;
 import info.magnolia.ui.api.location.LocationController;
 import info.magnolia.ui.contentapp.ContentBrowserSubApp.BrowserLocation;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,6 +33,7 @@ import javax.jcr.RepositoryException;
 import java.util.Optional;
 
 import static de.ibmix.magkit.test.cms.context.AggregationStateStubbingOperation.stubCharacterEncoding;
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.cms.context.ContextMockUtils.mockAggregationState;
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockContentNode;
 import static de.ibmix.magkit.test.cms.node.MagnoliaNodeMockUtils.mockPageNode;
@@ -138,6 +140,11 @@ class OpenPageBrowserLocationActionTest {
         action.execute();
 
         verify(_locationController).goTo(any(BrowserLocation.class));
+    }
+
+    @AfterEach
+    public void tearDown() {
+        cleanContext();
     }
 }
 

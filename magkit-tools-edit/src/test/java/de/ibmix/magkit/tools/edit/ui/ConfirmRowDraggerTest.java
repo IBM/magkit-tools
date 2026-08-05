@@ -30,6 +30,7 @@ import info.magnolia.ui.contentapp.browser.drop.DropConstraint;
 import info.magnolia.ui.datasource.jcr.JcrDatasource;
 import info.magnolia.ui.datasource.jcr.JcrSessionWrapper;
 import jakarta.inject.Provider;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -44,6 +45,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import static de.ibmix.magkit.test.cms.context.ContextMockUtils.cleanContext;
 import static de.ibmix.magkit.test.jcr.NodeMockUtils.mockNode;
 import static de.ibmix.magkit.test.jcr.WorkspaceMockUtils.mockWorkspace;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -253,5 +255,10 @@ public class ConfirmRowDraggerTest {
         when(session.getWorkspace()).thenReturn(workspace);
         when(jcrDatasource.getJCRSession()).thenReturn(session);
         return jcrDatasource;
+    }
+
+    @AfterEach
+    public void tearDown() {
+        cleanContext();
     }
 }
